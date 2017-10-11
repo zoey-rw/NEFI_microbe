@@ -24,10 +24,16 @@ otu_table.b <- as.data.frame(as.matrix(biom_data(otu.ITS.b)))
 taxonomy.b <- observation_metadata(otu.ITS.b)
 map.b <- read.table('/fs/data3/caverill/NEFI_microbial/map_otu/ITS_rerun20150922_mapping_file.txt',sep='\t' ,header=T, comment.char = "")
 
+#load reference file that links XSampleID to geneticSampleID provided by Lee Stanish.
+ref <- read.csv('/fs/data3/caverill/NEFI_microbial/map_otu/legacyMarkerGeneMappedsids.csv')
+
 #merge together mapping files.
 map_merge <- rbind(map.a, map.b)
 #convert sample ID to character vector
 map_merge$X.SampleID <- as.character(map_merge$X.SampleID)
+
+#merge in true sampleIDs and genetic sample IDs from reference file.
+map_merge <- merge(map_merge,ref, by = 'X.SampleID', all.x=T)
 
 #Merge together OTU tables.
 otu_table.a$merge_col <- rownames(otu_table.a)
@@ -43,28 +49,31 @@ taxonomy.b$merge_col <- rownames(taxonomy.b)
 tax_merge <- merge(taxonomy.a,taxonomy.b, all=T)
 rownames(tax_merge) <- tax_merge$merge_col
 
+#subset map to only include shit that has a genetic ID from Lee Stanish
+map_merge <- map_merge[!is.na(map_merge$geneticSampleID),]
+
 #subset to only include observations in both the OTU table and mapping files.
 otu_merge <- otu_merge[,colnames(otu_merge) %in% map_merge$X.SampleID]
 map_merge <- map_merge[map_merge$X.SampleID %in% colnames(otu_merge),]
 
-#some Sample IDs have leading or trailing `.` characters. remove these.
-map_merge$X.SampleID <- gsub("^\\.||\\.$", "", map_merge$X.SampleID)
-colnames(otu_merge) <- gsub("^\\.||\\.$", "", colnames(otu_merge))
+#some Sample IDs have leading or trailing `.` characters. remove these
+#unneccessary now that we have file from Lee Stanish
+#map_merge$X.SampleID <- gsub("^\\.||\\.$", "", map_merge$X.SampleID)
+# colnames(otu_merge) <- gsub("^\\.||\\.$", "", colnames(otu_merge))
 
 #put rows of map_merge in the same order as columns of otu_merge
 map_merge <- map_merge[order(map_merge$X.SampleID),]
 otu_merge <- otu_merge[,order(colnames(otu_merge))]
 
+#uppercase map_merge geneticSampleID, then make these the column names of otu_merge
+map_merge$geneticSampleID <- toupper(map_merge$geneticSampleID)
+colnames(otu_merge) <- map_merge$geneticSampleID
+
 #put rows of otu table and taxonomy table in the same order.
 otu_merge <- otu_merge[order(rownames(otu_merge)),]
 tax_merge <- tax_merge[order(rownames(tax_merge)),]
 
-#convert X.SampleID in mapping file to geneticSampleID format fromr rest of NEON.
-#first, replace all `.` characters with `-` characters.
-map_merge$geneticSampleID <- gsub('\\.','-',map_merge$X.SampleID)
-#add suffix '-GEN'
-map_merge$geneticSampleID <- paste(map_merge$geneticSampleID,'-GEN',sep='')
-#Pull out site ID
+#Pull out site ID from genetic ID.
 map_merge$site <- substr(map_merge$geneticSampleID,1,4)
 
 #Get site-level latitude and longitude for each observation.
