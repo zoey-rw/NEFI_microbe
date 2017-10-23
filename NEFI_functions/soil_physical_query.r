@@ -1,3 +1,4 @@
+#Colin needs to generalize this to query any neon product. requires generating grep string lookup table.
 #This function takes a data frame that has the columns "site" and "year_month". Can have other columns, they will be ignored.
 #site should be formatted as a character entry in all caps, ex. "BART"
 #year_month should be formatted as YYYY-MM, ex. "2014-08"

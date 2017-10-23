@@ -1,17 +1,27 @@
-#This function takes longitude and latitude (in that order) as inputs.
-#returns a dataframe of 2000-2015 averages on wet N deposition, dry deposition, and total N deposition.
-#There are currently warnings. ignore them. 
+#' Extract wet and dry N deposition data from NADP and CASTNET (2000-2015 average)
+#' There are currently warnings. ignore them.
+#'
+#' @param longitude a vector of site longtidude
+#' @param latitude a vector of site latitude
+#' @param folder path to directory that contains sub directories 'wet_dep' and 'dry_dep'. 
+#' These then contain all ndep rasters.
+#' folder path currently defaults to the directory in colin's folder on pecan2.
+#'
+#' @return returns a dataframe of wet, dry and total ndeposition values for all sites.
+#' @export
+#'
+#' @examples
 
-extract_ndep <- function(longitude,latitude){
+extract_ndep <- function(longitude,latitude,folder='/fs/data3/caverill/CASTNET_Ndep/'){
   #load dry deposition rasters
   dry.list <- list()
   for(i in 0:15){
-    dry.list[[i+1]] <- raster(paste0('/fs/data3/caverill/CASTNET_Ndep/dry_dep/n_dw-',2000 + i,'.e00'))
+    dry.list[[i+1]] <- raster(file.path(folder,paste0('dry_dep/n_dw-',2000 + i,'.e00')))
   }
   #load wet deposition rasters
   wet.list <- list()
   for(i in 0:15){
-    wet.list[[i+1]] <- raster(paste0('/fs/data3/caverill/CASTNET_Ndep/wet_dep/n_ww-',2000 + i,'.e00'))
+    wet.list[[i+1]] <- raster(file.path(folder,paste0('wet_dep/n_ww-',2000 + i,'.e00')))
   }
   
   #Fix the crs of each raster.

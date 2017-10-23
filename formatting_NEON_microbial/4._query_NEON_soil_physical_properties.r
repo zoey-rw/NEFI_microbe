@@ -1,5 +1,6 @@
 #2._extracting_soil_physical_properties.r Colin Averill, October 3, 2017
 #This script extracts physical properties for all site by month combinations from a mapping file.
+#This will be generalize to query all neon products of interest soon.
 #This will be generalized to a function that takes as input a vector of sites and year-months.
 #clear R environment, load packages.
 rm(list=ls())

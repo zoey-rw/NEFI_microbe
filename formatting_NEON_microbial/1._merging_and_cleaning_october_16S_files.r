@@ -8,9 +8,10 @@ substrRight <- function(x, n){
 }
 
 #set output paths for cleaned otu, map, and tax files.
-otu.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/16S_otu_clean.rds'
-map.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/16S_map_clean.rds'
-tax.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/16S_tax_clean.rds'
+out.dir <- '/fs/data3/caverill/NEFI_microbial/map_otu/'
+otu.out <- paste0(out.dir,'16S_otu_clean.rds')
+map.out <- paste0(out.dir,'16S_map_clean.rds')
+tax.out <- paste0(out.dir,'16S_tax_clean.rds')
 
 #load both otu tables with taxonomy and mapping files.
   otu.16S.a <- read_biom('/fs/data3/caverill/NEFI_microbial/map_otu/16S_run20150211_otu_table_w_taxonomy.biom')

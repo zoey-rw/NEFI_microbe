@@ -8,10 +8,10 @@ substrRight <- function(x, n){
 }
 
 #set output paths for cleaned otu, map, and tax files.
-otu.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/ITS_otu_clean.rds'
-map.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/ITS_map_clean.rds'
-tax.out <- '/fs/data3/caverill/NEFI_microbial/map_otu/ITS_tax_clean.rds'
-
+out.dir <- '/fs/data3/caverill/NEFI_microbial/map_otu/'
+otu.out <- paste0(out.dir,'ITS_otu_clean.rds')
+map.out <- paste0(out.dir,'ITS_map_clean.rds')
+tax.out <- paste0(out.dir,'ITS_tax_clean.rds')
 
 #load the two files sent by Lee Stanish with taxonomy.
 otu.ITS.a <- read_biom('/fs/data3/caverill/NEFI_microbial/map_otu/ITS_rerun20150225_otu_table_w_taxonomy.biom')
@@ -100,8 +100,8 @@ map_merge$month <- substr(map_merge$date,5,6)
 map_merge$day   <- substr(map_merge$date,7,8)
 map_merge$date <- paste0(map_merge$year,'-',map_merge$month,'-',map_merge$day)
 map_merge$year_month <- paste0(map_merge$year,'-',map_merge$month)
-#Give it a continuous date value, with 0 = Jan 1, 2013
-date.lookup <- format(seq(as.Date("2013-01-01"), as.Date("2016-12-31"), by = "1 day"))
+#Give it a continuous date value, with 0 = Jan 1, 2010
+date.lookup <- format(seq(as.Date("2010-01-01"), as.Date("2016-12-31"), by = "1 day"))
 map_merge$epoch_date <- match(map_merge$date, date.lookup)
 
 #save output.
