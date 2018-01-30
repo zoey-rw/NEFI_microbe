@@ -86,7 +86,7 @@ sites$longitude <- NA
 
 #loop over sites to extract latitude/longitude from nneo package.
 for(i in 1:nrow(sites)){
-  sites$latitude[i] <- nneo_location(sites$sites[i])$locationDecimalLatitude
+  sites$latitude[i]  <- nneo_location(sites$sites[i])$locationDecimalLatitude
   sites$longitude[i] <- nneo_location(sites$sites[i])$locationDecimalLongitude
 }
 #merge lat-long into mapping file

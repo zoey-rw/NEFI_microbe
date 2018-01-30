@@ -1,18 +1,18 @@
 #' Extract PRISM climate data for a particular site by year_month combination.
 #' This function takes a data frame that contains columns of:
-#' year_month in the form: "2014_01"
+#' year_month in the form: "2014-01"
 #' NEON site as "BART" or similar
-#' latitude an longitude
+#' latitude and longitude
 #' depends on raster, and sp packages.
 #'
-#' @param data data frame with site, year_month and latitude longitude columns.
-#' @param prism.dir path to directory that contains prism files.
+#' @param data data frame with site, year_month, latitude and longitude columns.
+#' @param prism.dir path to directory that contains prism files. Currently defaults to directory in Colin's data folder.
 #'
 #' @return returns of a data frame of 30-year mat and map normals as well as location-month specific tmean, tmin, tmax, and ppt.
 #' @export
 #'
 #' @examples
-prism_query <- function(data,prism.dir){
+prism_query <- function(data,prism.dir = '/fs/data3/caverill/PRISM/'){
   #grab longitude and latitude from data frame.
   points <- cbind(data$longitude, data$latitude)
   
