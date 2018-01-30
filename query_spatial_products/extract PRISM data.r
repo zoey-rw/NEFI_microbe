@@ -6,9 +6,6 @@ library(sp)
 library(raster)
 source('NEFI_functions/prism_query.r')
 
-#set prism directory, with '/' at end.
-prism.dir <- '/fs/data3/caverill/PRISM/'
-
 #path to your data file
 data.path <- '/fs/data3/caverill/NEFI_microbial/map_otu/16S_map_clean.rds'
 
@@ -16,7 +13,8 @@ data.path <- '/fs/data3/caverill/NEFI_microbial/map_otu/16S_map_clean.rds'
 d <- readRDS(data.path)
 
 #extract prism normals and month data
-climate_data <- prism_query(d, prism.dir)
+#prism path now set as default to directory in my data folder on pecan2.
+climate_data <- prism_query(d)
 
 #append this data to your dataframe, save it.
 d <- cbind(d,climate_data)
