@@ -3,15 +3,22 @@
 #' Function will handle redundant entries (i.e. multiple rows with the same site by year_month combination).
 #' If you don't get data back for a particular site by year_month combination, then those data are not on the NEON server.
 #' Currently depends on a grep_string lookup table. Hopefully this will be deprecated by a better solution.
+<<<<<<< HEAD
 #' Throws an error if you submit a data.frame that returns no data.
+=======
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
 #'
 #' @param some_data dataframe with the columns 'site' and 'year_month'
 #' site should be formatted as a character entry in all caps, ex. "BART"
 #' year_month should be formatted as YYYY-MM, ex. "2014-08"
 #' 
 #' @param neon_product_code product code for a given neon product
+<<<<<<< HEAD
 #' @param site_level logical, should this query be done at the site level? Default T. 
 #' If you want a subset of dates, set to F and be sure to have a vector of year-months.
+=======
+#' @param site_level logical, should this query be done at the site level? Default F.
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
 #' If set to T, will return all observations made at any time point for a given data product at a given site.
 #' @param lookup.path this links the product codes to grep strings for pulling out actual dataframe of interest from neon.
 #'
@@ -29,7 +36,11 @@
 
 neon_query <- function(some_data,
                        neon_product_code,
+<<<<<<< HEAD
                        site_level = T,
+=======
+                       site_level = F,
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
                        lookup.path='/home/caverill/NEFI_microbe/neon_product_grep_lookup.csv'){
   
   #grab data frame that has only unique combinations of site and year_month.
@@ -83,9 +94,13 @@ neon_query <- function(some_data,
     this_year_month <- sites[i,year_month]
     
     #Connect to the NEON API, grab NEON product of interest for a site by year_month combination.
+<<<<<<< HEAD
     site_product <- nneo::nneo_data(product_code = neon_product_code, 
                                             site = this_site, 
                                       year_month = this_year_month)
+=======
+    site_product <- nneo::nneo_data(product_code = neon_product_code, site = this_site, year_month = this_year_month)
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
 
     #only download data if there are data. duh.
     if(nrow(site_product$data$files) > 0){
@@ -93,6 +108,7 @@ neon_query <- function(some_data,
       path <- site_product$data$files$url[grep(grep_string,site_product$data$files$name)]
       #take last option in path list if more than one option. Some products have 'basic' and 'expanded' versions
       path <- path[length(path)]
+<<<<<<< HEAD
       #currently running a try, as NEON sometimes throws "HTTP status was '500 Internal Server Error'" for some data products that used to work.
       out <- try(read.delim(path, sep = ','), silent = T)
     }
@@ -100,10 +116,22 @@ neon_query <- function(some_data,
     #if there are no data, return NULL to list. If there is a server error, pass NULL as well.
     if(nrow(site_product$data$files) == 0){out = NULL}
     if(class(out) == 'try-error')         {out = NULL}
+=======
+      #take the last option in the path list. Some have basic and expanded versions.
+      #currently running a try, as there are NEON is throwing "HTTP status was '500 Internal Server Error'" for some data products that used to work.
+      #out <- read.delim(path, sep = ',')
+      out <- try(read.delim(path, sep = ','), silent = T)
+    }
+    
+    #if there are no data, return NA to list. If there is a server error, pass NULL as well.
+    if(class(out) == 'try-error'){out = NULL}
+    if(nrow(site_product$data$files) == 0){out = NULL}
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
     
     #save specific site by year-month data to output list.
     out.list[[i]] <- out
   }
+<<<<<<< HEAD
 
   #If there is output to return...
   if(length(out.list) > 0){
@@ -134,6 +162,31 @@ neon_query <- function(some_data,
   }
 
   #return output, which is a dataframe, or a message that says things broke.
+=======
+  #cull NULL entries in output, merge together. for some reason a few obs 
+  out.list <- out.list[!sapply(out.list,is.null)]
+  #out.list <- do.call('rbind',out.list)
+  
+  #try doing this another way, assigning NULL columns as necssary.
+  z <- out.list[[1]]
+  for(i in 2:length(out.list)){
+    k <- out.list[[i]]
+    #if the dataframe you are merging doesn't have all the column names so far add them, set to NULL.
+    if(sum(colnames(k) %in% colnames(z)) < ncol(z)){
+      to_add <- colnames(z[,!(colnames(z) %in% colnames(k))])
+      k[,to_add] <- NA
+    }
+    #if data frame you are merging has columns not in zz, address this as well.
+    if(sum(colnames(z) %in% colnames(k)) < ncol(k)){
+      to_add <- colnames(k[,!(colnames(k) %in% colnames(z))])
+      z[,to_add] <- NA
+    }
+    #now that they def have same columns with same names, merge them. 
+    z <- rbind(z,k)
+  }
+  
+  #return output, which is a dataframe.
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
   return(z)
   
 } #end function.

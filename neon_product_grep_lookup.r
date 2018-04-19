@@ -26,9 +26,17 @@ colnames(lookup) <- c('neon_product','grep_string','name')
 write.csv(lookup,'/home/caverill/NEFI_microbe/neon_product_grep_lookup.csv')
 
 #check out a neon product to figure out grep string.
+<<<<<<< HEAD
 nneo::nneo_product('DP1.10080.001')
 test <- nneo::nneo_data(product_code = 'DP1.10080.001',site = 'SCBI', year_month = '2017-03')
 test$data$files$name
 prod <- read.delim(test$data$files$url
                    [grep('NEON.D02.SCBI.DP1.10080.001.variables.20171221T212823Z.csv',test$data$files$name)], sep = ',')
 prod <- read.delim(test$data$files$url[16], sep = ',')
+=======
+#nneo::nneo_product('DP1.10100.001')
+#test <- nneo::nneo_data(product_code = 'DP1.10100.001',site = 'BART', year_month = '2014-08')
+#test$data$files
+#prod <- read.delim(test$data$files$url
+#                   [grep('sls_soilStableIsotopes.2014-08.expanded',test$data$files$name)], sep = ',')
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c

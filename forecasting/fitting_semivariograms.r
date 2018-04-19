@@ -32,4 +32,8 @@ d$resid <- residuals(m)
 vario.2 <- variogram(resid~1, data = d) #get semivariance values
 vario.model.2 <- fit.variogram(vario.2, vgm(model='Sph', nugget=T)) #fit a variogram model with a Spherical error structure and a "nugget" (nugget = intercept)
 #plot your semivariance and your model.
+<<<<<<< HEAD
 plot(vario.2, model=vario.model.1)
+=======
+plot(vario.2, model=vario.model.1)
+>>>>>>> 86f6aad5e093b910fe7cc8ff293b9089204f114c
