@@ -2,6 +2,7 @@
 #' The precipitation uncertainty scales with elevation. If the user does not supply elevation then we default to 500m (mean in worldclim2 calibration data).
 #' Would be nice to add a topography product to this when elevation is not supplied.
 #' Only precipitation uncertainty scales with elevation.
+#' Depends on output from JAGS models Colin fit. Not totally sure where to store these.
 #' 
 #'
 #' @param latitude   vector of latitude in decimal degrees.

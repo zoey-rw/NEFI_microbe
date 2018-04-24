@@ -1,8 +1,8 @@
 #' Extract wet and dry N deposition data from NADP and CASTNET (2000-2015 average)
 #' There are currently warnings. ignore them.
 #'
-#' @param longitude a vector of site longtidude
-#' @param latitude a vector of site latitude
+#' @param longitude a vector of site longitude
+#' @param latitude  a vector of site latitude
 #' @param folder path to directory that contains sub directories 'wet_dep' and 'dry_dep'. 
 #' These then contain all ndep rasters.
 #' folder path currently defaults to the directory in colin's folder on pecan2.
