@@ -5,8 +5,10 @@ library(data.table)
 library(vegan)
 library(tidyr)
 #source('Scripts/space_time_functions.r')
-source('/home/caverill/NEFI_microbe/NEFI_functions/fg_assign2.r')
+source('/home/caverill/NEFI_microbe/NEFI_functions/fg_assign.r')
 source('/home/caverill/NEFI_microbe/NEFI_functions/lineaus.r')
+source('/home/caverill/NEFI_microbe/NEFI_functions/worldclim2_grab.r')
+source('/home/caverill/NEFI_microbe/NEFI_functions/crib_fun.r')
 
 #output save_path
 output.path <- '/fs/data3/caverill/NEFI_microbial/prior_data/ted_all_prior_data.rds'
@@ -87,7 +89,7 @@ otu <- otu[rownames(otu) %in% tax$otu.ID,]
 #Go ahead and assign function using FunGuild with the fg_assign function
 tax <- fg_assign(tax)
 
-#Things can't be both ECM and SAP in gjam. Creates a sum to 1 problem.
+#Things can't be both ECM and SAP in dirlichet. Creates a sum to 1 problem.
 tax <- data.table(tax)
 tax[grep('Ectomycorrhizal', tax$guild),Ectomycorrhizal := 1]
 tax[is.na(Ectomycorrhizal),Ectomycorrhizal := 0]
@@ -95,8 +97,13 @@ tax[grep('Saprotroph', tax$guild), Saprotroph := 1]
 tax[is.na(Saprotroph), Saprotroph := 0]
 tax[grep('Arbuscular', tax$guild), Arbuscular := 1]
 tax[is.na(Arbuscular), Arbuscular := 0]
+tax[grep('Patho', tax$guild), Pathogen := 1]
+tax[is.na(Pathogen), Pathogen := 0]
 #If you are ECTO you can't be SAP
 tax[Ectomycorrhizal == 1, Saprotroph := 0]
+#if you are ecto or sap you not path.
+tax[Ectomycorrhizal == 1, Pathogen := 0]
+tax[Saprotroph == 1, Pathogen := 0]
 
 #assign hydrophobic/hydrophillic
 tax <- data.table(tax)
@@ -105,6 +112,17 @@ tax[genus %in% em.trait[hydrophillic == 1,]$genus,hydrophillic := 1]
 tax[is.na( hydrophobic),  hydrophobic := 0]
 tax[is.na(hydrophillic), hydrophillic := 0]
 
+
+#normalize the otu table
+pro.function <- function(otu){
+  for(i in 1:ncol(otu)){
+    otu[,i] <- otu[,i] / sum(otu[,i])
+  }
+  return(otu)
+}
+otu <- pro.function(otu)
+#make sure column sums are 1.
+colSums(otu)
 
 #get  most abundant genera in dataset.
 genera <- unique(tax$genus)
@@ -126,16 +144,6 @@ k <- k[!(genera %in% c('unidentified'))] #remove the genus "unidentified".
 #grab genera of interest.
 of_interest <- k$genera[1:n.gen]
 
-#normalize the otu table
-pro.function <- function(otu){
-  for(i in 1:ncol(otu)){
-    otu[,i] <- otu[,i] / sum(otu[,i])
-  }
-  return(otu)
-}
-otu <- pro.function(otu)
-#make sure column sums are 1.
-colSums(otu)
 
 #1. Get relative abundances of the most abundant genera
 gen.list <- list()
@@ -162,7 +170,7 @@ colnames(hydro.out) <- c('hydrophillic','hydrophobic')
 hydro.out$Mapping.ID <- rownames(hydro.out)
 
 #3. get relative abundances of functional groups (ECM, AM, SAP, WR)
-function_groups <- c('Ectomycorrhizal','Arbuscular','Saprotroph')
+function_groups <- c('Ectomycorrhizal','Arbuscular','Saprotroph','Pathogen')
 fun.list <- list()
 for(i in 1:length(function_groups)){
   z <- data.table(cbind(tax,otu))
@@ -180,12 +188,19 @@ abundances <- merge(fun.list,gen.list)
 abundances <- merge(abundances,hydro.out)
 
 #grab columns from map actually of interest.
-map <- map[,.(tedersoo.code,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,MAT,MAP,MAT_CV,MAP_CV)]
+map <- map[,.(tedersoo.code,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP)]
 map <- merge(map,abundances, by.x = 'tedersoo.code',by.y = 'Mapping.ID')
+
+#get worldclim2 mat, map and uncertainty.
+climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
+map <- cbind(map, climate)
 
 #rename some things.
 setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
              c('Mapping.ID'   ,'moisture','pN','pC','cn'))
+
+#subset to northern temperate latitudes
+map <- map[latitude < 66.5 & latitude > 23.5,]
 
 #save output
 saveRDS(map,output.path)
