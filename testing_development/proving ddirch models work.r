@@ -1,4 +1,4 @@
-#testing ddirch with missing data.
+#testing ddirch with missing data. both site-level and hierarhcical.
 #clear environment, generate data.
 rm(list = ls())
 library(data.table)

@@ -31,11 +31,14 @@ hierarchical_dirlichet_jags   <- function(y,
                                           adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F){
   #Load some important dependencies.
   source('/home/caverill/NEFI_microbe/NEFI_functions/crib_fun.r')
-  source('/home/caverill/NEFI_microbe/NEFI_functions/z_transform.r')
   source('/home/caverill/NEFI_microbe/NEFI_functions/sd_to_precision.r')
   source('/home/caverill/NEFI_microbe/NEFI_functions/precision_matrix_match.r')
   
   #Some checks before we get started.
+  y    <- as.data.frame(y)
+  core_mu <- as.data.frame(core_mu)
+  plot_mu <- as.data.frame(plot_mu)
+  site_mu <- as.data.frame(site_mu)
   #core level. First column needs to be intercept, a vector of 1s.
   if(mean(core_mu[,1]) != 1){stop('First column in core_mu is not a vector of 1s for the intercept. This needs to be or this function doesnt work.')}
   if(ncol(core_mu) < 2){stop('We need an intercept and at least one predictor at the core level for this to work. core_mu has less than 2 columns. Try again buddy.')}
@@ -56,7 +59,7 @@ hierarchical_dirlichet_jags   <- function(y,
   if(is.na(plot_sd)){plot_sd = data.frame(rep(1,nrow(plot_mu)))}
   if(is.na(site_sd)){site_sd = data.frame(rep(1,nrow(site_mu)))}
   
-  #Match up predictors and their SD. if no SD supplied we assign ~perfect precision.
+  #Match up predictors and their SD. if no SD supplied we assign perfect (really really high) precision.
   core_sd <- precision_matrix_match(core_mu,core_sd)
   plot_sd <- precision_matrix_match(plot_mu,plot_sd)
   site_sd <- precision_matrix_match(site_mu,site_sd)
@@ -167,11 +170,6 @@ hierarchical_dirlichet_jags   <- function(y,
   for(j in 1:N.site.preds){site.center.save[j] <- mean(site[,j])}
   
   #combine core/plot/site (x) values and parameters.
-  #for(j in 1:N.spp){
-  #for(i in 1:N.core){core.level[i,j] <- inprod(core.mm[,j], core[i,])           } #core level
-  #for(p in 1:N.plot){plot.level[p,j] <- inprod(plot.m [,j], plot[plot_plot[p],])} #plot level
-  #for(s in 1:N.site){site.level[s,j] <- inprod(site.m [,j], site[site_site[s],])} #site level
-  #}
   for(j in 1:N.spp){
   for(i in 1:N.core){core.level[i,j] <- inprod(core.mm[,j], core.center[i,])           } #core level
   for(p in 1:N.plot){plot.level[p,j] <- inprod(plot.m [,j], plot.center[plot_plot[p],])} #plot level
@@ -194,7 +192,6 @@ hierarchical_dirlichet_jags   <- function(y,
   }
   
   for (j in 1:N.spp) {
-  #core.m[1,j] <- alpha + core.mm[1,j]
   core.m[1,j] <- alpha + core.mm[1,j] - (core.norm[j] + plot.norm[j] + site.norm[j])
   for (i in 2:N.core.preds){
   core.m[i,j] <- core.mm[i,j]
