@@ -9,7 +9,7 @@
 #'
 #' @examples
 z_transform <- function(x) {
-  ifelse(sd(x) == 0,
+  ifelse(sd(x, na.rm=T) == 0,
          return(x),
          return((x - mean(x, na.rm=T)) / sd(x, na.rm=T))
   )

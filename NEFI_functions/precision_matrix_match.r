@@ -33,14 +33,15 @@ precision_matrix_match <- function(a,b){
   }
   
   #add columns for x values not present in precision matrix.
-  #give these columns a precision value of 10000
+  #give these columns a sd value of 0.01, which corresponds to a precision of 10000
   to_add <- colnames(a)[!(colnames(a) %in% colnames(b))]
   new.precision <- matrix(ncol = length(to_add), nrow = nrow(b))
-  new.precision[,] <- 10000
+  new.precision[,] <- 0.01
   colnames(new.precision) <- to_add
   b <- cbind(b,new.precision)
   #order the precision matrix columns to match x_mu matrix.
   b <- b[,colnames(a)]
+  b <- as.data.frame(b)
   
   #return new precision matrix.
   return(b)

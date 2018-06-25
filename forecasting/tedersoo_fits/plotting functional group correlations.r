@@ -11,7 +11,7 @@ of_interest <- lapply(of_interest,crib_fun)
 of_interest <- lapply(of_interest,logit)
 of_interest <- as.data.frame(of_interest)
 
-png(filename='figures/tede_fungal_groups_correlations.png',width=10,height=10,units='in',res=300)
+png(filename='figures/ted_fungal_groups_correlations.png',width=10,height=10,units='in',res=300)
 chart.Correlation(of_interest,  pch = 16, cex.labels = 2)
 dev.off()
 
