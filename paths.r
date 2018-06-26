@@ -9,16 +9,35 @@
 host <- system('hostname', intern=T)
 #data directory conditional to which computer you are working on.
 #defaults to scc directory.
-data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_microbial/'
+data.dir <- '/project/talbot-lab-data/caverill/NEFI_microbial_data/'
 #conditional data directory assignment.
-if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_microbial/'}
+if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_microbial_data/'}
 #if(host == 'scc1'  ){data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_16S_data/'} #hashed out as I haven't set this up on scc yet.
 #if(host == 'scc2'  ){data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_16S_data/'}
 #if(host == 'Colins-MacBook-Pro.local'){data.dir <- '/Users/colin/Documents/rstudio_data/NEFI_16S_data'}
+#make directory if it doesn't exist
+cmd <- paste0('mkdir -p ',data.dir)
+system(cmd)
+
+#JAGS output.
+dir <- paste0(data.dir,'JAGS_output/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+ted_ITS.prior_fg_JAGSfit <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
+
+#Tedersoo ITS prior paths
+dir <- paste0(data.dir,'prior_data/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+ted.ITSprior_data <- paste0(dir,'ted_all_prior_data.rds')
+      ted_map_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/merging seq and site data.csv"
+      ted_otu_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/alldata.biom_rdp_tedersoo_otu.txt"
 
 
 #product ouput paths.
 dir <- paste0(data.dir,'NEON_data_aggregation/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
 ITS_site_dates.path <- paste0(dir,'ITS_site_dates.rds')
 site_level_data.path <- paste0(dir,'site_level_data.rds')
 dp1.10108.00_output.path <- paste0(dir,'dp1.10108.00_output.rds')
@@ -36,7 +55,12 @@ site.table.path <- paste0(dir,'site.table.rds')
 #This wille ventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
 #mapping file will be constructed from DP1.10801.001 product, linking it to core and site data.
 dir <- paste0(data.dir,'map_otu/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
 its_otu.path <- paste0(dir,'ITS_otu_clean.rds')
 its_map.path <- paste0(dir,'ITS_map_clean.rds')
 its_tax.path <- paste0(dir,'ITS_tax_clean.rds')
 its_fun.path <- paste0(dir,'ITS_fun_clean.rds')
+
+#reference data product paths
+em_traits.path<- paste0(data.dir,'ecto_genus_traits_hobbie_Jan2018.csv')
