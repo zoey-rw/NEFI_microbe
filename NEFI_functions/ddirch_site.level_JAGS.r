@@ -21,10 +21,9 @@ site.level_dirlichet_jags     <- function(y,
                                           x_sd = NA,
                                           adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F){
   #Load some important dependencies.
-  source('/home/caverill/NEFI_microbe/NEFI_functions/crib_fun.r')
-  source('/home/caverill/NEFI_microbe/NEFI_functions/z_transform.r')
-  source('/home/caverill/NEFI_microbe/NEFI_functions/sd_to_precision.r')
-  source('/home/caverill/NEFI_microbe/NEFI_functions/precision_matrix_match.r')
+  source('NEFI_functions/crib_fun.r')
+  source('NEFI_functions/sd_to_precision.r')
+  source('NEFI_functions/precision_matrix_match.r')
   
   #Some checks before we get started.
   y    <- as.data.frame(y)

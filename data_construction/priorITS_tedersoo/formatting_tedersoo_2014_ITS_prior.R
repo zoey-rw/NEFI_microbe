@@ -5,36 +5,32 @@ library(data.table)
 library(vegan)
 library(tidyr)
 #source('Scripts/space_time_functions.r')
+source('paths.r')
 source('/home/caverill/NEFI_microbe/NEFI_functions/fg_assign.r')
 source('/home/caverill/NEFI_microbe/NEFI_functions/lineaus.r')
 source('/home/caverill/NEFI_microbe/NEFI_functions/worldclim2_grab.r')
+source('NEFI_functions/arid_extract.r')
 source('/home/caverill/NEFI_microbe/NEFI_functions/crib_fun.r')
-
-#output save_path
-output.path <- '/fs/data3/caverill/NEFI_microbial/prior_data/ted_all_prior_data.rds'
 
 #number of genera to keep (top 10 or 20 most abundant)
 n.gen <- 20
 
 #load mapping file.
-map <- read.csv("/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/merging seq and site data.csv", header = TRUE, na.strings=c("", "NA"))
+map <- read.csv(ted_map_raw, header = TRUE, na.strings=c("", "NA"))
 map <- data.table(map)
 #load otu file
-otu <- read.table("/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/alldata.biom_rdp_tedersoo_otu.txt", header = TRUE, row.names = 1, check.names = FALSE, sep = "\t")
+otu <- read.table(ted_otu_raw, header = TRUE, row.names = 1, check.names = FALSE, sep = "\t")
 #load times- sent separately by Leho Tedersoo.
 time <- read.csv("/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/tedersoo2014_dates.csv", header = TRUE, row.names=1, check.names = FALSE)
 #load ecto hydrophobic status from hobbie
-em.trait <- data.table(read.csv('/fs/data3/caverill/NEFI_microbial/ecto_genus_traits_hobbie_Jan2018.csv'))
+em.trait <- data.table(read.csv(em_traits.path))
 
-#grab the taxonomy from the otu table
-tax <- data.frame(rownames(otu),otu[,ncol(otu)])
-colnames(tax) <- c('otu.ID','taxonomy')
-rownames(tax) <- rownames(otu)
 
-#subset otu table and tax table to only include observations in map file
-otu <- otu[,colnames(otu) %in% map$tedersoo.code]
+#### Format mapping file ####
+#subset to northern temperate latitudes
+map <- map[latitude < 66.5 & latitude > 23.5,]
 
-####1. DEAL WITH TIME DATA####
+#format time data
 #format the time data frame (get rid of an empty column, etc.)
 colnames(time)[1] <- 'human.date'
 time[2] <- NULL
@@ -53,6 +49,26 @@ time <- time[row.names(time) %in% map$tedersoo.code,]
 #push times into the mapping file
 time$tedersoo.code <- rownames(time)
 map <- merge(map,time, by = 'tedersoo.code', all.x=T)
+map$forest <-ifelse(map$Biome %in% c('Temperate coniferous forests','Temperate deciduous forests','Dry Tropical Forests','Boreal forests'),1,0)
+map$conifer <- ifelse(map$Biome %in% c('Temperate coniferous forests'),1,0)
+map[grep('Pinus',Dominant.Ectomycorrhizal.host),conifer := 1]
+
+#rename some things.
+map$relEM <- map$Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.
+
+
+#extract spatial products
+clim
+
+
+#### OTU table processing ####
+#grab the taxonomy from the otu table
+tax <- data.frame(rownames(otu),otu[,ncol(otu)])
+colnames(tax) <- c('otu.ID','taxonomy')
+rownames(tax) <- rownames(otu)
+
+#subset otu table and tax table to only include observations in map file
+otu <- otu[,colnames(otu) %in% map$tedersoo.code]
 
 #order OTU table to match the mapping file
 otu <- otu[, order(colnames(otu), map$tedersoo.code)]
@@ -188,19 +204,17 @@ abundances <- merge(fun.list,gen.list)
 abundances <- merge(abundances,hydro.out)
 
 #grab columns from map actually of interest.
-map <- map[,.(tedersoo.code,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP)]
+map <- map[,.(tedersoo.code,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,forest,conifer,relEM)]
 map <- merge(map,abundances, by.x = 'tedersoo.code',by.y = 'Mapping.ID')
 
-#get worldclim2 mat, map and uncertainty.
+#get worldclim2 cliamte variables and aridity index
 climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
+climate$aridity <- arid_extract(map$latitude, map$longitude)
 map <- cbind(map, climate)
 
 #rename some things.
 setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
              c('Mapping.ID'   ,'moisture','pN','pC','cn'))
 
-#subset to northern temperate latitudes
-map <- map[latitude < 66.5 & latitude > 23.5,]
-
 #save output
-saveRDS(map,output.path)
+saveRDS(map,ted.ITSprior_data)

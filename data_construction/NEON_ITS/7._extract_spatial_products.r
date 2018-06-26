@@ -3,6 +3,7 @@
 #ignore the warnings on the N-deposition extraction.
 rm(list = ls())
 source('paths.r')
+source('NEFI_functions/arid_extract.r')
 source('NEFI_functions/extract_ndep.r')
 source('NEFI_functions/worldclim2_grab.r')
 
@@ -18,6 +19,7 @@ ele <- aggregate(elevation        ~ siteID, data = location, FUN = mean)
 
 #extract climate and uncertainty from worldclim2
 climate <- worldclim2_grab(latitude = lat[,2], longitude = lon[,2], elev = ele[,2])
+climate$aridity <- arid_extract(lat[,2],lon[,2])
 #extract wet, dry and total nitrogen deposition.
 ndep    <- extract_ndep(longitude = lon[,2],latitude = lat[,2])
 

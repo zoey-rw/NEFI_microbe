@@ -27,16 +27,22 @@ worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000){
   points <- cbind(longitude, latitude)
  
   #load mean annual temperature and precipitation rasters from worldclim2
-  prec <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_12.tif')
-  temp <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_01.tif')
+  prec    <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_12.tif')
+  temp    <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_01.tif')
+  temp_CV <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_04.tif')
+  prec_CV <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_15.tif')
+  mdr     <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_02.tif')
   
   #load runjags summaries of precipitation and temperature fitted vs. observed.
-  prec.jags <- readRDS('/fs/data3/caverill/NEFI_microbial/worldclim2_uncertainty/precipitation_JAGS_model.rds')
-  temp.jags <- readRDS('/fs/data3/caverill/NEFI_microbial/worldclim2_uncertainty/temperature_JAGS_model.rds')
+  prec.jags <- readRDS('/fs/data3/caverill/NEFI_microbial_data/worldclim2_uncertainty/precipitation_JAGS_model.rds')
+  temp.jags <- readRDS('/fs/data3/caverill/NEFI_microbial_data/worldclim2_uncertainty/temperature_JAGS_model.rds')
   
   #extract worldclim2 predicted climate data.
-  prec.obs <- raster::extract(prec, points)
-  temp.obs <- raster::extract(temp, points)
+     prec.obs <- raster::extract(prec, points)
+     temp.obs <- raster::extract(temp, points)
+  prec_CV.obs <- raster::extract(prec_CV, points)
+  temp_CV.obs <- raster::extract(temp_CV, points)
+      mdr.obs <- raster::extract(    mdr, points)
   
   #temperature uncertainty workup. Draw from paramters n.sim times, calcualte predicted sd.
   temp.list <- list()
@@ -67,8 +73,8 @@ worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000){
       prec.sd <- apply(prec.list, 1, sd, na.rm = T)
       
   #wrap up output and return.
-  to_return <- data.frame(cbind(prec.obs,prec.sd,temp.obs,temp.sd))
-  colnames(to_return) <- c('map','map_sd','mat','mat_sd')
+  to_return <- data.frame(cbind(prec.obs,prec.sd,temp.obs,temp.sd,prec_CV.obs,temp_CV.obs,mdr.obs))
+  colnames(to_return) <- c('map','map_sd','mat','mat_sd','map_CV','mat_CV','mdr')
   return(to_return)
   
 } #end function.
