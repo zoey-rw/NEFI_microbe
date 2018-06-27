@@ -134,7 +134,7 @@ for(i in 1:ncol(y)){
 #### testing hierarchical dirichlet w/ subset of NEON data. ####
 ##Current hangup: some sites have observations but no core or plot level data, which throws off indexing.
 rm(list=ls())
-source('/home/caverill/NEFI_microbe/data_formatting/formatting_NEON_microbial/core_site_plot_aggregation_May.2018/0. aggregation paths.r')
+source('paths.r')
 #source functions
 source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_function.r')
 source('NEFI_functions/crib_fun.r')
