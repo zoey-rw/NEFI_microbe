@@ -77,6 +77,7 @@ for(i in 1:length(fg_models)){
   mtext(name, line = -2, adj = 0.05, col = 'purple')
   mtext(paste0('R2 = ',rsq), line = -3.2, adj = 0.05, col = 'purple')
 }
+
 #dev.off()
 
 #png(filename='figures/ted_ITSprior_20.top.genera_fits.png',width=12,height=10,units='in',res=300)

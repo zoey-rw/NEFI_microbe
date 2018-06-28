@@ -33,7 +33,6 @@ ted.ITSprior_data <- paste0(dir,'ted_all_prior_data.rds')
       ted_map_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/merging seq and site data.csv"
       ted_otu_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/alldata.biom_rdp_tedersoo_otu.txt"
 
-
 #product ouput paths.
 dir <- paste0(data.dir,'NEON_data_aggregation/')
 cmd <- paste0('mkdir -p ',dir)
