@@ -44,6 +44,7 @@ dp1.10108.00_output.path <- paste0(dir,'dp1.10108.00_output.rds')
 dp1.10109.00_output.path <- paste0(dir,'dp1.10109.00_output.rds')
 dp1.10086.00_output.path <- paste0(dir,'dp1.10086.00_output.rds')
 dp1.10078.00_output.path <- paste0(dir,'dp1.10078.00_output.rds')
+dp1.10098.00_output.path <- paste0(dir,'dp1.10098.00_output.rds')
 
 #Paths to spatial x and y variables for modeling.
  obs.table.path <- paste0(dir, 'obs.table.rds') 
@@ -63,4 +64,11 @@ its_tax.path <- paste0(dir,'ITS_tax_clean.rds')
 its_fun.path <- paste0(dir,'ITS_fun_clean.rds')
 
 #reference data product paths
-em_traits.path<- paste0(data.dir,'ecto_genus_traits_hobbie_Jan2018.csv')
+dir <- paste0(data.dir,'reference_data/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+em_traits.path<- paste0(dir,'ecto_genus_traits_hobbie_Jan2018.csv')
+em_species.path <- paste0(dir,'myc_assignments.rds')
+poa_genera.path <- paste0(dir,'poaceae_genera_wikipedia.rds')
+#em_species.path <- paste0(dir,'mycorrhizal_SPCD_data.csv')
+ em_genera.path <- paste0(dir,'tedersoo_2017_genera.csv')

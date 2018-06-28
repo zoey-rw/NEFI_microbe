@@ -24,6 +24,7 @@ y_ge <- as.data.frame(y_ge)
 
 #Get matrix of predictors.
 x <- d[,.(pH,moisture,pC,cn,doy,NPP,mat,map,mat_CV,map_CV,mdr,aridity,latitude,forest,conifer,relEM)]
+x <- d[,.(pH,moisture,pC,cn    ,NPP,mat,map,mat_CV,map_CV,mdr,aridity,latitude,forest,conifer,relEM)]
 #x$mat_relEM <- x$mat * x$relEM
 x <- as.data.frame(x)
 
@@ -63,7 +64,7 @@ for(i in 1:ncol(y_ge)){
 }
 names(ge_models) <- colnames(y_ge)
 
-png(filename='figures/ted_ITSprior_fg_fits.png',width=12,height=10,units='in',res=300)
+#png(filename='figures/ted_ITSprior_fg_fits.png',width=12,height=10,units='in',res=300)
 par(mfrow = c(2,3))
 for(i in 1:length(fg_models)){
   name <- names(fg_models)[i]
@@ -76,9 +77,9 @@ for(i in 1:length(fg_models)){
   mtext(name, line = -2, adj = 0.05, col = 'purple')
   mtext(paste0('R2 = ',rsq), line = -3.2, adj = 0.05, col = 'purple')
 }
-dev.off()
+#dev.off()
 
-png(filename='figures/ted_ITSprior_20.top.genera_fits.png',width=12,height=10,units='in',res=300)
+#png(filename='figures/ted_ITSprior_20.top.genera_fits.png',width=12,height=10,units='in',res=300)
 par(mfrow = c(5,4),
     mai = c(0.3,0.3,0.3,0.3))
 for(i in 1:length(ge_models)){
@@ -92,4 +93,4 @@ for(i in 1:length(ge_models)){
   mtext(name, line = -2, adj = 0.05, col = 'purple')
   mtext(paste0('R2 = ',rsq), line = -3.2, adj = 0.05, col = 'purple')
 }
-dev.off()
+#dev.off()
