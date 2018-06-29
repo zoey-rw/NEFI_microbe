@@ -24,6 +24,7 @@ dir <- paste0(data.dir,'JAGS_output/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ted_ITS.prior_fg_JAGSfit <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
+ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.selection_JAGS.rds')
 
 #Tedersoo ITS prior paths
 dir <- paste0(data.dir,'prior_data/')
