@@ -21,9 +21,10 @@ site.level_dirlichet_jags     <- function(y,
                                           x_sd = NA,
                                           adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F){
   #Load some important dependencies.
-  source('NEFI_functions/crib_fun.r')
-  source('NEFI_functions/sd_to_precision.r')
-  source('NEFI_functions/precision_matrix_match.r')
+  source('/home/caverill/NEFI_microbe/NEFI_functions/crib_fun.r')
+  source('/home/caverill/NEFI_microbe/NEFI_functions/z_transform.r')
+  source('/home/caverill/NEFI_microbe/NEFI_functions/sd_to_precision.r')
+  source('/home/caverill/NEFI_microbe/NEFI_functions/precision_matrix_match.r')
   
   #Some checks before we get started.
   y    <- as.data.frame(y)
@@ -129,7 +130,7 @@ site.level_dirlichet_jags     <- function(y,
                                    sample = sample,
                                    n.chains = n.chains,
                                    method = run.method,
-                                   monitor = c('x.m','deviance'))
+                                   monitor = c('x.m'))
   #summarize output
   out <- summary(jags.out)
   
@@ -158,12 +159,9 @@ site.level_dirlichet_jags     <- function(y,
   #get matrix of residuals
   resid <- y - predicted
   
-  #get deviance score.
-  deviance <- out[grep('deviance',rownames(out)),]
-  
   #make a super output that also returns model
-  super.list <- list(jags.out, output.list,predicted,y,resid,deviance)
-  names(super.list) <- c('jags_model','species_parameter_output','predicted','observed','residual','deviance')
+  super.list <- list(jags.out, output.list,predicted,y,resid)
+  names(super.list) <- c('jags_model','species_parameter_output','predicted','observed','residual')
   
   #return model and output
   return(super.list)

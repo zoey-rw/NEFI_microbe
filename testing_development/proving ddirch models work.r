@@ -46,7 +46,7 @@ test.x <- all.test[,3:ncol(all.test)]
 
 
 #### testing hierarchical dirichlet w/ pseudo data ####
-source('forecasting/development-testing_scripts/implement_missing_data_ddirch/ddirch_missing.data_function.r')
+source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_function.r')
 
 #go ahead and use the function to fit the model to data, summarize. 
 test <- hierarchical_dirlichet_jags(y = spp.y,
@@ -69,7 +69,7 @@ mtext(paste0('R2 = ',round(summary(m1)$r.squared, 2)), side = 3, adj = 0.05, lin
 
 
 #### testing site level dirichlet w/ pseudo data ####
-source('forecasting/development-testing_scripts/implement_missing_data_ddirch/ddirch_missing.data_site.level.only_function.r')
+source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_site.level.only_function.r')
 test <- site.level_dirlichet_jags(y=spp.y,x_mu=test.x,adapt = 100, burnin = 200, sample = 200)
 
 #plot predicted vs. observed, 1:1 line, vest fit line and R2 values.
@@ -107,7 +107,7 @@ x <- d[,.(intercept,cn,pH,moisture,NPP,mat,map)]
 x$map <- log(x$map)
 
 #source and run function
-source('forecasting/development-testing_scripts/implement_missing_data_ddirch/ddirch_missing.data_site.level.only_function.r')
+source('testing_development/implement_missing_data_ddirch//ddirch_missing.data_site.level.only_function.r')
 test <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 
 #plot predicted vs. observed, 1:1 line, vest fit line and R2 values.
@@ -134,9 +134,9 @@ for(i in 1:ncol(y)){
 #### testing hierarchical dirichlet w/ subset of NEON data. ####
 ##Current hangup: some sites have observations but no core or plot level data, which throws off indexing.
 rm(list=ls())
-source('/home/caverill/NEFI_microbe/data_formatting/formatting_NEON_microbial/core_site_plot_aggregation_May.2018/0. aggregation paths.r')
+source('paths.r')
 #source functions
-source('forecasting/development-testing_scripts/implement_missing_data_ddirch/ddirch_missing.data_function.r')
+source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_function.r')
 source('NEFI_functions/crib_fun.r')
 
 #load data.

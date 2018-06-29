@@ -1,7 +1,7 @@
 #Getting NEON ITS meta-data.
 #two outputs:
 #1. A nested list of sites and dates within site that have ITS sequence data.
-#2. The DP1.10801.00 dataframe for each site-date with ITS data, merged together as one.
+#2. The DP1.10108.001 dataframe for each site-date with ITS data, merged together as one.
 #clearn environment, source output paths.
 rm(list=ls())
 source('paths.r')
