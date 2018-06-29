@@ -12,9 +12,10 @@
 #' @export
 #'
 #' @examples
-arid_extract <- function(latitude, longitude, path = '/fs/data3/caverill/Global_Aridity/aridity/w001001.adf'){
+arid_extract <- function(latitude, longitude, folder = '/fs/data3/caverill/Global_Aridity/aridity/'){
   #path to Global Aridity Index raster.
-  path <- '/fs/data3/caverill/Global_Aridity/aridity/w001001.adf'
+  file.name <-' w001001.adf'
+  path <- paste0(folder,file.name)
   
   #load raster
   arid <- raster::raster(path)

@@ -5,10 +5,11 @@
 #' Depends on output from JAGS models Colin fit. Not totally sure where to store these.
 #' 
 #'
-#' @param latitude   vector of latitude in decimal degrees.
-#' @param longitude  vector of longitude in decimal degrees.
-#' @param elev       vector of elevations. If none supplied defaults to 500m.
-#' @param n.sim      number of simulations to base uncertainty estimate on. Default to 1000.
+#' @param latitude         vector of latitude in decimal degrees.
+#' @param longitude        vector of longitude in decimal degrees.
+#' @param elev             vector of elevations. If none supplied defaults to 500m.
+#' @param n.sim            number of simulations to base uncertainty estimate on. Default to 1000.
+#' @param worldclim2_foder path to directory of worldclim2 rasters.
 #'
 #' @return           returns a datafrme with mat, map, mat_sd and map_sd
 #' @export
@@ -21,17 +22,18 @@
 #'                                                                                      2L))
 #' test.out <- worldclim2_grab(points[,2], points[,1])
 
-worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000){
+worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000,
+                            worldclim2_folder = '/fs/data3/caverill/WorldClim2/'){
   
   #make points an object
   points <- cbind(longitude, latitude)
  
   #load mean annual temperature and precipitation rasters from worldclim2
-  prec    <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_12.tif')
-  temp    <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_01.tif')
-  temp_CV <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_04.tif')
-  prec_CV <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_15.tif')
-  mdr     <- raster::raster('/fs/data3/caverill/WorldClim2/wc2.0_bio_30s_02.tif')
+  prec    <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_12.tif'))
+  temp    <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_01.tif'))
+  temp_CV <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_04.tif'))
+  prec_CV <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_15.tif'))
+  mdr     <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_02.tif'))
   
   #load runjags summaries of precipitation and temperature fitted vs. observed.
   prec.jags <- readRDS('/fs/data3/caverill/NEFI_microbial_data/worldclim2_uncertainty/precipitation_JAGS_model.rds')

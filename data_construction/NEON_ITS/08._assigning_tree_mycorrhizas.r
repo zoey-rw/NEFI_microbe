@@ -37,6 +37,9 @@ unassigned <- dat[is.na(dat$MYCO_ASSO),]
 (1 - (sum(unassigned$basal) / sum(dat$basal)))*100
 
 #We now need to account for dead trees, insect damaged trees. FIgure out plantStatus codes.
+#Need to pick a time point (if there are even multiple time points) for each site.
+unique(dat$plantStatus)
+dat[dat$plantStatus == '4',]
 
-#aggregate by plot? Subplot?
+#Aggregate by plot.
 #exclude 50% damaged/dead?
