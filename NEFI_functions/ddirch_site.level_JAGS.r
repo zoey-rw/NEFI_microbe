@@ -129,7 +129,7 @@ site.level_dirlichet_jags     <- function(y,
                                    sample = sample,
                                    n.chains = n.chains,
                                    method = run.method,
-                                   monitor = c('x.m'))
+                                   monitor = c('x.m','deviance'))
   #summarize output
   out <- summary(jags.out)
   
@@ -158,9 +158,12 @@ site.level_dirlichet_jags     <- function(y,
   #get matrix of residuals
   resid <- y - predicted
   
+  #get deviance score.
+  deviance <- out[grep('deviance',rownames(out)),]
+  
   #make a super output that also returns model
-  super.list <- list(jags.out, output.list,predicted,y,resid)
-  names(super.list) <- c('jags_model','species_parameter_output','predicted','observed','residual')
+  super.list <- list(jags.out, output.list,predicted,y,resid,deviance)
+  names(super.list) <- c('jags_model','species_parameter_output','predicted','observed','residual','deviance')
   
   #return model and output
   return(super.list)
