@@ -46,7 +46,7 @@ covariate_selection_JAGS <- function(y, x_mu, n.adapt = 100, n.burnin = 100, n.s
   runmode <- ifelse(parallel == F, F, T)
   
   #fit first model, calculate deviance.
-  cat('Fitting initial model...')
+  cat('Fitting initial model...\n')
   tic()
   fit <- site.level_dirlichet_jags(y = y, x_mu = x_mu, adapt = n.adapt, burnin = n.burnin, sample = n.sample, parallel = runmode)
   dev <- fit$deviance #grab deviance
