@@ -29,7 +29,7 @@ y <- as.data.frame(y)
 x <- as.data.frame(x)
 
 #run the algorithm.
-send_it <- covariate_selection_JAGS(y=y,x_mu=x, adapt = 300, burnin = 1000, sample = 1000, parallel = T)
+send_it <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = T)
 
 #save the output.
 saveRDS(send_it, ITS.prior_linear_fg_cov.selection_JAGS)
