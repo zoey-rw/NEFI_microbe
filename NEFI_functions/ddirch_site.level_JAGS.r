@@ -15,11 +15,10 @@
 #' @export
 #'
 #' @examples
-#' adapt = 500; burnin = 1000; sample = 2000; n.chains = 3; parallel = F
 site.level_dirlichet_jags     <- function(y,
                                           x_mu, 
                                           x_sd = NA,
-                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F){
+                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F, silent.jags = F){
   #Load some important dependencies.
   source('NEFI_functions/crib_fun.r')
   source('NEFI_functions/sd_to_precision.r')
@@ -129,6 +128,7 @@ site.level_dirlichet_jags     <- function(y,
                                    sample = sample,
                                    n.chains = n.chains,
                                    method = run.method,
+                                   silent.jags = silent.jags,
                                    monitor = c('x.m','deviance'))
   #summarize output
   out <- summary(jags.out)

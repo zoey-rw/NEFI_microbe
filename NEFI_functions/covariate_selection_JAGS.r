@@ -35,7 +35,7 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 
-covariate_selection_JAGS <- function(y, x_mu, n.adapt = 100, n.burnin = 100, n.sample = 200, parallel = F){
+covariate_selection_JAGS <- function(y, x_mu, n.adapt = 100, n.burnin = 100, n.sample = 200, parallel = F, silent.jags = T){
   #### Fit first JAGS model to all covariates. ####
   #register parallel cores
   registerDoParallel(cores = detectCores())
@@ -59,7 +59,7 @@ covariate_selection_JAGS <- function(y, x_mu, n.adapt = 100, n.burnin = 100, n.s
     fit.list <-
       foreach(i = 2:ncol(x_mu)) %dopar% {
         x_new <- x_mu[,-i]
-        mod.fit <- site.level_dirlichet_jags(y=y, x_mu = x_new, adapt = n.adapt, burnin = n.burnin, sample = n.sample, parallel = runmode)
+        mod.fit <- site.level_dirlichet_jags(y=y, x_mu = x_new, adapt = n.adapt, burnin = n.burnin, sample = n.sample, parallel = runmode, silent.jags = silent.jags)
         fit.list[[i-1]] <- mod.fit
       }
     #grab deviance statistics as data.frame.
