@@ -70,7 +70,8 @@ mtext(paste0('R2 = ',round(summary(m1)$r.squared, 2)), side = 3, adj = 0.05, lin
 
 #### testing site level dirichlet w/ pseudo data ####
 source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_site.level.only_function.r')
-test <- site.level_dirlichet_jags(y=spp.y,x_mu=test.x,adapt = 100, burnin = 200, sample = 200)
+#source('NEFI_functions/ddirch_site.level_JAGS.r')
+test <- site.level_dirlichet_jags(y=spp.y,x_mu=test.x,adapt = 100, burnin = 200, sample = 200, silent.jags = T)
 
 #plot predicted vs. observed, 1:1 line, vest fit line and R2 values.
 par(mfrow = c(1,2))
