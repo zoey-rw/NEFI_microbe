@@ -71,7 +71,7 @@ mtext(paste0('R2 = ',round(summary(m1)$r.squared, 2)), side = 3, adj = 0.05, lin
 #### testing site level dirichlet w/ pseudo data ####
 source('testing_development/implement_missing_data_ddirch/ddirch_missing.data_site.level.only_function.r')
 #source('NEFI_functions/ddirch_site.level_JAGS.r')
-test <- site.level_dirlichet_jags(y=spp.y,x_mu=test.x,adapt = 100, burnin = 200, sample = 200, silent.jags = T)
+test <- site.level_dirlichet_jags(y=spp.y,x_mu=test.x,adapt = 100, burnin = 200, sample = 200)
 
 #plot predicted vs. observed, 1:1 line, vest fit line and R2 values.
 par(mfrow = c(1,2))
@@ -133,7 +133,7 @@ for(i in 1:ncol(y)){
 
 
 #### testing hierarchical dirichlet w/ subset of NEON data. ####
-##Current hangup: some sites have observations but no core or plot level data, which throws off indexing.
+#### Current hangup: some sites have observations but no core or plot level data, which throws off indexing. ####
 rm(list=ls())
 source('paths.r')
 #source functions

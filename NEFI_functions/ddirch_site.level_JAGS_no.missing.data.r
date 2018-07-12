@@ -34,7 +34,7 @@ site.level_dirlichet_jags     <- function(y,
   #grab names
   y.names <- colnames(y)
   x.names <- colnames(x_mu)
-
+  
   ###massage your data together.
   #deal with zero relative abundances.
   y <- data.frame(y)
@@ -42,22 +42,21 @@ site.level_dirlichet_jags     <- function(y,
   
   #make sd objects if they were not supplied.
   if(is.na(x_sd)){x_sd = data.frame(rep(1,nrow(x_mu)))}
-
+  
   #Match up predictors and their SD. if no SD supplied we assign ~perfect precision.
   x_sd <- precision_matrix_match(x_mu,x_sd)
-
+  
   #covert sd to precision. output is matrix.
   x_precision <- sd_to_precision(x_sd)
-
+  
   #make sure every else is a matrix.
   y <- as.matrix(y)
   x_mu <- as.matrix(x_mu)
   
   ###setup jags data object.
   jags.data <- list(N = nrow(y), N.spp = ncol(y), #number of observations and number of species
-                    N.preds = ncol(x_mu),    #number of x predictors
-                    x_mu = x_mu,                  #x-value mean matrix
-                    x_precision = x_precision,    #x-value precision matrix
+                    N.preds = ncol(x_mu),         #number of x predictors
+                    x = x_mu,                     #x-value mean matrix
                     y = y)                        #species matrix, y
   
   ###specify JAGS model.
@@ -66,52 +65,37 @@ site.level_dirlichet_jags     <- function(y,
   #parameter priors for each species.
   alpha ~ dnorm(0, 1.0E-3) 
   for(i in 1:N.preds){
-    x.mm[i,1] <- 0
-    for (j in 2:N.spp) {
-      x.mm[i,j] ~ dnorm(0, 1.0E-3)
-    }
+  x.mm[i,1] <- 0
+  for (j in 2:N.spp) {
+  x.mm[i,j] ~ dnorm(0, 1.0E-3)
   }
-  
-  ### Begin missing data model ###
-  #missing X data priors, site-level.
-  for(m in 1:N.preds){
-  x.global[m] ~ dnorm(0,1.0E-4) #global level parameter prior.
-     x.tau[m] ~ dgamma(0.1,0.1)
   }
-  
-  #fill in any missing X values at site level.
-  for(m in 1:N.preds){
-  for(i in 1:N){   x_mu[i,m] ~ dnorm(x.global[m], x.tau[m])}   ## estimate global mean
-  }
-  
-  #predictor (x) values drawn from distributions.
-  for(j in 1:N.preds){for(i in 1:N){x[i,j] ~ dnorm(x_mu[i,j], x_precision[i,j])}} #x values
 
   #mean center all predictors (except intercept).
   for(i in 1:N){
-    x.center[i,1] <- 1
-    for(j in 2:N.preds){
-      x.center[i,j] <- x[i,j] - mean(x[,j])
-    }
+  x.center[i,1] <- 1
+  for(j in 2:N.preds){
+  x.center[i,j] <- x[i,j] - mean(x[,j])
   }
-
+  }
+  
   #save mean values for back transforming intercept values.
   for(j in 1:N.preds){x.center.save[j] <- mean(x[,j])}
   
   #fit species abundances as a linear combination of predictors and parameters.
   for(i in 1:N){
-    for(j in 1:N.spp){
-      log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,])
-    }
-    y[i,1:N.spp] ~ ddirch(a0[i,1:N.spp]) 
+  for(j in 1:N.spp){
+  log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,])
+  }
+  y[i,1:N.spp] ~ ddirch(a0[i,1:N.spp]) 
   }
   
   #map to original parameterization, assuming first column of predictors is intercept.
   for (j in 1:N.spp) {
-    x.m[1,j] <- alpha + x.mm[1,j] - inprod(x.mm[2:N.preds,j], x.center.save[2:N.preds])
-    for (i in 2:N.preds){
-      x.m[i,j] <- x.mm[i,j]
-    }
+  x.m[1,j] <- alpha + x.mm[1,j] - inprod(x.mm[2:N.preds,j], x.center.save[2:N.preds])
+  for (i in 2:N.preds){
+  x.m[i,j] <- x.mm[i,j]
+  }
   }
   
   } #close model loop.

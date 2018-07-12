@@ -38,7 +38,7 @@ hierarch_plot.means_JAGS <- function(x_mu, plot_site,
   }
 
   #Global level priors
-  global_mu ~ dnorm(0,1E-3)  I(0, ) #interval censored to be greater than zero.
+  global_mu ~ dnorm(0,1E-3)  #I(0, ) #interval censored to be greater than zero.
   sigma.glob ~ dunif(0,100)
   tau.glob <- pow(sigma.glob, -2)
   
