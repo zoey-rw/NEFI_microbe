@@ -15,8 +15,13 @@
 #' @export
 #'
 #' @examples
+#' rm(list=ls())
+#' source('paths.r'); source('NEFI_functions/crib_fun.r')
+#' dp.10098.plot <- readRDS(dp1.10098.00_plot.level.path)
+#' to.ag <- dp.10098.plot[,c('plotID','siteID','relEM','basal_live')]
+#' x_mu = to.ag$basal_live; plot_site=to.ag$siteID;n.adapt=200;n.burnin=1000;n.sample=1000;n.chains=3; parallel = F
 hierarch_plot.means_JAGS <- function(x_mu, plot_site,
-                                     n.adapt = 200, n.burnin = 1000, n.sample = 1000, n.chains = 3, parallel = F){
+                                     n.adapt = 200, n.burnin = 1000, n.sample = 1000, n.chains = 3, parallel = F, gamma_variance = F){
   
   #### specify JAGS model ####
   jags.model = "
@@ -34,13 +39,41 @@ hierarch_plot.means_JAGS <- function(x_mu, plot_site,
   #Site level priors
   for(i in 1:N.site) {
   sigma.site[i] ~ dunif(0, 100)
-  tau.site[i] <- pow(sigma.site[i], -2)
+    tau.site[i] <- pow(sigma.site[i], -2)
+  #   tau.site[i]  ~ dgamma(1,1)
   }
 
   #Global level priors
-  global_mu ~ dnorm(0,1E-3)  I(0, ) #interval censored to be greater than zero.
+  global_mu ~ dnorm(0,1E-3)  #I(0, ) #interval censored to be greater than zero.
   sigma.glob ~ dunif(0,100)
-  tau.glob <- pow(sigma.glob, -2)
+    tau.glob <- pow(sigma.glob, -2)
+  
+  }"
+  
+  #### JAGS model with gamma on variance prior. ####
+  jags.gamma_variance.model = "
+  model {
+  #get site level means.
+  for(i in 1:N.plot) {
+  plot_mu[i] ~ dnorm(site_mu[plot_site[i]], tau.site[plot_site[i]])
+  }
+  
+  #get global mean and uncertainty.
+  for(i in 1:N.site){
+  site_mu[i] ~ dnorm(global_mu, tau.glob)
+  }
+  
+  #Site level priors
+  for(i in 1:N.site) {
+  #sigma.site[i] ~ dunif(0, 100)
+  #  tau.site[i] <- pow(sigma.site[i], -2)
+     tau.site[i]  ~ dgamma(1,1)
+  }
+
+  #Global level priors
+  global_mu ~ dnorm(0,1E-3)  #I(0, ) #interval censored to be greater than zero.
+  sigma.glob ~ dunif(0,100)
+    tau.glob <- pow(sigma.glob, -2)
   
   }"
   
@@ -48,15 +81,20 @@ hierarch_plot.means_JAGS <- function(x_mu, plot_site,
   dat <- data.frame(x_mu,plot_site)
   dat <- dat[complete.cases(dat),]
   site.names <- unique((plot_site))
+  #reorder site.names so it matches what they are going to be used as.
+  site.order <- order(site.names)
+  site.names <- as.character(site.names[site.order])
   
-  jags.data <- list(N.plot = length(plot_site), N.site = length(unique(plot_site)),
+  jags.data <- list(N.plot = length(dat$plot_site), N.site = length(unique(dat$plot_site)),
                     plot_mu = dat$x_mu, 
                     plot_site = droplevels(as.factor(dat$plot_site))
                     )
   
   #### fit JAGS model ####
   #runmode <- ifelse(parallel == T,T,F)
-  mod  <- runjags::run.jags(model = jags.model,
+  j.model <- jags.model
+  if(gamma_variance == T){j.model = jags.gamma_variance.model}
+  mod  <- runjags::run.jags(model = j.model,
                             data = jags.data,
                             monitor = c('site_mu','global_mu'),
                             adapt = n.adapt,
@@ -67,7 +105,6 @@ hierarch_plot.means_JAGS <- function(x_mu, plot_site,
   site.table <- data.frame(out[grep('site_mu', rownames(out)),])
   site.table$siteID <- site.names
   glob.table <- data.frame(t(out[grep('global_mu', rownames(out)),]))
-  
   
   #### return output ####
   output.list <- list(out,site.table,glob.table)

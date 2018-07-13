@@ -58,6 +58,9 @@ hierarch_core.means_JAGS <- function(x_mu, core_plot,
   dat <- dat[complete.cases(dat),]
   plot_site <- substring(unique(dat$core_plot),1,4)
   site.names <- unique((plot_site))
+  #reorder site.names so it matches what they are going to be used as.
+  site.order <- order(site.names)
+  site.names <- as.character(site.names[site.order])
   
   jags.data <- list(N.core = nrow(dat), N.plot = length(plot_site), N.site = length(unique(plot_site)),
                     core_mu = dat$x_mu, core_plot = droplevels(as.factor(dat$core_plot)), plot_site = droplevels(as.factor(plot_site)))
