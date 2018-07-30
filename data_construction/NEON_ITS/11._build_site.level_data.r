@@ -1,6 +1,7 @@
 #Getting site-level NEON data for site-level prediction.
 #clear environment, source paths.
 rm(list = ls())
+library(runjags)
 source('paths.r')
 source('NEFI_functions/hierarch_core.means_JAGS.r')
 source('NEFI_functions/hierarch_plot.means_JAGS.r')

@@ -63,5 +63,6 @@ plot.level$relEM <- plot.level$basal_ECM / plot.level$basal_live
 plot.level$live_fraction <- plot.level$basal_live / (plot.level$basal_live + plot.level$basal_dead)
 plot.level$siteID <- substring(plot.level$plotID,1,4)
 
+
 #save plot-level EM relative abundance.
 saveRDS(plot.level, dp1.10098.00_plot.level.path)

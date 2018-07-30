@@ -4,15 +4,20 @@
 #clear environment
 rm(list = ls())
 library(data.table)
+library(doParallel)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/crib_fun.r')
+
+#detect and register cores.
+n.cores <- detectCores()
+registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
 d <- data.table(readRDS(ted.ITSprior_data))
 d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-#d <- d[1:35,] #for testing
+d <- d[1:35,] #for testing
 
 #organize y data
 y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular)]
@@ -25,17 +30,30 @@ y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
 
 #Drop in intercept, setup predictor matrix.
 d$intercept <- rep(1,nrow(d))
+d$map <- log(d$map)
 x <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
-x$map <- log(x$map)
+
+#define multiple subsets
+x.clim <- d[,.(intercept,NPP,mat,map)]
+x.site <- d[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
+x.all  <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
 #This take a long time to run, probably because there is so much going on.
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
-fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+output.list<-
+  foreach(i = length(x.list)) %dopar% {
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    return(fit)
+  }
+names(output.list) <- c('climate.preds','site.preds','all.preds')
+
+#fit <- site.level_dirlichet_jags(y=y,x_mu=x.all,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
 
 cat('Saving fit...\n')
-saveRDS(fit, ted_ITS.prior_fg_JAGSfit)
+saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
 cat('Script complete. \n')
 
 #visualize fits

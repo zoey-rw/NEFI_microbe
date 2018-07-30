@@ -7,7 +7,7 @@
 #$ -l h_rt=80:00:00
 #
 #Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 4
+#$ -pe omp 10
 #
 #Give the job a name
 #$ -N ITSprior
