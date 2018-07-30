@@ -15,28 +15,36 @@ registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
 d <- data.table(readRDS(ted.ITSprior_data))
-d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+start <- which(colnames(d)=="Russula"   )
+  end <- which(colnames(d)=="Tricholoma")
+y <- d[,start:end]
+x <- d[,.(cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- cbind(y,x)
 d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[1:35,] #for testing
+#d <- d[1:35,] #for testing
 
 #organize y data
-y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular)]
+start <- which(colnames(d)=="Russula"   )
+  end <- which(colnames(d)=="Tricholoma")
+y <- d[,start:end]
+x <- d[,(end+1):ncol(d)]
+
 #make other column
 y <- data.frame(lapply(y,crib_fun))
-y$other <- 1 - rowSums(y)
-y <- as.data.frame(y)
-#reorder columns. other needs to be first.
-y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
+other <- 1 - rowSums(y)
+y <- cbind(other,y)
 
 #Drop in intercept, setup predictor matrix.
-d$intercept <- rep(1,nrow(d))
-d$map <- log(d$map)
-x <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+intercept <- rep(1, nrow(x))
+x <- cbind(intercept, x)
+
+#log transform map, magnitudes in 100s-1000s break this.
+x$map <- log(x$map)
 
 #define multiple subsets
-x.clim <- d[,.(intercept,NPP,mat,map)]
-x.site <- d[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
-x.all  <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.clim <- x[,.(intercept,NPP,mat,map)]
+x.site <- x[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
@@ -53,7 +61,7 @@ names(output.list) <- c('climate.preds','site.preds','all.preds')
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x.all,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
 
 cat('Saving fit...\n')
-saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
+saveRDS(output.list, ted_ITS.prior_20gen_JAGSfit)
 cat('Script complete. \n')
 
 #visualize fits
