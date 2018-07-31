@@ -1,5 +1,9 @@
 #Getting site-level NEON data for site-level prediction.
 #clear environment, source paths.
+#Need to aggregate:
+#mat, map, NPP - spatial products.
+#forest (0,1), conifer (0,1), relEM - forest data.
+#pC, C:N, pH, soil moisture - soil data.
 rm(list = ls())
 library(runjags)
 source('paths.r')
@@ -28,3 +32,8 @@ to.ag$relEM <- boot::logit(crib_fun(to.ag$relEM))
 relEM <- hierarch_plot.means_JAGS(x_mu = to.ag$relEM, plot_site = to.ag$siteID, gamma_variance = T)
 basal <- hierarch_plot.means_JAGS(x_mu = to.ag$basal_live, plot_site = to.ag$siteID)
 
+#Get wheter its a forest or not.Colin just got this from the site descriptions, data is below.
+#Consider dropping STER, its agriculture.
+siteID <- c('DSNY','HARV','BART','JERC','ORNL','SCBI','TALL','UNDE','CPER','STER','WOOD')
+forest <- c(0,1,1,0,1,1,1,1,0,0,0)
+forest.data <- data.frame(siteID,forest)
