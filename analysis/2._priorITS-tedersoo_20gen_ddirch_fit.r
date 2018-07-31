@@ -4,38 +4,64 @@
 #clear environment
 rm(list = ls())
 library(data.table)
+library(doParallel)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 
+#detect and register cores.
+n.cores <- detectCores()
+registerDoParallel(cores=n.cores)
+
 #load tedersoo data.
 d <- data.table(readRDS(ted.ITSprior_data))
-d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+start <- which(colnames(d)=="Russula"   )
+  end <- which(colnames(d)=="Tricholoma")
+y <- d[,start:end]
+x <- d[,.(cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- cbind(y,x)
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
 
 #organize y data
-y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular)]
+start <- which(colnames(d)=="Russula"   )
+  end <- which(colnames(d)=="Tricholoma")
+y <- d[,start:end]
+x <- d[,(end+1):ncol(d)]
+
 #make other column
 y <- data.frame(lapply(y,crib_fun))
-y$other <- 1 - rowSums(y)
-y <- as.data.frame(y)
-#reorder columns. other needs to be first.
-y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
+other <- 1 - rowSums(y)
+y <- cbind(other,y)
 
 #Drop in intercept, setup predictor matrix.
-d$intercept <- rep(1,nrow(d))
-x <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+intercept <- rep(1, nrow(x))
+x <- cbind(intercept, x)
+
+#log transform map, magnitudes in 100s-1000s break this.
 x$map <- log(x$map)
+
+#define multiple subsets
+x.clim <- x[,.(intercept,NPP,mat,map)]
+x.site <- x[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
 #This take a long time to run, probably because there is so much going on.
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
-fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+output.list<-
+  foreach(i = length(x.list)) %dopar% {
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    return(fit)
+  }
+names(output.list) <- c('climate.preds','site.preds','all.preds')
+
+#fit <- site.level_dirlichet_jags(y=y,x_mu=x.all,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
 
 cat('Saving fit...\n')
-saveRDS(fit, ted_ITS.prior_fg_JAGSfit)
+saveRDS(output.list, ted_ITS.prior_20gen_JAGSfit)
 cat('Script complete. \n')
 
 #visualize fits
