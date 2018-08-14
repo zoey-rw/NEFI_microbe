@@ -27,6 +27,11 @@ ted_ITS.prior_fg_JAGSfit    <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
 ted_ITS.prior_20gen_JAGSfit <- paste0(dir,'ted_ITS.prior_20gen_JAGSfit.rds')
 ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.selection_JAGS.rds')
 
+#Bahram sequence data.
+bahram_dir <- paste0(data.dir,'bahram_2018_seqs')
+cmd <- paste0('mkdir -p ',bahram_dir)
+system(cmd)
+
 #Tedersoo ITS prior paths
 dir <- paste0(data.dir,'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
@@ -75,3 +80,13 @@ system(cmd)
             #em_species.path <- paste0(dir,'mycorrhizal_SPCD_data.csv')
               em_genera.path <- paste0(dir,'tedersoo_2017_genera.csv')
  NEON_plantStatus_codes.path <- paste0(dir,'NEON_DP1.10098.plantStatus_decode.csv')
+ 
+
+#Forecast covariates
+#Aggregated NEON site level covariates and global level uncertainty for predictors
+dir <- paste0(data.dir,'NEON_covariates/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+
+NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
+NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
