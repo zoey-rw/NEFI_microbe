@@ -32,6 +32,15 @@ bahram_dir <- paste0(data.dir,'bahram_2018_seqs')
 cmd <- paste0('mkdir -p ',bahram_dir)
 system(cmd)
 
+#Raw NEON sequence data from MG-rast
+mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
+#setup place to save ITS data.
+ASV_ITS.dir <- paste0(data.dir,'NEON_ASVs/ITS/')
+ASV_16S.dir <- paste0(data.dir,'NEON_ASVs/16S/')
+cmd <- paste0('mkdir -p ',ASV_ITS.dir)
+cmd <- paste0('mkdir -p ',ASV_16S.dir)
+
+
 #Tedersoo ITS prior paths
 dir <- paste0(data.dir,'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
@@ -39,6 +48,13 @@ system(cmd)
 ted.ITSprior_data <- paste0(dir,'ted_all_prior_data.rds')
       ted_map_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/merging seq and site data.csv"
       ted_otu_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/alldata.biom_rdp_tedersoo_otu.txt"
+      ted_srr_codes <- paste0(dir,'tedersoo_srr_codes.csv')
+      
+#downloading Tedersoo sequence data from SRA.
+ted2014_seq_dir <- paste0(data.dir,'tedersoo_SRA_seqs')
+cmd <- paste0('mkdir -p ',ted2014_seq_dir)
+system(cmd)
+
 
 #product ouput paths.
 dir <- paste0(data.dir,'NEON_data_aggregation/')
