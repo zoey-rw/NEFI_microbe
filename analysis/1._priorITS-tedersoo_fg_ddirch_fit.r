@@ -1,4 +1,6 @@
 #Fit dirlichet models to functional groups of fungi from Tedersoo et al. Temperate Latitude Fungi.
+#PROBLEM: something in the site-specific predictors is killing our predicted % ecto. ITS THE MOISTURE VALUES.
+#PROBLEM: probably - no %C in model, mismatch in how CN or pC measured in two studies, 
 #No hierarchy required, as everything is observed at the site level. Each observation is a unique site.
 #Missing data are allowed.
 #clear environment
@@ -7,6 +9,7 @@ library(data.table)
 library(doParallel)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
+source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
 source('NEFI_functions/crib_fun.r')
 
 #detect and register cores.
@@ -15,7 +18,7 @@ registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
 d <- data.table(readRDS(ted.ITSprior_data))
-d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
 
@@ -31,12 +34,12 @@ y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
 #Drop in intercept, setup predictor matrix.
 d$intercept <- rep(1,nrow(d))
 d$map <- log(d$map)
-x <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x <- d[,.(intercept,pC,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
 
 #define multiple subsets
 x.clim <- d[,.(intercept,NPP,mat,map)]
-x.site <- d[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
-x.all  <- d[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.site <- d[,.(intercept,pC,cn,pH,forest,conifer,relEM)]
+x.all  <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
@@ -44,13 +47,16 @@ x.list <- list(x.clim,x.site,x.all)
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
 output.list<-
-  foreach(i = length(x.list)) %dopar% {
+  foreach(i = 1:length(x.list)) %dopar% {
     fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
     return(fit)
   }
-names(output.list) <- c('climate.preds','site.preds','all.preds')
 
-#fit <- site.level_dirlichet_jags(y=y,x_mu=x.all,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+#get intercept only fit.
+output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
+
+#name the items in the list
+names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 
 cat('Saving fit...\n')
 saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)

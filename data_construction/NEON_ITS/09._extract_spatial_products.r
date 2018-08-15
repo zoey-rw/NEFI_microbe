@@ -6,6 +6,7 @@ source('paths.r')
 source('NEFI_functions/arid_extract.r')
 source('NEFI_functions/extract_ndep.r')
 source('NEFI_functions/worldclim2_grab.r')
+source('NEFI_functions/extract_npp.r')
 
 #Get site level lat-longitude.
 d <- readRDS(ITS_site_dates.path)
@@ -22,8 +23,10 @@ climate <- worldclim2_grab(latitude = lat[,2], longitude = lon[,2], elev = ele[,
 climate$aridity <- arid_extract(lat[,2],lon[,2])
 #extract wet, dry and total nitrogen deposition.
 ndep    <- extract_ndep(longitude = lon[,2],latitude = lat[,2])
+#extract NPP
+NPP     <- extract_npp(latitude = lat[,2], longitude = lon[,2])
 
 #wrap up output and save.
-output <- cbind(sites,lat[,2],lon[,2],ele[,2],climate,ndep)
+output <- cbind(sites,lat[,2],lon[,2],ele[,2],climate,ndep,NPP)
 colnames(output)[1:4] <- c('siteID','latitude','longitude','elevation')
 saveRDS(output,site_level_data.path)
