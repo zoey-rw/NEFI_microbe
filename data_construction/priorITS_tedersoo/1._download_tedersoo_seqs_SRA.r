@@ -14,15 +14,19 @@ d <- read.csv(ted_srr_codes)
 d$SRR_code <- as.character(d$SRR_code)
 
 #Download the sequences.
-d$SRR_code <- d$SRR_code[1] #for testing
-getSRAfile(d$SRR_code, con, fileType = 'fastq',destDir = ted2014_seq_dir)
+cat('Begin downloading sequences...\n')
+test_file <- d$SRR_code[1] #for testing
+#getSRAfile(d$SRR_code, con, fileType = 'fastq',destDir = ted2014_seq_dir)
+getSRAfile(test_file, con, fileType = 'fastq',destDir = ted2014_seq_dir)
+cat('Download complete.\n')
 
 #unzip all fastq.gz files.
+cat('unzipping files...\n')
 cmd <- paste0('gunzip ',ted2014_seq_dir,'/*.gz')
 system(cmd)
 
 #clean up. Remove SRAdb sqlite file.
-system('rm SRAmetadb.sqlite')
+#system('rm SRAmetadb.sqlite')
 system('rm SRAmetadb.sqlite.gz')
 
 #end script.
