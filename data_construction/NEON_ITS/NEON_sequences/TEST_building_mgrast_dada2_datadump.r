@@ -14,6 +14,7 @@ site_dates <- readRDS(ITS_site_dates.path)
 #this mg-rast file was passed to CA by Lee Stanish so we could rip from MG-RAST.
 mg_rast_link <- read.csv(mg_rast.key)
 #merge these together.
+test <- merge(dna_ids, mg_rast_link, all.x = T)
 dna_ids <- merge(dna_ids, mg_rast_link[,c('dnaSampleID','metagenome_id')], all.x = T)
 dna_ids$metagenome_id <- as.character(dna_ids$metagenome_id)
 

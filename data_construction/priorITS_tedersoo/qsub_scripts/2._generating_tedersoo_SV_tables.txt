@@ -8,7 +8,7 @@
 #$ -l h_rt=100:00:00
 #
 #Give the job a name
-#$ -N ted_download
+#$ -N ted_filter-trim
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -28,13 +28,13 @@
 # load necessary modules 
 module load R/3.4.0
 module load python/2.7.7
+module load qiime/1.9.0
 #
 #move to directory that contains the project
 cd /projectnb/talbot-lab-data/caverill/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript data_construction/priorITS_tedersoo/1._download_tedersoo_seqs_SRA.r
-
+Rscript data_construction/priorITS_tedersoo/2._generating_tedersoo_SV_tables.r
 #
 #
 #End of commands.

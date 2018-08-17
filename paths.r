@@ -42,6 +42,9 @@ cmd <- paste0('mkdir -p ',ASV_16S.dir)
 
 
 #Tedersoo ITS prior paths
+#raw sequence directory.
+ted.seq.dir <- paste0(data.dir,'tedersoo_SRA_seqs/')
+
 dir <- paste0(data.dir,'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
