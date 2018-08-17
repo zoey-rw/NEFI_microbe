@@ -9,7 +9,7 @@
 host <- system('hostname', intern=T)
 #data directory conditional to which computer you are working on.
 #defaults to scc directory.
-data.dir <- '/project/talbot-lab-data/caverill/NEFI_microbial_data/'
+data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_microbial_data/'
 #conditional data directory assignment.
 if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_microbial_data/'}
 #if(host == 'scc1'  ){data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_16S_data/'} #hashed out as I haven't set this up on scc yet.
