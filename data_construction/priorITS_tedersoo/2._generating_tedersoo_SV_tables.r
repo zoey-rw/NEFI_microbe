@@ -84,7 +84,7 @@ for(i in 1:length(fastq.files)){
 
 #de-replicate and generate SV table.
 #### Build an ASV table from all sequence files. ####
-cat(paste0('Building ASV tables...'))
+cat(paste0('Building ASV tables...\n'))
 for(j in 1:length(fastq.files)){
   sample.name <- fastq.files[j]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
@@ -111,9 +111,24 @@ for(j in 1:length(fastq.files)){
   system(paste0('rm ',c.file))
   system(paste0('rm ',s.file))
 }
-output_filepath <- paste0(seq.path,'SV_table.rds')
-saveRDS(out, output_filepath)
 
+#convert back to dataframe, replace NA values with zeros.
+out <- as.data.frame(out)
+out[is.na(out)] <- 0
+
+#transpose to be consistent with dada2
+#this is being weird.
+t.out <- t(out[,-1])
+seq.names <- gsub('.fastq','',fastq.files)
+colnames(t.out) <- seq.names
+
+#convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
+t.out <- as.matrix(t.out)
+t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
+
+output_filepath <- paste0(seq.path,'SV_table.rds')
+saveRDS(t.out, output_filepath)
+cat('ASV table built!\n')
 
 
 
