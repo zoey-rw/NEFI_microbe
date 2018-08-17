@@ -7,6 +7,7 @@
 #clear environment, load packages.
 rm(list=ls())
 source('paths.r')
+library(data.table)
 
 #begin by testing this script with 2 .fastq files from the tedersoo study.
 seq.path <- ted.seq.dir
@@ -83,34 +84,35 @@ for(i in 1:length(fastq.files)){
 
 #de-replicate and generate SV table.
 #### Build an ASV table from all sequence files. ####
-#cat(paste0('Building ASV tables...'))
-#for(j in 1:length(fastq.files)){
-#  sample.name <- fastq.files[i]
-#  sample.name <- substr(sample.name,1,nchar(sample.name)-6)
-#  #get just the sequences into a separate file, without additional shit.
+cat(paste0('Building ASV tables...'))
+for(j in 1:length(fastq.files)){
+  sample.name <- fastq.files[j]
+  sample.name <- substr(sample.name,1,nchar(sample.name)-6)
+  #get just the sequences into a separate file, without additional shit.
   
-#  file <- paste0(cur.dir,'/'    ,sample.names[j],'.fasta')
-#  s.file <- paste0(cur.dir,'/seq.',sample.names[j],'.fasta')
-#  pre <- paste0("sed -n '0~2p' ",file,' > ',s.file)
-#  system(pre)
-#  
+    file <- paste0(seq.path,'q.final/'    ,sample.name,'.fna')
+  s.file <- paste0(seq.path,'q.final/seq.',sample.name,'.fna')
+  cmd <- paste0("sed -n '0~2p' ",file,' > ',s.file)
+  system(cmd)
+  
   #Convert sequences to a sequence table. Write table to a file. No need to load all sequences into R memory.
-#  c.file <- paste0(cur.dir,'/counts.',sample.names[j],'.txt')   #sample-specific ASV table.
-#  pre <- paste0('cat ',s.file,' | sort | uniq -c > ', c.file)
-#  system(pre)
-#  asv <- data.table::data.table(read.table(c.file))
-#  colnames(asv) <- c(sample.names[j],'seq')
-#  data.table::setkey(asv,seq)
+  c.file <- paste0(seq.path,'counts.',sample.name,'.txt')   #sample-specific ASV table.
+  pre <- paste0('cat ',s.file,' | sort | uniq -c > ', c.file)
+  system(pre)
+  asv <- data.table::data.table(read.table(c.file))
+  colnames(asv) <- c(sample.name,'seq')
+  data.table::setkey(asv,seq)
   
   #merge multiple sample-specific ASV tables.
-#  if(j == 1){ out = asv}
-#  if(j > 1){ out <- merge(out, asv, all = T)} #this merge really requires data.table be loaded into the environment.
+  if(j == 1){ out = asv}
+  if(j > 1){ out <- merge(out, asv, all = T)} #this merge really requires data.table be loaded into the environment.
   
   #remove duplicated seq and counts files.
-#  system(paste0('rm ',c.file))
-#  system(paste0('rm ',s.file))
-#}
-
+  system(paste0('rm ',c.file))
+  system(paste0('rm ',s.file))
+}
+output_filepath <- paste0(seq.path,'SV_table.rds')
+saveRDS(out, output_filepath)
 
 
 
