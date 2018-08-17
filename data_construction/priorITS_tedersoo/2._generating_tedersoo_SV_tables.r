@@ -69,8 +69,47 @@ system(cmd)
 #cmd <- 'rm -rf ',seq.path,'q.filter' #once you are sure everything is working do this.
 #system(cmd)
 
-#de-replicate and generate SV table.
+#above code made sequence take up more than one line, which interferes with code I use to make SV table.
+#we fix this here.
+system(paste0('mkdir -p ',seq.path,'q.final'))
+for(i in 1:length(fastq.files)){
+  sample.name <- fastq.files[i]
+  sample.name <- substr(sample.name,1,nchar(sample.name)-6)
+  system(command = paste0("perl -pe '/^>/ ? print \"\n\" : chomp' ",
+                          seq.path,"q.trim/",sample.name,
+                          ".fna | tail -n +2 > ",
+                          seq.path,"q.final/",sample.name,".fna"), intern = TRUE)
+}
 
+#de-replicate and generate SV table.
+#### Build an ASV table from all sequence files. ####
+#cat(paste0('Building ASV tables...'))
+#for(j in 1:length(fastq.files)){
+#  sample.name <- fastq.files[i]
+#  sample.name <- substr(sample.name,1,nchar(sample.name)-6)
+#  #get just the sequences into a separate file, without additional shit.
+  
+#  file <- paste0(cur.dir,'/'    ,sample.names[j],'.fasta')
+#  s.file <- paste0(cur.dir,'/seq.',sample.names[j],'.fasta')
+#  pre <- paste0("sed -n '0~2p' ",file,' > ',s.file)
+#  system(pre)
+#  
+  #Convert sequences to a sequence table. Write table to a file. No need to load all sequences into R memory.
+#  c.file <- paste0(cur.dir,'/counts.',sample.names[j],'.txt')   #sample-specific ASV table.
+#  pre <- paste0('cat ',s.file,' | sort | uniq -c > ', c.file)
+#  system(pre)
+#  asv <- data.table::data.table(read.table(c.file))
+#  colnames(asv) <- c(sample.names[j],'seq')
+#  data.table::setkey(asv,seq)
+  
+  #merge multiple sample-specific ASV tables.
+#  if(j == 1){ out = asv}
+#  if(j > 1){ out <- merge(out, asv, all = T)} #this merge really requires data.table be loaded into the environment.
+  
+  #remove duplicated seq and counts files.
+#  system(paste0('rm ',c.file))
+#  system(paste0('rm ',s.file))
+#}
 
 
 
