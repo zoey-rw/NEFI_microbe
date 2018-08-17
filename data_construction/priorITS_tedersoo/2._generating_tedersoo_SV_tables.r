@@ -64,7 +64,7 @@ for(i in 1:length(fastq.files)){
 #clean up and rename some things.
 cmd <- paste0('rm -rf ',seq.path,'q.trim.L')
 system(cmd)
-cmd <- paste0('mv q.trim.R ',seq.path,'q.trim')
+cmd <- paste0('mv ',seq.path,'q.trim.R ',seq.path,'q.trim')
 system(cmd)
 #cmd <- 'rm -rf ',seq.path,'q.filter' #once you are sure everything is working do this.
 #system(cmd)
