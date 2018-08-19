@@ -130,7 +130,7 @@ cat('ASV table built!\n')
 
 #Test removing chimeras.
 cat('Removing chimeras...\n')
-t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus')
+t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
 
 #save output.
