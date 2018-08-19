@@ -40,6 +40,11 @@ for(i in 1:length(fastq.files)){
   system(cmd)
 }
 
+#update fastq list in case a file or two didn't make ith through split_libraries_fastq.py.
+fastq.files <- list.files(paste0(seq.path,'q.filter/'))
+fastq.files <- fastq.files[grep('.fna',fastq.files)]
+fastq.files <- gsub('.fna','.fastq',fastq.files)
+
 #from here we need to trim out primers and leading adapter/barcode sequence which is variable length.
 #DOE has a great tool to find a primer and trim anything preceding in, called bbuk.sh in the bbmap package.
 #Find theat here: https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/
@@ -50,8 +55,9 @@ for(i in 1:length(fastq.files)){
   sample.name <- fastq.files[i]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
   output.dir1 <- 'q.trim.L/'
-  cmd <- paste0('NEFI_functions/bbduk.sh ',
-                'literal=',rev.primers,
+  bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh'
+  cmd <- paste0(bbduk.path,
+                ' literal=',rev.primers,
                 ' ktrim=l k=10 minlen=100 ',
                 'in=',seq.path,'q.filter/',sample.name,'.fna out=',seq.path,output.dir1,sample.name,'.fna')
   system(cmd)
@@ -69,8 +75,8 @@ cmd <- paste0('rm -rf ',seq.path,'q.trim.L')
 system(cmd)
 cmd <- paste0('mv ',seq.path,'q.trim.R ',seq.path,'q.trim')
 system(cmd)
-#cmd <- 'rm -rf ',seq.path,'q.filter' #once you are sure everything is working do this.
-#system(cmd)
+cmd <- paste0('rm -rf ',seq.path,'q.filter')
+system(cmd)
 
 #above code made sequence take up more than one line, which interferes with code I use to make SV table.
 #we fix this here.
@@ -128,7 +134,7 @@ t.out <- as.matrix(t.out)
 t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
 cat('ASV table built!\n')
 
-#Test removing chimeras.
+#Remove chimeras.
 cat('Removing chimeras...\n')
 t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
