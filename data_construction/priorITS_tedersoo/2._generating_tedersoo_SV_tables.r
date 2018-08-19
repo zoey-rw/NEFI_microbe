@@ -11,12 +11,13 @@ library(data.table)
 
 #begin by testing this script with 2 .fastq files from the tedersoo study.
 seq.path <- ted.seq.dir
-seq.path <- '/projectnb/talbot-lab-data/caverill/ted_test_fastq/' #for testing.
+#seq.path <- '/projectnb/talbot-lab-data/caverill/ted_test_fastq/' #for testing.
+#seq.path <- '/fs/data3/caverill/NEFI_microbial_data/ted_test_fastq/'
 
 #reverse primers (there is a flex position)
 rev.primers <- 'TCCTGCGCTTATTGATATGC,TCCTCCGCTTATTGATATGC'
 #foward primers: there are 6. These are their reverse complements.
-rc.fwd.primers <- 'CAGCGTTCTTCATCGATGACGAGTCTAG,CTGCGTTCTTCATCGTTGACGAGTCTAG,CTGCGTTCTTCATCGGTGACGAGTCTAG,CTACGTTCTTCATCGATGACGAGTCTAG,CCACGTTCTTCATCGATGACGAGTCTAG,CAGCGTTCTTCATCGATGACGAGTCTAG'
+rc.fwd.primers <- ('CAGCGTTCTTCATCGATGACGAGTCTAG,CTGCGTTCTTCATCGTTGACGAGTCTAG,CTGCGTTCTTCATCGGTGACGAGTCTAG,CTACGTTCTTCATCGATGACGAGTCTAG,CCACGTTCTTCATCGATGACGAGTCTAG,CAGCGTTCTTCATCGATGACGAGTCTAG')
 
 #get fastq file names, only include files that end in .fastq.
 fastq.files <- list.files(seq.path)
@@ -42,13 +43,14 @@ for(i in 1:length(fastq.files)){
 #from here we need to trim out primers and leading adapter/barcode sequence which is variable length.
 #DOE has a great tool to find a primer and trim anything preceding in, called bbuk.sh in the bbmap package.
 #Find theat here: https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/
+#I copied this indivudal script into the NEFI_tools directory.
 #This also trim 3' "forward" primer, and requires sequences to be 100bp long.
 for(i in 1:length(fastq.files)){
   #quality filter fastq files using qiime.
   sample.name <- fastq.files[i]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
   output.dir1 <- 'q.trim.L/'
-  cmd <- paste0('/projectnb/talbot-lab-data/caverill/bbmap/bbduk.sh ',
+  cmd <- paste0('NEFI_functions/bbduk.sh ',
                 'literal=',rev.primers,
                 ' ktrim=l k=10 minlen=100 ',
                 'in=',seq.path,'q.filter/',sample.name,'.fna out=',seq.path,output.dir1,sample.name,'.fna')
@@ -119,18 +121,22 @@ out[is.na(out)] <- 0
 #transpose to be consistent with dada2
 #this is being weird.
 t.out <- t(out[,-1])
-seq.names <- gsub('.fastq','',fastq.files)
-colnames(t.out) <- seq.names
+colnames(t.out) <- as.character(out[,1])
 
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
 t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
-
-output_filepath <- paste0(seq.path,'SV_table.rds')
-saveRDS(t.out, output_filepath)
 cat('ASV table built!\n')
 
+#Test removing chimeras.
+cat('Removing chimeras...\n')
+t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus')
+cat('Chimeras removed.\n')
 
+#save output.
+output_filepath <- paste0(seq.path,'SV_table.rds')
+saveRDS(t.out_nochim, output_filepath)
+cat('script complete.\n')
 
 
 #forward primers 5' -> 3' (before reverse complement), which are actually at the ends of these reads.
