@@ -100,14 +100,14 @@ path_to_check <- paste0(seq.path,'q.final/')
 cmd <- paste0('find ',path_to_check,' -size 0 -delete')
 system(cmd)
 #update file list.
-fastq.files <- list.files(paste0(seq.path,'q.final/'))
-fastq.files <- fastq.files[grep('.fna',fastq.files)]
-fastq.files <- gsub('.fna','.fastq',fastq.files)
+files <- list.files(paste0(seq.path,'q.final/'))
+files <- files[grep('.fna',files)]
+files <- gsub('.fna','.fastq',files)
 
 #### Build an ASV table from all sequence files. ####
 cat(paste0('Building ASV tables...\n'))
-for(j in 1:length(fastq.files)){
-  sample.name <- fastq.files[j]
+for(j in 1:length(files)){
+  sample.name <- files[j]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
   #get just the sequences into a separate file, without additional shit.
   
@@ -157,12 +157,3 @@ cat('Chimeras removed.\n')
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath)
 cat('script complete.\n')
-
-
-#forward primers 5' -> 3' (before reverse complement), which are actually at the ends of these reads.
-#CTAGACTCGTCATCGATGAAGAACGCAG
-#CTAGACTCGTCAACGATGAAGAACGCAG
-#CTAGACTCGTCACCGATGAAGAACGCAG
-#CTAGACTCGTCATCGATGAAGAACGTAG
-#CTAGACTCGTCATCGATGAAGAACGTGG
-#CTAGACTCGTCATCGATGAAGAACGCTG
