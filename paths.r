@@ -32,7 +32,7 @@ bahram_dir <- paste0(data.dir,'bahram_2018_seqs')
 cmd <- paste0('mkdir -p ',bahram_dir)
 system(cmd)
 
-#Raw NEON sequence data from MG-rast
+#Raw NEON sequence data from MG-rast. only works for 16S currently.
 mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
 #setup place to save ITS data.
 ASV_ITS.dir <- paste0(data.dir,'NEON_ASVs/ITS/')
@@ -40,6 +40,9 @@ ASV_16S.dir <- paste0(data.dir,'NEON_ASVs/16S/')
 cmd <- paste0('mkdir -p ',ASV_ITS.dir)
 cmd <- paste0('mkdir -p ',ASV_16S.dir)
 
+#Raw NEON ITS sequence data from custom links provided by L.Stanish.
+NEON_ITS.dir <- paste0(data.dir,'NEON_raw_ITS_seqs/')
+NEON_ITS_link_file <- paste0(NEON_ITS.dir,'NEON_rawFilesList.csv')
 
 #Tedersoo ITS prior paths
 #raw sequence directory.

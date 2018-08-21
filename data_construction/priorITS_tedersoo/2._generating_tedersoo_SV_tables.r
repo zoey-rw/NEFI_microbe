@@ -90,7 +90,20 @@ for(i in 1:length(fastq.files)){
                           seq.path,"q.final/",sample.name,".fna"), intern = TRUE)
 }
 
+#remove q.trim
+cmd <- paste0('rm -rf ',seq.path,'q.trim')
+system(cmd)
+
 #de-replicate and generate SV table.
+#Some files have zero lines. remove these.
+path_to_check <- paste0(seq.path,'q.final/')
+cmd <- paste0('find ',path_to_check,' -size 0 -delete')
+system(cmd)
+#update file list.
+fastq.files <- list.files(paste0(seq.path,'q.final/'))
+fastq.files <- fastq.files[grep('.fna',fastq.files)]
+fastq.files <- gsub('.fna','.fastq',fastq.files)
+
 #### Build an ASV table from all sequence files. ####
 cat(paste0('Building ASV tables...\n'))
 for(j in 1:length(fastq.files)){
@@ -108,6 +121,7 @@ for(j in 1:length(fastq.files)){
   pre <- paste0('cat ',s.file,' | sort | uniq -c > ', c.file)
   system(pre)
   asv <- data.table::data.table(read.table(c.file))
+  try(asv <- data.table::data.table(read.table(c.file)), silent = T)
   colnames(asv) <- c(sample.name,'seq')
   data.table::setkey(asv,seq)
   
