@@ -37,7 +37,8 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds, glob.cov
     #fill in NAs from global level predictor means and sds.
     for(j in 1:ncol(covs)){
       cov.name <- colnames(covs)[j]
-      covs[,j][is.na(  covs[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$Mean
+      if(cov.name %in% glob_covs$predictor == F){next}
+        covs[,j][is.na(  covs[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$Mean
       cov.sd[,j][is.na(cov.sd[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$SD
     }
     
