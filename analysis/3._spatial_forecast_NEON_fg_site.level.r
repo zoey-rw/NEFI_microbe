@@ -21,13 +21,11 @@ glob_covs <- readRDS(NEON_glob_covs.path)
 #specify number of times to sample from parameters and covariates.
 n.samp <- 1000
 
-test <- ddirch_forecast_site.level(mod,site_covs,site_sds,glob.covs = glob.covs)
-
-
-
+test <- ddirch_forecast_site.level(mod = mod,site_covs = site_covs,site_sds = site_sds,glob.covs = glob_covs)
 
 
 #Here is where we gonna loop over models.
+#this loop now runs in the function above.
 prediction.output <- list()
 for(i in 1:length(mod)){
   #grab the model out of list

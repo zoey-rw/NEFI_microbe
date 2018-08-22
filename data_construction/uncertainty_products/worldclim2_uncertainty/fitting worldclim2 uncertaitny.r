@@ -10,12 +10,15 @@ rm(list=ls())
 library(runjags)
 
 #load data
-prec <- readRDS('/fs/data3/caverill/NEFI_microbial/worldclim2_uncertainty/worldclim2_prec_uncertainty.rds')
-temp <- readRDS('/fs/data3/caverill/NEFI_microbial/worldclim2_uncertainty/worldclim2_tavg_uncertainty.rds')
+prec <- readRDS(wc_prec_raw_data.path)
+temp <- readRDS(wc_temp_raw_data.path)
 
 #subset prec for prelim fitting.
 prec <- prec[sample(nrow(prec),20000),]
 temp <- temp[sample(nrow(temp),10000),]
+
+#prec_output.path
+#temp_output.path
 
 #plot(observed ~ predicted, data = prec, cex = 0.4, pch = 16, ylim = c(0,4000))
 
