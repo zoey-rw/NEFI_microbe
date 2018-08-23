@@ -53,7 +53,7 @@ fastq.files <- gsub('.fna','.fastq',fastq.files)
 #DOE has a great tool to find a primer and trim anything preceding in, called bbuk.sh in the bbmap package.
 #Find theat here: https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbduk-guide/
 #I copied this indivudal script into the NEFI_tools directory.
-#This also trim 3' "forward" primer, and requires sequences to be 100bp long.
+#This also trim 3' "forward" primer.
 for(i in 1:length(fastq.files)){
   #quality filter fastq files using qiime.
   sample.name <- fastq.files[i]
@@ -62,7 +62,7 @@ for(i in 1:length(fastq.files)){
   bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh'
   cmd <- paste0(bbduk.path,
                 ' literal=',rev.primers,
-                ' ktrim=l k=10 minlen=100 ',
+                ' ktrim=l k=10',
                 'in=',seq.path,'q.filter/',sample.name,'.fna out=',seq.path,output.dir1,sample.name,'.fna')
   system(cmd)
   #now trim 3' end since all "forward" primers are 28bp long.
@@ -156,6 +156,9 @@ cat('ASV table built!\n')
 cat('Removing chimeras...\n')
 t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
+
+#sequences must be at least 100bp.
+t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
 
 #save output.
 output_filepath <- paste0(seq.path,'SV_table.rds')

@@ -128,6 +128,9 @@ t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithre
 cat('Chimeras removed.\n')
 toc()
 
+#sequences must be at least 100bp.
+t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
+
 #save output.
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath1)
