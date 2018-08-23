@@ -8,7 +8,7 @@
 #$ -l h_rt=100:00:00
 #run on a few processors (dada2 RDP classifier can be run in parallel)
 #$ -pe omp 8
-#$ -l mem_total=510G #huge memory job.
+#$ -l mem_total=250G #huge memory job.
 #
 #Give the job a name
 #$ -N NEON_tax
