@@ -17,7 +17,8 @@ files <- list.files(seq.path)
 files <- files[grep('.fasta',files)]
 
 #output file path.
-
+output_filepath1 <-  paste0(seq.path,'SV_table.rds')
+output_filepath2 <- NEON_SV.table.path
 
 #Get reverse complement of reverse primers.
 #These are ITS1 reads with reverse read discarded. Some sequences have reverse primer, some dont. 
@@ -129,7 +130,8 @@ toc()
 
 #save output.
 output_filepath <- paste0(seq.path,'SV_table.rds')
-saveRDS(t.out_nochim, output_filepath)
+saveRDS(t.out_nochim, output_filepath1)
+saveRDS(t.out_nochim, output_filepath2)
 cat('script complete.\n')
 
 

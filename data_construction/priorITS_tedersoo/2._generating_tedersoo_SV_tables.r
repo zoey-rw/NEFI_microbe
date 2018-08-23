@@ -14,6 +14,10 @@ seq.path <- ted.seq.dir
 #seq.path <- '/projectnb/talbot-lab-data/caverill/ted_test_fastq/' #for testing.
 #seq.path <- '/fs/data3/caverill/NEFI_microbial_data/ted_test_fastq/'
 
+#output file path.
+output_filepath1 <-  paste0(seq.path,'SV_table.rds')
+output_filepath2 <- ted_2014_SV.table.path
+
 #reverse primers (there is a flex position)
 rev.primers <- 'TCCTGCGCTTATTGATATGC,TCCTCCGCTTATTGATATGC'
 #foward primers: there are 6. These are their reverse complements.
@@ -155,5 +159,6 @@ cat('Chimeras removed.\n')
 
 #save output.
 output_filepath <- paste0(seq.path,'SV_table.rds')
-saveRDS(t.out_nochim, output_filepath)
+saveRDS(t.out_nochim, output_filepath1)
+saveRDS(t.out_nochim, output_filepath2)
 cat('script complete.\n')

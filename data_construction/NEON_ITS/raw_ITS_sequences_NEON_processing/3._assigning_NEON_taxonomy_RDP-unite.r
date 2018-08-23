@@ -7,8 +7,8 @@ source('NEFI_functions/tic_toc.r')
 
 #load ASV table, set output path.----
 #this needs a lot of memory.
-d <- readRDS(NEON_ITS_SV.path)
-output.path <- NEON_ITS_tax.path
+d <- readRDS(NEON_SV.table.path)
+output.path <- NEON_tax.path
 
 #d <- readRDS(paste0(ted.seq.dir,'SV_table.rds'))
 
