@@ -17,7 +17,7 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
-d <- data.table(readRDS(ted.ITSprior_data))
+d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
 d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing

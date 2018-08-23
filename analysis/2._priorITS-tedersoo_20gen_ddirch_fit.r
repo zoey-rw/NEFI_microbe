@@ -15,7 +15,7 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
-d <- data.table(readRDS(ted.ITSprior_data))
+d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
 start <- which(colnames(d)=="Russula"   )
   end <- which(colnames(d)=="Tricholoma")
 y <- d[,start:end]
