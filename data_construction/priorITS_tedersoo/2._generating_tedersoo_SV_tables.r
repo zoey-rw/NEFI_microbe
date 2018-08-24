@@ -62,7 +62,7 @@ for(i in 1:length(fastq.files)){
   bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh'
   cmd <- paste0(bbduk.path,
                 ' literal=',rev.primers,
-                ' ktrim=l k=10',
+                ' ktrim=l k=10 ',
                 'in=',seq.path,'q.filter/',sample.name,'.fna out=',seq.path,output.dir1,sample.name,'.fna')
   system(cmd)
   #now trim 3' end since all "forward" primers are 28bp long.

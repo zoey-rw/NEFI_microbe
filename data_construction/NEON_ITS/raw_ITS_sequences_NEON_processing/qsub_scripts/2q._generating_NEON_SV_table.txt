@@ -6,9 +6,10 @@
 ########################################
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
-#run on a few processors (dada2 chimera slayer can be run in parallel)
-#$ -pe omp 8
-#$ -l mem_total=250G #huge memory job.
+# requesting an entire node that has 1024GB of memory because I am clearly doing this a very dumb way.
+#$ -l mem_per_core=28G
+# Request all cores on the node (36)
+#$ -pe omp 36
 #
 #Give the job a name
 #$ -N NEON_trim2sv
