@@ -2,6 +2,7 @@
 
 #clear environment, load packages, functions and paths.----
 rm(list=ls())
+library(doParallel)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 
@@ -60,6 +61,7 @@ tax <- data.frame(do.call('rbind',output.list))
 
 #3. save output.----
 saveRDS(tax, output.path)
+cat('Taxonomy output saved.\n')
 
 #4. cleanup.----
 system('rm ',unite_path.zip)

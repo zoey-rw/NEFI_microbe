@@ -1,11 +1,6 @@
 #Processing raw ITS sequences from NEON.
-#1. These are forward reads only, reverse was discarded.
-#2. Quality filtering has already been done.
-#3. Go through and separate reads by sample, contruct per sample files.
-#4. Make SV tables from per sample files.
-#5. remove chimeras, save SV table.
 
-#clear environment, load functions and packages.
+#1. clear environment, load functions and packages.----
 rm(list=ls())
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
@@ -16,6 +11,7 @@ library(doParallel)
 n <- detectCores()
 registerDoParallel(cores=n)
 
+#2. Setup paths.----
 #get sequence file paths
 seq.path <- NEON_ITS.dir
 files <- list.files(seq.path)
@@ -31,8 +27,7 @@ output_filepath2 <- NEON_SV.table.path
 rc.rev.primer <- 'GCATCGATGAAGAACGCAGC'
 
 
-#use bbduk to trim reverse primer if present.
-#files <- files[1:2] #subset to test
+#3. use bbduk to trim reverse primer if present.----
 cat('Trimming primers...\n')
 tic()
 bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh' #path to bbduk function within the bbmap directory.
@@ -52,6 +47,7 @@ foreach(i = 1:length(files)) %dopar% {
   system(cmd)
 }
 
+#4. collapse to normal format.----
 #above code made sequence take up more than one line, which interferes with code I use to make SV table.
 #we fix this here.
 q.final.dir <- paste0(seq.path,'q.final/')
@@ -74,7 +70,7 @@ system(cmd)
 cat('Primers trimmed!\n')
 toc()
 
-#de-replicate and generate SV table.
+#5. de-replicate and generate SV table.----
 #Some files have zero lines. remove these.
 path_to_check <- paste0(seq.path,'q.final/')
 cmd <- paste0('find ',path_to_check,' -size 0 -delete')
@@ -89,7 +85,7 @@ sv.dir.path <- paste0(seq.path,'sv.files/')
 cmd <- paste0('mkdir -p ',sv.dir.path)
 system(cmd)
 
-#### Build an ASV table from all sequence files. ####
+#Build an ASV table from all sequence files.
 cat(paste0('Building sample specific SV tables...\n'))
 tic()
 #for(j in 1:length(files)){
@@ -113,6 +109,7 @@ foreach(j = 1:length(files)) %dopar% {
 cat('Sample-specific SV tables constructed.\n')
 toc()
 
+#6. Merge sample specific SV tables.----
 #update SV files.
 files <- list.files(sv.dir.path)
 
@@ -133,11 +130,16 @@ for(j in 1:length(files)){
   
   #report every 100 samples merged and upadte how long its been running.
   to_check <- j/100
-  if(to_check == round(to_check)){cat(j,'of',length(files),'samples merged.\n')}
-  toc()
+  if(to_check == round(to_check)){cat(j,'of',length(files),'samples merged. ');toc()}
+  
 }
-cat('Sample-specific SV tables merged. total time:')
+cat('Sample-specific SV tables merged. ')
 toc()
+
+#7. dial in the SV table to work with dada2.----
+#save here in case everything downstream crashes.
+pre_SV_table.path <- paste0(seq.path,'pre_SV_table.rds')
+saveRDS(out, pre_SV_table.path)
 
 cat('Dialing in merged SV table...\n')
 #convert back to dataframe, replace NA values with zeros.
@@ -150,20 +152,21 @@ colnames(t.out) <- as.character(out[,1])
 
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
-t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
+mode(t.out) <- "integer"
 cat('ASV table dialed!\n')
 
 #clean up (delete) q.final sample-specific sv. directories.
-#system(paste0('rm -rf ',seq.path,'q.final'))
-#system(paste0('rm -rf ',sv.dir.path))
+system(paste0('rm -rf ',seq.path,'q.final'))
+system(paste0('rm -rf ',sv.dir.path))
 
-#Remove chimeras.
+#8. Remove chimeras using dada2.----
 cat('Removing chimeras...\n')
 tic()
 t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
 toc()
 
+#9. Final save and cleanup.----
 #sequences must be at least 100bp.
 t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
 
@@ -171,4 +174,9 @@ t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath1)
 saveRDS(t.out_nochim, output_filepath2)
+
+#nwo you can delete the pre-table.
+cmd <- paste0('rm -f ',pre_SV_table.path)
+system(cmd)
+
 cat('script complete.\n')

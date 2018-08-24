@@ -7,7 +7,8 @@
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
 #run on a few processors (dada2 chimera slayer can be run in parallel)
-#$ -pe omp 8
+#$ -pe omp 16         #assign in parallel.
+#$ -l mem_per_core=8G #big memory.
 #
 #Give the job a name
 #$ -N ted_RDP
