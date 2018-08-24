@@ -10,8 +10,13 @@ rm(list=ls())
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 library(data.table)
+library(doParallel)
 
-#get .fna file paths
+#register parallel environment.
+n <- detectCores()
+registerDoParallel(cores=n)
+
+#get sequence file paths
 seq.path <- NEON_ITS.dir
 files <- list.files(seq.path)
 files <- files[grep('.fasta',files)]
@@ -31,7 +36,8 @@ rc.rev.primer <- 'GCATCGATGAAGAACGCAGC'
 cat('Trimming primers...\n')
 tic()
 bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh' #path to bbduk function within the bbmap directory.
-for(i in 1:length(files)){
+#for(i in 1:length(files)){
+foreach(i = 1:length(files)) %dopar% {
   #quality filter fastq files using qiime.
    output.dir <- 'q.trim/'
   sample.name <- files[i]
@@ -50,7 +56,8 @@ for(i in 1:length(files)){
 #we fix this here.
 q.final.dir <- paste0(seq.path,'q.final/')
 system(paste0('mkdir -p ',q.final.dir))
-for(i in 1:length(files)){
+#for(i in 1:length(files)){
+foreach(i = 1:length(files)) %dopar% {
   sample.name <- files[i]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
    input.path <- paste0(seq.path,'q.trim/',sample.name,'.fna')
@@ -64,7 +71,7 @@ for(i in 1:length(files)){
 #remove q.trim
 cmd <- paste0('rm -rf ',seq.path,'q.trim')
 system(cmd)
-cat('Primers trimmed! ')
+cat('Primers trimmed!\n')
 toc()
 
 #de-replicate and generate SV table.
@@ -77,36 +84,62 @@ files <- list.files(paste0(seq.path,'q.final/'))
 files <- files[grep('.fna',files)]
 files <- gsub('.fna','.fastq',files)
 
+#make sample-specific SV field irectiory.
+sv.dir.path <- paste0(seq.path,'sv.files/')
+cmd <- paste0('mkdir -p ',sv.dir.path)
+system(cmd)
+
 #### Build an ASV table from all sequence files. ####
-cat(paste0('Building ASV tables...\n'))
+cat(paste0('Building sample specific SV tables...\n'))
 tic()
-for(j in 1:length(files)){
+#for(j in 1:length(files)){
+foreach(j = 1:length(files)) %dopar% {
   sample.name <- files[j]
   sample.name <- substr(sample.name,1,nchar(sample.name)-6)
   #get just the sequences into a separate file, without header lines.
-  file <- paste0(seq.path,'q.final/'    ,sample.name,'.fna')
+  file <- paste0(seq.path,'q.final/'      ,sample.name,'.fna')
   s.file <- paste0(seq.path,'q.final/seq.',sample.name,'.fna')
   cmd <- paste0("sed -n '0~2p' ",file,' > ',s.file)
   system(cmd)
   
   #Convert sequences to a sequence table. Write table to a file. No need to load all sequences into R memory.
-  c.file <- paste0(seq.path,'counts.',sample.name,'.txt')   #sample-specific ASV table.
+  c.file <- paste0(sv.dir.path,'sv.',sample.name,'.txt')   #sample-specific ASV table.
   pre <- paste0('cat ',s.file,' | sort | uniq -c > ', c.file)
   system(pre)
-  asv <- data.table::data.table(read.table(c.file))
-  try(asv <- data.table::data.table(read.table(c.file)), silent = T)
-  colnames(asv) <- c(sample.name,'seq')
-  data.table::setkey(asv,seq)
   
-  #merge multiple sample-specific ASV tables.
-  if(j == 1){ out = asv}
-  if(j > 1){ out <- merge(out, asv, all = T)} #this merge really requires data.table be loaded into the environment.
-  
-  #remove duplicated seq and counts files.
-  system(paste0('rm ',c.file))
+  #clean up s.file
   system(paste0('rm ',s.file))
 }
+cat('Sample-specific SV tables constructed.\n')
+toc()
 
+#update SV files.
+files <- list.files(sv.dir.path)
+
+#actually merge the files one at a time. This is the slow part, the big memory part.
+cat('Merging sample-specific SV files...\n')
+tic()
+for(j in 1:length(files)){
+  sample.name <- files[j]
+  sample.name <- substr(sample.name,1,nchar(sample.name)-4)
+  c.file <- paste0(sv.dir.path,files[j])
+  asv <- data.table(read.table(c.file))
+  colnames(asv) <- c(sample.name,'seq')
+  setkey(asv,seq)
+  
+  #merge multiple sample-specific SV tables.
+  if(j == 1){ out = asv}
+  if(j  > 1){ out <- merge(out, asv, all = T)} #this merge really requires data.table be loaded into the environment.
+  
+  #report every 100 samples merged and upadte how long its been running.
+  to_check <- j/100
+  if(to_check == round(to_check)){cat(j,'of',length(files),'samples merged.\n')}
+  toc()
+}
+cat('Sample-specific SV tables merged. total time:')
+toc()
+
+cat('Dialing in merged SV table...\n')
 #convert back to dataframe, replace NA values with zeros.
 out <- as.data.frame(out)
 out[is.na(out)] <- 0
@@ -118,8 +151,11 @@ colnames(t.out) <- as.character(out[,1])
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
 t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
-cat('ASV table built!\n')
-toc()
+cat('ASV table dialed!\n')
+
+#clean up (delete) q.final sample-specific sv. directories.
+#system(paste0('rm -rf ',seq.path,'q.final'))
+#system(paste0('rm -rf ',sv.dir.path))
 
 #Remove chimeras.
 cat('Removing chimeras...\n')
@@ -136,5 +172,3 @@ output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath1)
 saveRDS(t.out_nochim, output_filepath2)
 cat('script complete.\n')
-
-
