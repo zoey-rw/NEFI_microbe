@@ -1,47 +1,96 @@
 #all paths for NEFI fungal amplicon analysis and forecasts.
-#The path to the data directory will depend if you are on your local computer, the scc or somewhere else.
+#The path to the data directory will depend if you are on pecan2 or the scc.
 #To deal with this Colin has condiitonally setup the path to data based on the hostname of the computer.
-#Forst instance, if the hostname is 'pecan2' colin tells the omputer that all the data are in /fs/data3/caverill/NEFI_16S_data/
-#You can your local or remote machine to this list, following the instructions below. You just need your hostname.
-#To get your hostname open up terminal and type 'hostname'.
+#Forst instance, if the hostname is 'pecan2' colin tells the computer that all the data are in /fs/data3/caverill/NEFI_data
 #I often save data objects as ".rds" files, which is just an R data storage type.
 #.rds files can be loaded with "readRDS()", and saved with "saveRDS(R_object, path/to/file.rds)".
+
+#### High level directory structure. ####
+#NEFI_data - master data directory.
 host <- system('hostname', intern=T)
 #data directory conditional to which computer you are working on.
-#defaults to scc directory.
-data.dir <- '/project/talbot-lab-data/caverill/NEFI_microbial_data/'
+data.dir <- '/projectnb/talbot-lab-data/NEFI_data/'
 #conditional data directory assignment.
-if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_microbial_data/'}
-#if(host == 'scc1'  ){data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_16S_data/'} #hashed out as I haven't set this up on scc yet.
-#if(host == 'scc2'  ){data.dir <- '/projectnb/talbot-lab-data/caverill/NEFI_16S_data/'}
-#if(host == 'Colins-MacBook-Pro.local'){data.dir <- '/Users/colin/Documents/rstudio_data/NEFI_16S_data'}
+if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_data/'}
 #make directory if it doesn't exist
 cmd <- paste0('mkdir -p ',data.dir)
 system(cmd)
 
-#JAGS output.
-dir <- paste0(data.dir,'JAGS_output/')
+#NEFI_data has 3 sub-directories. big_data, ITS and 16S (16S data generated in a different R project.)
+#Each ITS and 16S directory has sub directories for data generated in scc or pecan (scc_gen or pecan_gen)
+#big_data only lives in the scc.
+#scc_gen and pecan_gen live on both, but updating the directory from one computer to the other only goes one way.
+#scc_gen only goes scc->pecan. pecan_gen only goes pecan->scc.
+#This keeps data synced and nothing goes missing. There are transfer scripts that make sure this is done correctly.
+big_data_dir <- paste0(data.dir,'big_data/')
+data_ITS_dir <- paste0(data.dir,'ITS/')
+  ITS_scc_gen_dir <- paste0(data_ITS_dir,  'scc_gen/')
+ITS_pecan_gen_dir <- paste0(data_ITS_dir,'pecan_gen/')
+#make the directories if they don't exist.
+system(paste0('mkdir -p ',big_data_dir))
+system(paste0('mkdir -p ',data_ITS_dir))
+system(paste0('mkdir -p ',  ITS_scc_gen_dir))
+system(paste0('mkdir -p ',ITS_pecan_gen_dir))
+
+
+#### big_data file paths. ####
+#Tedersoo ITS prior paths
+#raw sequence directory.
+ted.seq.dir <- paste0(big_data_dir,'tedersoo_SRA_seqs/')
+cmd <- paste0('mkdir -p ',ted.seq.dir)
+
+#Raw NEON ITS sequence data from custom links provided by L.Stanish.
+      NEON_ITS.dir <- paste0(big_data_dir,'NEON_raw_ITS_seqs/')
+NEON_ITS_link_file <- paste0(NEON_ITS.dir,'NEON_rawFilesList.csv')
+  NEON_ITS_SV.path <- paste0(NEON_ITS.dir,'NEON_ITS_sv.rds')
+ NEON_ITS_tax.path <- paste0(NEON_ITS.dir,'NEON_ITS_tax.rds')
+
+#Raw NEON sequence data from MG-rast. only works for 16S currently.
+mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
+#setup place to save ITS data.
+ASV_ITS.dir <- paste0(big_data_dir,'NEON_mgRAST_ASVs/ITS/')
+ASV_16S.dir <- paste0(big_data_dir,'NEON_mgRAST_ASVs/16S/')
+cmd <- paste0('mkdir -p ',ASV_ITS.dir)
+cmd <- paste0('mkdir -p ',ASV_16S.dir)
+
+
+#### ITS/scc_gen: JAGS output paths. ####
+dir <- paste0(ITS_scc_gen_dir,'JAGS_output/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ted_ITS.prior_fg_JAGSfit    <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
 ted_ITS.prior_20gen_JAGSfit <- paste0(dir,'ted_ITS.prior_20gen_JAGSfit.rds')
 ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.selection_JAGS.rds')
 
-#Bahram sequence data.
-bahram_dir <- paste0(data.dir,'bahram_2018_seqs')
-cmd <- paste0('mkdir -p ',bahram_dir)
-system(cmd)
-
-#Tedersoo ITS prior paths
-dir <- paste0(data.dir,'prior_data/')
+#### ITS/scc_gen: tedersoo 2014 SV and taxonomy paths. ####
+ted_2014_SV.table.path <- paste0(ITS_scc_gen_dir,'ted_2014_SV.table.rds')
+     ted_2014_tax.path <- paste0(ITS_scc_gen_dir,'ted_2014_tax.rds') 
+     
+#### ITS/scc_gen: NEON to forecast SV and taxonomy paths. ####
+NEON_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_SV.table.rds')
+     NEON_tax.path <- paste0(ITS_scc_gen_dir,'NEON_tax.rds') 
+     
+#### ITS/pecan_gen: Uncertainty product paths. ####
+dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-ted.ITSprior_data <- paste0(dir,'ted_all_prior_data.rds')
-      ted_map_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/merging seq and site data.csv"
-      ted_otu_raw <- "/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/alldata.biom_rdp_tedersoo_otu.txt"
+#worldclim2
+wc2.dir <- paste0(dir,'worldclim2_uncertainty/')
+cmd <- paste0('mkdir -p ',wc2.dir)
+system(cmd)
+wc_prec_raw_data.path <- paste0(wc2.dir,'worldclim2_prec_raw_data.rds')
+wc_temp_raw_data.path <- paste0(wc2.dir,'worldclim2_temp_raw_data.rds')
+wc_prec_JAGS.path     <- paste0(wc2.dir,'precipitation_JAGS_model.rds')
+wc_temp_JAGS.path     <- paste0(wc2.dir,'temperature_JAGS_model.rds')
 
-#product ouput paths.
-dir <- paste0(data.dir,'NEON_data_aggregation/')
+#### ITS/pecan_gen: Tedersoo 2014 prior data. ####
+dir <- paste0(ITS_pecan_gen_dir,'tedersoo_2014_data/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
+
+#### ITS/pecan_gen: NEON data aggregation paths. ####
+dir <- paste0(ITS_pecan_gen_dir,'NEON_data_aggregation/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
          ITS_site_dates.path <- paste0(dir,'ITS_site_dates.rds')
@@ -59,19 +108,30 @@ core.table.path <- paste0(dir,'core.table.rds')
 plot.table.path <- paste0(dir,'plot.table.rds') 
 site.table.path <- paste0(dir,'site.table.rds') 
 
-#Get NEON map, tax and OTU tables.
-#This wille ventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
-#mapping file will be constructed from DP1.10801.001 product, linking it to core and site data.
-dir <- paste0(data.dir,'map_otu/')
+#### ITS/pecan_gen: Forecast covariate paths.----
+#Aggregated NEON site level covariates and global level uncertainty for predictors
+dir <- paste0(ITS_pecan_gen_dir,'NEON_covariates/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-its_otu.path <- paste0(dir,'ITS_otu_clean.rds')
-its_map.path <- paste0(dir,'ITS_map_clean.rds')
-its_tax.path <- paste0(dir,'ITS_tax_clean.rds')
-its_fun.path <- paste0(dir,'ITS_fun_clean.rds')
+NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
+NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
 
-#reference data product paths
-dir <- paste0(data.dir,'reference_data/')
+
+#### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
+#This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
+#mapping file will be constructed from DP1.10801.001 product, linking it to core and site data.
+dir <- paste0(ITS_pecan_gen_dir,'NEON_map_otu/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+its_otu.path <- paste0(dir,'NEON_ITS_otu_clean.rds')
+its_map.path <- paste0(dir,'NEON_ITS_map_clean.rds')
+its_tax.path <- paste0(dir,'NEON_ITS_tax_clean.rds')
+its_fun.path <- paste0(dir,'NEON_ITS_fun_clean.rds')
+
+#### ITS/pecan_gen: reference data product paths. ####
+#these are not actually generated by scripts. Maybe this should move to a "small_data" higher level directory.
+#All stuff that was downloaded by "hand".
+dir <- paste0(ITS_pecan_gen_dir,'reference_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
               em_traits.path <- paste0(dir,'ecto_genus_traits_hobbie_Jan2018.csv')
@@ -80,13 +140,18 @@ system(cmd)
             #em_species.path <- paste0(dir,'mycorrhizal_SPCD_data.csv')
               em_genera.path <- paste0(dir,'tedersoo_2017_genera.csv')
  NEON_plantStatus_codes.path <- paste0(dir,'NEON_DP1.10098.plantStatus_decode.csv')
+          ted_srr_codes.path <- paste0(dir,'tedersoo_srr_codes.csv')
+            ted_map_raw.path <- paste0(dir,'tedersoo_2014_mapping_file.csv')
+            ted_otu_raw.path <- paste0(dir,'tedersoo_2014_otu_file.txt')
  
-
-#Forecast covariates
-#Aggregated NEON site level covariates and global level uncertainty for predictors
-dir <- paste0(data.dir,'NEON_covariates/')
-cmd <- paste0('mkdir -p ',dir)
-system(cmd)
-
-NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
-NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
+#### NEON pre-release: otu tables from L. Stanish. ####
+#This is a one off, will be replaced by our own pipeline eventually.
+#These data live outside the NEFI_data directory.
+NEON_pre_release.dir <- '/fs/data3/caverill/NEON_pre-release_ITS-16S_otus/'
+#outputs from pre-release processing.
+neon_pre_release_otu.out_16S <- paste0(NEON_pre_release.dir,'16S_otu_clean.rds')
+neon_pre_release_map.out_16S <- paste0(NEON_pre_release.dir,'16S_map_clean.rds')
+neon_pre_release_tax.out_16S <- paste0(NEON_pre_release.dir,'16S_tax_clean.rds')
+neon_pre_release_otu.out_ITS <- paste0(NEON_pre_release.dir,'ITS_otu_clean.rds')
+neon_pre_release_map.out_ITS <- paste0(NEON_pre_release.dir,'ITS_map_clean.rds')
+neon_pre_release_tax.out_ITS <- paste0(NEON_pre_release.dir,'ITS_tax_clean.rds')

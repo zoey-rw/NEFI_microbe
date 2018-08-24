@@ -16,10 +16,10 @@ source('NEFI_functions/crib_fun.r')
 n.gen <- 20
 
 #load mapping file.
-map <- read.csv(ted_map_raw, header = TRUE, na.strings=c("", "NA"))
+map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
 map <- data.table(map)
 #load otu file
-otu <- read.table(ted_otu_raw, header = TRUE, row.names = 1, check.names = FALSE, sep = "\t")
+otu <- read.table(ted_otu_raw.path, header = TRUE, row.names = 1, check.names = FALSE, sep = "\t")
 #load times- sent separately by Leho Tedersoo.
 time <- read.csv("/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/tedersoo2014_dates.csv", header = TRUE, row.names=1, check.names = FALSE)
 #load ecto hydrophobic status from hobbie
@@ -55,11 +55,6 @@ map[grep('Pinus',Dominant.Ectomycorrhizal.host),conifer := 1]
 
 #rename some things.
 map$relEM <- map$Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.
-
-
-#extract spatial products
-clim
-
 
 #### OTU table processing ####
 #grab the taxonomy from the otu table
@@ -217,4 +212,4 @@ setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
              c('Mapping.ID'   ,'moisture','pN','pC','cn'))
 
 #save output
-saveRDS(map,ted.ITSprior_data)
+saveRDS(map,tedersoo_ITS.prior_for_analysis.path)

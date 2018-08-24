@@ -36,7 +36,7 @@ module load R/3.4.0
 module load jags
 #
 # cd into directory, for safety purposes
-cd /project/talbot-lab-data/caverill/NEFI_microbe
+cd /projectnb/talbot-lab-data/caverill/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
 Rscript analysis/covariate_selection/1._ITSprior_linear_all.preds.r

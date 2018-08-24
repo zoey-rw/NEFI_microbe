@@ -21,7 +21,7 @@
 #'                      64.766184, 64.766184, 64.766184, 64.766184, 64.766184), .Dim = c(10L, 
 #'                                                                                      2L))
 #' test.out <- worldclim2_grab(points[,2], points[,1])
-
+source('paths.r') #need these for JAGS uncertainty models.
 worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000,
                             worldclim2_folder = '/fs/data3/caverill/WorldClim2/'){
   
@@ -36,8 +36,8 @@ worldclim2_grab <- function(latitude,longitude,elev = 500, n.sim = 1000,
   mdr     <- raster::raster(paste0(worldclim2_folder,'wc2.0_bio_30s_02.tif'))
   
   #load runjags summaries of precipitation and temperature fitted vs. observed.
-  prec.jags <- readRDS('/fs/data3/caverill/NEFI_microbial_data/worldclim2_uncertainty/precipitation_JAGS_model.rds')
-  temp.jags <- readRDS('/fs/data3/caverill/NEFI_microbial_data/worldclim2_uncertainty/temperature_JAGS_model.rds')
+  prec.jags <- readRDS(wc_prec_JAGS.path)
+  temp.jags <- readRDS(wc_temp_JAGS.path)
   
   #extract worldclim2 predicted climate data.
      prec.obs <- raster::extract(prec, points)

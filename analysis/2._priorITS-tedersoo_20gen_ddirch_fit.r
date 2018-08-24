@@ -7,6 +7,7 @@ library(data.table)
 library(doParallel)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
+source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
 source('NEFI_functions/crib_fun.r')
 
 #detect and register cores.
@@ -14,7 +15,7 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
-d <- data.table(readRDS(ted.ITSprior_data))
+d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
 start <- which(colnames(d)=="Russula"   )
   end <- which(colnames(d)=="Tricholoma")
 y <- d[,start:end]
@@ -56,13 +57,17 @@ output.list<-
     fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
     return(fit)
   }
-names(output.list) <- c('climate.preds','site.preds','all.preds')
 
-#fit <- site.level_dirlichet_jags(y=y,x_mu=x.all,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+#get intercept only fit.
+output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
+
+#name the items in the list
+names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 
 cat('Saving fit...\n')
-saveRDS(output.list, ted_ITS.prior_20gen_JAGSfit)
+saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
 cat('Script complete. \n')
+
 
 #visualize fits
 #par(mfrow = c(1,ncol(fit$observed)))

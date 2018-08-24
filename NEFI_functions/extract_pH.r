@@ -20,7 +20,7 @@
 extract_pH <- function(latitude, longitude,folder = '/project/talbot-lab-data/spatial_raster_data/SoilGrids_uncertainty'){
   #default directory path is scc1. Check if you are pecan2. Can be modified to work on more local machines this way.
   host <- system('hostname', intern=T)
-  if(host == 'pecan2'){folder <- '/fs/data3/caverill/NEFI_microbial_data/SoilGrids_uncertainty/'}
+  if(host == 'pecan2'){folder <- '/fs/data3/caverill/SoilGrids_pH/'}
   
   #specify raster path
   raster.path <- paste0(folder,'PHIHOX_M_sl2_250m.tif')

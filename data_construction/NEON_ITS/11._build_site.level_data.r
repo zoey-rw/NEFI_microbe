@@ -33,7 +33,6 @@ relEM <- hierarch_plot.means_JAGS(x_mu = to.ag$relEM, plot_site = to.ag$siteID, 
 basal <- hierarch_plot.means_JAGS(x_mu = to.ag$basal_live, plot_site = to.ag$siteID)
 
 #Get wheter its a forest or not.Colin just got this from the site descriptions, data is below.
-#Consider dropping STER, its agriculture.
 siteID <- c('DSNY','HARV','BART','JERC','ORNL','SCBI','TALL','UNDE','CPER','STER','WOOD')
  forest <- c(0,1,1,0,1,1,1,1,0,0,0)
 conifer <- c(1,1,1,0,1,0,1,1,0,0,0)
@@ -62,6 +61,9 @@ names(out)[names(out) == 'SD'  ] <- 'moisture_sd'
 out <- merge(out, pH$site.table[,c('Mean','SD','siteID')], all.x=T)
 names(out)[names(out)=='Mean'] <- 'pH'
 names(out)[names(out) == 'SD'  ] <- 'pH_sd'
+
+#only include ones where we assigned forest data if new sites showed up for some reason (legacy data).
+out <- out[out$siteID %in% forest.data$siteID,]
 
 #deal with grassland NAs for relEM and basal area.
 out[out$forest == 0 & is.na(out$basal   ),]$basal    <- 0

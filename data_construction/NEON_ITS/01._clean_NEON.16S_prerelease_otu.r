@@ -1,5 +1,6 @@
 #Processing 16S bacterial OTU tables with taxonomy and mapping files sent by Lee Stanish October, 2017
 rm(list=ls())
+source('paths.r')
 library(biomformat)
 library(nneo)
 #subtring function to pull from the right edge of a character entry.
@@ -8,24 +9,26 @@ substrRight <- function(x, n){
 }
 
 #set output paths for cleaned otu, map, and tax files.
-out.dir <- '/fs/data3/caverill/NEFI_microbial/map_otu/'
-otu.out <- paste0(out.dir,'16S_otu_clean.rds')
-map.out <- paste0(out.dir,'16S_map_clean.rds')
-tax.out <- paste0(out.dir,'16S_tax_clean.rds')
+pre_release.dir <- NEON_pre_release.dir
+otu.out <- neon_pre_release_otu.out_16S
+map.out <- neon_pre_release_map.out_16S
+tax.out <- neon_pre_release_tax.out_16S
 
 #load both otu tables with taxonomy and mapping files.
-  otu.16S.a <- read_biom('/fs/data3/caverill/NEFI_microbial/map_otu/16S_run20150211_otu_table_w_taxonomy.biom')
+  otu.16S.a <- read_biom(paste0(pre_release.dir,'16S_run20150211_otu_table_w_taxonomy.biom'))
 otu_table.a <- as.data.frame(as.matrix(biom_data(otu.16S.a)))
  taxonomy.a <- observation_metadata(otu.16S.a)
-      map.a <- read.table('/fs/data3/caverill/NEFI_microbial/map_otu/16S_run20150211_mapping_file.txt',sep='\t' ,header=T, comment.char = "")
+ path.map.a <- paste0(pre_release.dir,'16S_run20150211_mapping_file.txt')
+      map.a <- read.table(path.map.a,sep='\t' ,header=T, comment.char = "")
 
-  otu.16S.b <- read_biom('/fs/data3/caverill/NEFI_microbial/map_otu/16S_run20150925_otu_table_w_taxonomy.biom')
+  otu.16S.b <- read_biom(paste0(pre_release.dir,'16S_run20150925_otu_table_w_taxonomy.biom'))
 otu_table.b <- as.data.frame(as.matrix(biom_data(otu.16S.b)))
  taxonomy.b <- observation_metadata(otu.16S.b)
-      map.b <- read.table('/fs/data3/caverill/NEFI_microbial/map_otu/16S_run20150925_mapping_file.txt',sep='\t' ,header=T, comment.char = "")
+ path.map.b <- paste0(pre_release.dir,'16S_run20150925_mapping_file.txt')
+      map.b <- read.table(path.map.b,sep='\t' ,header=T, comment.char = "")
 
 #load reference file that links XSampleID to geneticSampleID provided by Lee Stanish.
-       ref <- read.csv('/fs/data3/caverill/NEFI_microbial/map_otu/legacyMarkerGeneMappedsids.csv')
+       ref <- read.csv(paste0(pre_release.dir,'legacyMarkerGeneMappedsids.csv'))
  
 #merge together mapping files.
 map_merge <- rbind(map.a, map.b)

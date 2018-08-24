@@ -42,6 +42,7 @@ precision_matrix_match <- function(a,b){
   #order the precision matrix columns to match x_mu matrix.
   b <- b[,colnames(a)]
   b <- as.data.frame(b)
+  colnames(b) <- colnames(a)
   
   #return new precision matrix.
   return(b)
