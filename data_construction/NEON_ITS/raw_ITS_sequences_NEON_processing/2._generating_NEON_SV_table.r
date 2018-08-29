@@ -142,11 +142,14 @@ pre_SV_table.path <- paste0(seq.path,'pre_SV_table.rds')
 saveRDS(out, pre_SV_table.path)
 
 cat('Dialing in merged SV table...\n')
-#convert back to dataframe, replace NA values with zeros.
-out <- as.data.frame(out)
-out[is.na(out)] <- 0
+#replace NA values with zeros.
+#You need these data.table trick when the SV table is BIG.
+DT.for.set.sqln  <- function(x) { for (j in seq_len(ncol(x)))
+  set(x,which(is.na(x[[j]])),j,0) }
+out <- data.table(out)
+DT.for.set.sqln(out)
 
-#transpose to be consistent with dada2.
+#transpose to be consistent with dada2. These steps are fine.
 t.out <- t(out[,-1])
 colnames(t.out) <- as.character(out[,1])
 
