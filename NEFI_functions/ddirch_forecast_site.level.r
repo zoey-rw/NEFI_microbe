@@ -11,8 +11,21 @@
 #'
 #' @examples
 source('NEFI_functions/precision_matrix_match.r')
-ddirch_forecast_site.level <- function(model.list, site_covs, site_sds, glob.covs, n.samp = 1000){
-  #Here is where we gonna loop over models.
+ddirch_forecast_site.level <- function(model.list, site_covs, site_sds = NA, glob.covs = NA, n.samp = 1000){
+  #run some tests.----
+  if(!is.na(site_sds) & is.na(glob.covs)){
+    stop('You have supplied site level uncertainties for missing data but not global level uncertainty. Not chill.')
+  }
+  if(is.list(mod) == F){
+    stop("Your model object isn't a list. It really needs to be.")
+  }
+  if('map' %in% colnames(site_covs)){
+    if(max(site_covs$map > 100)){
+      warning('You have map values that are great than 100. You probably need to log transform these.')
+    }
+  }
+  
+  #Here is where we gonna loop over models.----
   prediction.output <- list()
   for(i in 1:length(mod)){
     #grab the model out of list
@@ -27,45 +40,56 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds, glob.cov
     covs <- cbind(rep(1,nrow(covs)), covs)
     colnames(covs)[1] <- 'intercept'
     #grab uncertainties in sd, if present.
-    cov.sd <- precision_matrix_match(covs, site_sds)
+    if(!is.na(site_sds)){
+      cov.sd <- precision_matrix_match(covs, site_sds)
+    }
+    
     #re-order to match predictor order. Conditional otherwise it breaks the intercept only case.
     if(ncol(covs) > 1){
       covs   <-   data.frame(covs[,preds])
-      cov.sd <- data.frame(cov.sd[,preds])
+      if(!is.na(site_sds)){
+        cov.sd <- data.frame(cov.sd[,preds]) 
+      }
     }
     
-    #fill in NAs from global level predictor means and sds.
-    for(j in 1:ncol(covs)){
-      cov.name <- colnames(covs)[j]
-      if(cov.name %in% glob_covs$predictor == F){next}
-        covs[,j][is.na(  covs[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$Mean
-      cov.sd[,j][is.na(cov.sd[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$SD
+    #fill in NAs from global level predictor means and sds, if present.
+    if(!is.na(glob.covs)){
+      for(j in 1:ncol(covs)){
+        cov.name <- colnames(covs)[j]
+        if(cov.name %in% glob_covs$predictor == F){next}
+          covs[,j][is.na(  covs[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$Mean
+        cov.sd[,j][is.na(cov.sd[,j])] <- glob_covs[glob_covs$predictor == cov.name,]$SD
+      }
     }
     
     #### Sample parameter and covariate space, make predictions. ####
     pred.out <- list()
     cred.out <- list()
     for(j in 1:n.samp){
-      #### Sample parameters from mcmc output. ####
+      #Sample parameters from mcmc output.----
       mcmc <- do.call(rbind,j.mod$mcmc)
       mcmc.sample <- mcmc[sample(nrow(mcmc),1),]
       #grab x.m values, convert to matrix.
       x.m <- mcmc.sample[grep("^x\\.m\\[", names(mcmc.sample))]
       x.m <- matrix(x.m, nrow = ncol(covs), ncol = length(x.m)/ncol(covs))
       
-      #### Sample from covariate distributions. ####
-      now.cov <- matrix(NA, ncol = ncol(covs), nrow = nrow(covs))
-      for(k in 1:ncol(covs)){now.cov[,k] <- rnorm(nrow(covs),covs[,k], cov.sd[,k])}
-      colnames(now.cov) <- preds
-      now.cov <- data.frame(now.cov)
-      #log transform map values if this is one of your covariates, put covariates back in matrix form.
-      #anti-logit relEM, multiply by 100 if this is one of your covariates.
-      if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM) * 100}
-      if('map'   %in% colnames(now.cov)){now.cov$map   <- log(now.cov$map)}
-      now.cov <- as.matrix(now.cov)
+      #Sample from covariate distributions.----
+      #only sample if you supplied uncertainties.
+      if(!is.na(site_sds)){
+        now.cov <- matrix(NA, ncol = ncol(covs), nrow = nrow(covs))
+        for(k in 1:ncol(covs)){now.cov[,k] <- rnorm(nrow(covs),covs[,k], cov.sd[,k])}
+        colnames(now.cov) <- preds
+        now.cov <- data.frame(now.cov)
+        #log transform map values if this is one of your covariates, put covariates back in matrix form.
+        #anti-logit relEM, multiply by 100 if this is one of your covariates.
+        if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM) * 100}
+        if('map'   %in% colnames(now.cov)){now.cov$map   <- log(now.cov$map)}
+        now.cov <- as.matrix(now.cov)
+      }
+      #If you did not supply covariate uncertainties then now.cov is just covs.
+      if(is.na(site_sds)){now.cov <- as.matrix(covs)}
       
-      
-      #### Combine covariates and parameters to make a prediction. ####
+      #Combine covariates and parameters to make a prediction.----
       pred.x.m <- matrix(NA, ncol=ncol(x.m), nrow = nrow(covs))
       for(k in 1:ncol(x.m)){pred.x.m[,k] <- exp(now.cov %*% x.m[,k])}
       #get mean prediction and then draw from dirichlet distribution.
@@ -73,7 +97,7 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds, glob.cov
       pred.out[[j]] <- DirichletReg::rdirichlet(nrow(pred.x.m),pred.x.m)
     }
     
-    #### Summarize prediction mean and confidence intervals. ####
+    #Summarize prediction mean and confidence intervals.----
     pred.mean       <- apply(simplify2array(cred.out), 1:2, mean)
     pred.ci.0.025   <- apply(simplify2array(cred.out), 1:2, quantile, probs = c(0.025))
     pred.ci.0.975   <- apply(simplify2array(cred.out), 1:2, quantile, probs = c(0.975))
