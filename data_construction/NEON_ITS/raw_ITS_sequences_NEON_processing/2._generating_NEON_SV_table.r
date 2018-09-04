@@ -1,4 +1,7 @@
-#Processing raw ITS sequences from NEON.
+#Processing raw ITS sequences from NEON. This script takes ~3 hours to run with 36 cores in parallel, big memory.
+#Slowest part is the merging on the sample-specific SV tables.
+#Time is taken scales linearly in log-log space with number of samples merged.
+#Someone clever could write a hierarchical merging algorithm that might speed this way up, resulting in fewer merging comparisons.
 
 #1. clear environment, load functions and packages.----
 rm(list=ls())
@@ -157,29 +160,32 @@ colnames(t.out) <- as.character(out[,1])
 t.out <- as.matrix(t.out)
 mode(t.out) <- "integer"
 cat('ASV table dialed!\n')
+SV_pre.chimera.path <- paste0(seq.path,'SV_pre.chimera_table.rds')
+saveRDS(t.out,SV_pre.chimera.path)
+
 
 #clean up (delete) q.final sample-specific sv. directories.
-system(paste0('rm -rf ',seq.path,'q.final'))
-system(paste0('rm -rf ',sv.dir.path))
+#system(paste0('rm -rf ',seq.path,'q.final'))
+#system(paste0('rm -rf ',sv.dir.path))
 
 #8. Remove chimeras using dada2.----
 cat('Removing chimeras...\n')
-tic()
-t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
-cat('Chimeras removed.\n')
-toc()
+#tic()
+#t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
+#cat('Chimeras removed.\n')
+#toc()
 
 #9. Final save and cleanup.----
 #sequences must be at least 100bp.
-t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
+#t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
 
 #save output.
-output_filepath <- paste0(seq.path,'SV_table.rds')
-saveRDS(t.out_nochim, output_filepath1)
-saveRDS(t.out_nochim, output_filepath2)
+#output_filepath <- paste0(seq.path,'SV_table.rds')
+#saveRDS(t.out_nochim, output_filepath1)
+#saveRDS(t.out_nochim, output_filepath2)
 
 #nwo you can delete the pre-table.
-cmd <- paste0('rm -f ',pre_SV_table.path)
-system(cmd)
+#cmd <- paste0('rm -f ',pre_SV_table.path)
+#system(cmd)
 
 cat('script complete.\n')
