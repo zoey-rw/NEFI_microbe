@@ -17,7 +17,7 @@ output_filepath2 <- NEON_SV.table.path
 t.out <- readRDS(SV_pre.chimera.path)
 cat('Removing chimeras...\n')
 tic()
-t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
+t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = TRUE)
 cat('Chimeras removed.\n')
 toc()
 
