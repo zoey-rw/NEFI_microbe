@@ -19,7 +19,7 @@ d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
 start <- which(colnames(d)=="Russula"   )
   end <- which(colnames(d)=="Tricholoma")
 y <- d[,start:end]
-x <- d[,.(cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+x <- d[,.(pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- cbind(y,x)
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
@@ -44,8 +44,8 @@ x$map <- log(x$map)
 
 #define multiple subsets
 x.clim <- x[,.(intercept,NPP,mat,map)]
-x.site <- x[,.(intercept,cn,pH,moisture,forest,conifer,relEM)]
-x.all  <- x[,.(intercept,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.site <- x[,.(intercept,pC,cn,pH,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
