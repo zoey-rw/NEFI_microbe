@@ -1,4 +1,5 @@
 #' ddirch_forecast_site.level.r
+#' NOTE: this assumes the predictor "map" is mean annual precipitation in mm, and natural log transforms.
 #'
 #' @param model.list    #list of models to generate a forecast for.
 #' @param site_covs     #dataframe of site-level covariates. Must include all covariates used in models.
@@ -13,16 +14,8 @@
 source('NEFI_functions/precision_matrix_match.r')
 ddirch_forecast_site.level <- function(model.list, site_covs, site_sds = NA, glob.covs = NA, n.samp = 1000){
   #run some tests.----
-  if(!is.na(site_sds) & is.na(glob.covs)){
-    stop('You have supplied site level uncertainties for missing data but not global level uncertainty. Not chill.')
-  }
   if(is.list(mod) == F){
     stop("Your model object isn't a list. It really needs to be.")
-  }
-  if('map' %in% colnames(site_covs)){
-    if(max(site_covs$map > 100)){
-      warning('You have map values that are great than 100. You probably need to log transform these.')
-    }
   }
   
   #Here is where we gonna loop over models.----
@@ -40,20 +33,20 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds = NA, glo
     covs <- cbind(rep(1,nrow(covs)), covs)
     colnames(covs)[1] <- 'intercept'
     #grab uncertainties in sd, if present.
-    if(!is.na(site_sds)){
+    if(is.data.frame(site_sds)){
       cov.sd <- precision_matrix_match(covs, site_sds)
     }
     
     #re-order to match predictor order. Conditional otherwise it breaks the intercept only case.
     if(ncol(covs) > 1){
       covs   <-   data.frame(covs[,preds])
-      if(!is.na(site_sds)){
+      if(is.data.frame(site_sds)){
         cov.sd <- data.frame(cov.sd[,preds]) 
       }
     }
     
     #fill in NAs from global level predictor means and sds, if present.
-    if(!is.na(glob.covs)){
+    if(is.data.frame(glob.covs)){
       for(j in 1:ncol(covs)){
         cov.name <- colnames(covs)[j]
         if(cov.name %in% glob_covs$predictor == F){next}
@@ -75,7 +68,7 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds = NA, glo
       
       #Sample from covariate distributions.----
       #only sample if you supplied uncertainties.
-      if(!is.na(site_sds)){
+      if(is.data.frame(site_sds)){
         now.cov <- matrix(NA, ncol = ncol(covs), nrow = nrow(covs))
         for(k in 1:ncol(covs)){now.cov[,k] <- rnorm(nrow(covs),covs[,k], cov.sd[,k])}
         colnames(now.cov) <- preds
@@ -87,7 +80,7 @@ ddirch_forecast_site.level <- function(model.list, site_covs, site_sds = NA, glo
         now.cov <- as.matrix(now.cov)
       }
       #If you did not supply covariate uncertainties then now.cov is just covs.
-      if(is.na(site_sds)){now.cov <- as.matrix(covs)}
+      if(!is.data.frame(site_sds)){now.cov <- as.matrix(covs)}
       
       #Combine covariates and parameters to make a prediction.----
       pred.x.m <- matrix(NA, ncol=ncol(x.m), nrow = nrow(covs))

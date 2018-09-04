@@ -116,6 +116,12 @@ system(cmd)
 NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
 NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
 
+#### ITS/pecan_gen: Forecast output paths.----
+dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+NEON_site_fcast_fg.path <- paste0(dir,'NEON_fcast_site.level_fg.rds')
+NEON_site_fcast_20gen.path <- paste0(dir,'NEON_fcast_site.level_20gen.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
 #This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
