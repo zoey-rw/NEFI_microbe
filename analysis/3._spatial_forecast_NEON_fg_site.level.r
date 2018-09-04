@@ -106,3 +106,4 @@ names(prediction.output) <- names(mod)
 ####4. repeat 2+3, setting parameter uncertainty to zero then covariate uncertainty to zero.####
 
 ####5. save all output for downstream plotting and variance decomposition. ####
+saveRDS(prediction.output,NEON_site_fcast_fg.path)
