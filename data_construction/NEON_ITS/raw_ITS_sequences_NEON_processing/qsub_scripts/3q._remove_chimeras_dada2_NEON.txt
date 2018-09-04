@@ -6,8 +6,9 @@
 ########################################
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
-#run on a few processors (dada2 RDP classifier can be run in parallel)
-#$ -pe omp 16 -l mem_per_core=16G
+#run on a few processors.
+#$ -pe omp 36 
+#$ -l mem_per_core=28G
 #
 #Give the job a name
 #$ -N NEON_chimera
