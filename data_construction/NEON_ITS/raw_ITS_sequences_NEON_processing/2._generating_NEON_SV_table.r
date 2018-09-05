@@ -140,10 +140,6 @@ cat('Sample-specific SV tables merged. ')
 toc()
 
 #7. dial in the SV table to work with dada2.----
-#save here in case everything downstream crashes.
-pre_SV_table.path <- paste0(seq.path,'pre_SV_table.rds')
-saveRDS(out, pre_SV_table.path)
-
 cat('Dialing in merged SV table...\n')
 #replace NA values with zeros.
 #You need these data.table trick when the SV table is BIG.
@@ -159,33 +155,32 @@ colnames(t.out) <- as.character(out[,1])
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
 mode(t.out) <- "integer"
+
+#drop singletons and reads <100bp.
+t.out <- t.out[,!colSums(t.out) == 1]
+#remove reads less than 100bp
+t.out <- t.out[,nchar(colnames(t.out)) > 99]
 cat('ASV table dialed!\n')
 SV_pre.chimera.path <- paste0(seq.path,'SV_pre.chimera_table.rds')
 saveRDS(t.out,SV_pre.chimera.path)
 
 
 #clean up (delete) q.final sample-specific sv. directories.
-#system(paste0('rm -rf ',seq.path,'q.final'))
-#system(paste0('rm -rf ',sv.dir.path))
+system(paste0('rm -rf ',seq.path,'q.final'))
+system(paste0('rm -rf ',sv.dir.path))
 
 #8. Remove chimeras using dada2.----
-cat('Removing chimeras...\n')
+######## We may be able to return this here now that I filter out singletons and reads < 100bp
+#cat('Removing chimeras...\n')
 #tic()
 #t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 #cat('Chimeras removed.\n')
 #toc()
 
 #9. Final save and cleanup.----
-#sequences must be at least 100bp.
-#t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
-
 #save output.
 #output_filepath <- paste0(seq.path,'SV_table.rds')
 #saveRDS(t.out_nochim, output_filepath1)
 #saveRDS(t.out_nochim, output_filepath2)
-
-#nwo you can delete the pre-table.
-#cmd <- paste0('rm -f ',pre_SV_table.path)
-#system(cmd)
 
 cat('script complete.\n')

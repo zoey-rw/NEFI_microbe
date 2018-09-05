@@ -13,11 +13,13 @@ SV_pre.chimera.path <- paste0(seq.path,'SV_pre.chimera_table.rds')
 output_filepath1 <-  paste0(seq.path,'SV_table.rds')
 output_filepath2 <- NEON_SV.table.path
 
-#3. load data, remove singletons and chimeras.----
+#3. load data, remove singletons, reads <100bp and chimeras.----
 #load data.
 t.out <- readRDS(SV_pre.chimera.path)
 #remove signeltons.
-t.out <- t.out[,!colSums(t.out) == 1]
+#t.out <- t.out[,!colSums(t.out) == 1]
+#remove reads less than 100bp
+#t.out <- t.out[,nchar(colnames(t.out)) > 99]
 #remove chimeras.
 cat('Removing chimeras...\n')
 tic()
@@ -26,9 +28,6 @@ cat('Chimeras removed.\n')
 toc()
 
 #4. Final save and cleanup.----
-#sequences must be at least 100bp.
-t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
-
 #save output.
 cat('Saving output.../n')
 tic()
@@ -36,5 +35,11 @@ saveRDS(t.out_nochim, output_filepath1)
 saveRDS(t.out_nochim, output_filepath2)
 toc()
 cat('Output saved./n')
+
+#clean up if t.out_nochim was created.
+if(exists('t.out_nochim')==T){
+  cmd <- paste0('rm -f ',SV_pre.chimera.path)
+  system(cmd)
+}
 
 #end script.

@@ -145,6 +145,10 @@ out[is.na(out)] <- 0
 t.out <- t(out[,-1])
 colnames(t.out) <- as.character(out[,1])
 
+#drop singletons, reads less than 100 bp.
+t.out <- t.out[,!colSums(t.out) == 1]
+t.out <- t.out[,nchar(colnames(t.out)) > 99]
+
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
 t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
@@ -155,11 +159,9 @@ cat('Removing chimeras...\n')
 t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
 
-#sequences must be at least 100bp.
-t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
-
 #save output.
+cat('Saving output...\n')
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath1)
 saveRDS(t.out_nochim, output_filepath2)
-cat('script complete.\n')
+cat('Output saved, script complete.\n')
