@@ -1,5 +1,4 @@
 #assign taxonomy to tedersoo sequences.
-
 #clear environment, load packages, functions and paths.----
 rm(list=ls())
 library(doParallel)
