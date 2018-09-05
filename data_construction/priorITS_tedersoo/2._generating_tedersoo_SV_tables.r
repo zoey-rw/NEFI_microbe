@@ -148,7 +148,7 @@ colnames(t.out) <- as.character(out[,1])
 #reverse complement the SVs. For some reason these reads are 3'->5'. Thats why you trimmed the reverse primer to the left.
 to_flip <- colnames(t.out)
 dna.list <- list()
-for(i in 1:length(to_assign)){
+for(i in 1:length(to_flip)){
   dna.list[[i]] <- Biostrings::DNAString(to_flip[i])
   dna.list[[i]] <- Biostrings::reverseComplement(dna.list[[i]])
   dna.list[[i]] <- as.character(dna.list[[i]])
