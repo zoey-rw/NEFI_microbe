@@ -17,7 +17,7 @@ unite_path.zip <- paste0(data.dir,'unite.fa.zip')
 unite_path     <- paste0(data.dir,'sh_general_release_dynamic_01.12.2017.fasta')
 #cmd <- paste0('curl ',unite_url,' > ',unite_path.zip)
 #system(cmd)
-#cmd <- paste0('unzip ',unite_path.zip)
+#cmd <- paste0('unzip ',unite_path.zip,' -d ',data.dir)
 #system(cmd)
 #cat('UNITE download complete.\n')
 

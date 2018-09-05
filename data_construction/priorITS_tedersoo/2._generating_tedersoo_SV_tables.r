@@ -145,6 +145,18 @@ out[is.na(out)] <- 0
 t.out <- t(out[,-1])
 colnames(t.out) <- as.character(out[,1])
 
+#reverse complement the SVs. For some reason these reads are 3'->5'. Thats why you trimmed the reverse primer to the left.
+to_flip <- colnames(t.out)
+dna.list <- list()
+for(i in 1:length(to_assign)){
+  dna.list[[i]] <- Biostrings::DNAString(to_flip[i])
+  dna.list[[i]] <- Biostrings::reverseComplement(dna.list[[i]])
+  dna.list[[i]] <- as.character(dna.list[[i]])
+}
+to_flip <- unlist(dna.list)
+#fix your DNA sequences as the column names of t.out
+colnames(t.out) <- to_flip
+
 #drop singletons, reads less than 100 bp.
 t.out <- t.out[,!colSums(t.out) == 1]
 t.out <- t.out[,nchar(colnames(t.out)) > 99]
