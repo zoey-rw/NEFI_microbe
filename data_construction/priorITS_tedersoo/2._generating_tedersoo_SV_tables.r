@@ -11,8 +11,6 @@ library(data.table)
 
 #begin by testing this script with 2 .fastq files from the tedersoo study.
 seq.path <- ted.seq.dir
-#seq.path <- '/projectnb/talbot-lab-data/caverill/ted_test_fastq/' #for testing.
-#seq.path <- '/fs/data3/caverill/NEFI_microbial_data/ted_test_fastq/'
 
 #output file path.
 output_filepath1 <-  paste0(seq.path,'SV_table.rds')

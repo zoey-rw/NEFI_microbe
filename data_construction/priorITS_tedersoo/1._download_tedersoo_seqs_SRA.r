@@ -15,9 +15,9 @@ d$SRR_code <- as.character(d$SRR_code)
 
 #Download the sequences.
 cat('Begin downloading sequences...\n')
-test_file <- d$SRR_code[1] #for testing
-#getSRAfile(d$SRR_code, con, fileType = 'fastq',destDir = ted2014_seq_dir)
-getSRAfile(test_file, con, fileType = 'fastq',destDir = ted2014_seq_dir)
+#test_file <- d$SRR_code[1] #for testing
+#getSRAfile(test_file, con, fileType = 'fastq',destDir = ted2014_seq_dir)
+getSRAfile(d$SRR_code, con, fileType = 'fastq',destDir = ted2014_seq_dir)
 cat('Download complete.\n')
 
 #unzip all fastq.gz files.
