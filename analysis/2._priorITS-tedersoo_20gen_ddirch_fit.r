@@ -17,21 +17,18 @@ registerDoParallel(cores=n.cores)
 #load tedersoo data.
 #d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
 d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
-start <- which(colnames(d)=="Morterella"   )
-  end <- which(colnames(d)=="Tricholoma")
+#d <- d[1:35,] #for testing
+start <- which(colnames(d)=="Mortierella")
+  end <- which(colnames(d)=="Amphinema"  )
 y <- d[,start:end]
 x <- d[,.(pC,cn,pH,NPP,map,mat,forest,conifer,relEM)]
 d <- cbind(y,x)
 d <- d[complete.cases(d),] #optional. This works with missing data.
-#d <- d[1:35,] #for testing
-
-#organize y data
-start <- which(colnames(d)=="Mortierella")
-  end <- which(colnames(d)=="Amphinema"  )
-y <- d[,start:end]
+y <- d[,colnames(d) %in% colnames(y), with = F]
+x <- d[,colnames(d) %in% colnames(x), with = F]
 
 #make other column
-y <- data.frame(lapply(y,crib_fun))
+y <- data.frame(lapply(y,crib_fun, N = ncol(y)*nrow(y)))
 other <- 1 - rowSums(y)
 y <- cbind(other,y)
 

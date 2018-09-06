@@ -6,4 +6,13 @@
 #' @export
 #'
 #' @examples
-crib_fun <- function(x){(x * (length(x) - 1) + 0.5) / length(x)}
+crib_fun <- function(x,N = NA){
+  #default use length of vector.
+  if( is.na(N)){
+    (x * (length(x) - 1) + 0.5) / length(x)  
+  }
+  #custom- useful when I am in multivariate case.
+  if(!is.na(N)){
+    (x * (N - 1) + 0.5) / N
+  }
+}

@@ -24,13 +24,13 @@ d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
 
 #organize y data
-y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular)]
+y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen)]
 #make other column
 y <- data.frame(lapply(y,crib_fun))
 y$other <- 1 - rowSums(y)
 y <- as.data.frame(y)
 #reorder columns. other needs to be first.
-y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
+y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph')]
 
 #Drop in intercept, setup predictor matrix.
 #IMPORTANT: LOG TRANSFORM MAP.
