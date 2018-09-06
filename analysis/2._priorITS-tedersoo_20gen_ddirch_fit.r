@@ -28,9 +28,15 @@ y <- d[,colnames(d) %in% colnames(y), with = F]
 x <- d[,colnames(d) %in% colnames(x), with = F]
 
 #make other column
+y$other <- 1 - rowSums(y)
 y <- data.frame(lapply(y,crib_fun, N = ncol(y)*nrow(y)))
-other <- 1 - rowSums(y)
-y <- cbind(other,y)
+#in the rare case where one column actually needs to be a zero for a row to prevent to summing over 1...
+for(i in 1:nrow(y)){
+  if(rowSums(y[i,]) > 1){
+    y[i,] <- y[i,] / rowSums(y[i,])
+  }
+}
+y <- as.data.frame(y)
 
 #Drop in intercept, setup predictor matrix.
 intercept <- rep(1, nrow(x))

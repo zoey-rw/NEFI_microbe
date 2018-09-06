@@ -25,12 +25,18 @@ d <- d[complete.cases(d),] #optional. This works with missing data.
 
 #organize y data
 y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen)]
-#make other column
-y <- data.frame(lapply(y,crib_fun))
 y$other <- 1 - rowSums(y)
+y <- data.frame(lapply(y,crib_fun, N = nrow(y) * ncol(y)))
+#in the rare case where one column actually needs to be a zero for a row to prevent to summing over 1...
+for(i in 1:nrow(y)){
+  if(rowSums(y[i,]) > 1){
+    y[i,] <- y[i,] / rowSums(y[i,])
+  }
+}
 y <- as.data.frame(y)
+
 #reorder columns. other needs to be first.
-y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph')]
+y <- y[,c('other','Ectomycorrhizal','Pathogen','Saprotroph')]
 
 #Drop in intercept, setup predictor matrix.
 #IMPORTANT: LOG TRANSFORM MAP.
