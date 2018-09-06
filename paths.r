@@ -88,6 +88,7 @@ dir <- paste0(ITS_pecan_gen_dir,'tedersoo_2014_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
+tedersoo_ITS.prior_fromSV_analysis.path <- paste0(dir,'tedersoo_ITS.prior_fromSV_analysis.rds')
 
 #### ITS/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'NEON_data_aggregation/')

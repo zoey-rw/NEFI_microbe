@@ -15,18 +15,13 @@ output.path <- ted_2014_tax.path
 unite_url <- 'https://files.plutof.ut.ee/doi/B2/07/B2079372C79891519EF815160D4467BBF4AF1288A23E135E666BABF2C5779767.zip'
 unite_path.zip <- paste0(data.dir,'unite.fa.zip')
 unite_path     <- paste0(data.dir,'sh_general_release_dynamic_01.12.2017.fasta')
-#cmd <- paste0('curl ',unite_url,' > ',unite_path.zip)
-#system(cmd)
-#cmd <- paste0('unzip ',unite_path.zip,' -d ',data.dir)
-#system(cmd)
-#cat('UNITE download complete.\n')
+cmd <- paste0('curl ',unite_url,' > ',unite_path.zip)
+system(cmd)
+cmd <- paste0('unzip ',unite_path.zip,' -d ',data.dir)
+system(cmd)
+cat('UNITE download complete.\n')
 
-#2. assign taxonomy.----
-#to_assign <- colnames(d)
-#tax <- dada2::assignTaxonomy(to_assign,unite_path, multithread = T)
-#tax <- dada2::assignTaxonomy(to_assign,unite_path)
-
-#2_alternate. assign taxonomy in parallel using colin's parallel hack.----
+#2_alternate. assign taxonomy in parallel using colin's parallel hack. Native dada2 multithread isn't working.----
 n <- detectCores()
 registerDoParallel(cores=n)
 
@@ -63,7 +58,7 @@ saveRDS(tax, output.path)
 cat('Taxonomy output saved.\n')
 
 #4. cleanup.----
-system('rm ',unite_path.zip)
-system('rm ',unite_path)
+system('rm -f ',unite_path.zip)
+system('rm -f ',unite_path)
 
 #end script.

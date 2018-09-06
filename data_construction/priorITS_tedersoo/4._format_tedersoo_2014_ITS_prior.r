@@ -4,15 +4,15 @@
 rm(list=ls())
 source('paths.r')
 source('NEFI_functions/fg_assign.r')
-source('NEFI_functions/lineaus.r')
+#source('NEFI_functions/lineaus.r')
 source('NEFI_functions/worldclim2_grab.r')
 source('NEFI_functions/arid_extract.r')
-source('NEFI_functions/crib_fun.r')
+#source('NEFI_functions/crib_fun.r')
 
 #number of genera to keep (top 10 or 20 most abundant)
 n.gen <- 20
 
-#load mapping file.
+#load  files.----
 map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
 map <- data.table(map)
 #load SV table as otu file.
@@ -53,8 +53,8 @@ map[grep('Pinus',Dominant.Ectomycorrhizal.host),conifer := 1]
 #rename some things.
 map$relEM <- map$Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.
 
-#### OTU table processing.----
 
+#taxonomic and functional assignment.----
 #subset otu table and tax table to only include observations in map file
 map$SRR.id <- as.character(map$SRR.id)
 otu <- otu[rownames(otu) %in% map$SRR.id,]
@@ -62,7 +62,6 @@ map <- map[map$SRR.id %in% rownames(otu),]
 #order OTU table to match the mapping file
 otu <- otu[order(rownames(otu), map$SRR.id),]
 
-#setup taxonomy table and assign funguild.----
 #remove leading "k__".
 for(i in 1:ncol(tax)){
   tax[,i] <- substring(tax[,i],4)
@@ -82,13 +81,13 @@ tax <- fg_assign(tax)
 #Things can't be both ECM and SAP in dirlichet. Creates a sum to 1 problem.
 tax <- data.table(tax)
 tax[grep('Ectomycorrhizal', tax$guild),Ectomycorrhizal := 1]
-tax[is.na(Ectomycorrhizal),Ectomycorrhizal := 0]
-tax[grep('Saprotroph', tax$guild), Saprotroph := 1]
-tax[is.na(Saprotroph), Saprotroph := 0]
-tax[grep('Arbuscular', tax$guild), Arbuscular := 1]
-tax[is.na(Arbuscular), Arbuscular := 0]
-tax[grep('Patho', tax$guild), Pathogen := 1]
-tax[is.na(Pathogen), Pathogen := 0]
+tax[is.na(Ectomycorrhizal),            Ectomycorrhizal := 0]
+tax[grep('Saprotroph', tax$guild),          Saprotroph := 1]
+tax[is.na(Saprotroph),                      Saprotroph := 0]
+tax[grep('Arbuscular', tax$guild),          Arbuscular := 1]
+tax[is.na(Arbuscular),                      Arbuscular := 0]
+tax[grep('Patho', tax$guild),                 Pathogen := 1]
+tax[is.na(Pathogen),                          Pathogen := 0]
 #If you are ECTO you can't be SAP
 tax[Ectomycorrhizal == 1, Saprotroph := 0]
 #if you are ecto or sap you not path.
@@ -103,7 +102,7 @@ tax[is.na( hydrophobic),  hydrophobic := 0]
 tax[is.na(hydrophillic), hydrophillic := 0]
 
 
-#normalize the otu table
+#normalize the otu table.----
 otu <- t(otu)
 pro.function <- function(otu){
   for(i in 1:ncol(otu)){
@@ -115,6 +114,7 @@ otu <- pro.function(otu)
 #make sure column sums are 1.
 colSums(otu)
 
+#aggregate important classes and genera.----
 #get  most abundant genera in dataset.
 genera <- unique(tax$genus)
 test <- data.table(cbind(tax, otu))
@@ -174,13 +174,14 @@ fun.list <- data.frame(t(do.call('rbind',fun.list)))
 colnames(fun.list) <- function_groups
 fun.list$Mapping.ID <- rownames(fun.list)
 
-#Merge together data you want for analysis.
+#Merge together data aggregated groups you want for analysis.
 abundances <- merge(fun.list,gen.list)
 abundances <- merge(abundances,hydro.out)
 
+#final merging of files and worldclim grab.----
 #grab columns from map actually of interest.
-map <- map[,.(tedersoo.code,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,forest,conifer,relEM)]
-map <- merge(map,abundances, by.x = 'tedersoo.code',by.y = 'Mapping.ID')
+map <- map[,.(tedersoo.code,SRR.id,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,forest,conifer,relEM)]
+map <- merge(map,abundances, by.x = 'SRR.id',by.y = 'Mapping.ID')
 
 #get worldclim2 cliamte variables and aridity index
 climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
@@ -190,4 +191,7 @@ map <- cbind(map, climate)
 #rename some things.
 setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
          c('Mapping.ID'   ,'moisture','pN','pC','cn'))
+
+#save output.----
+saveRDS(map, tedersoo_ITS.prior_fromSV_analysis.path)
 
