@@ -15,20 +15,20 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
-d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
-start <- which(colnames(d)=="Russula"   )
+#d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
+d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
+start <- which(colnames(d)=="Morterella"   )
   end <- which(colnames(d)=="Tricholoma")
 y <- d[,start:end]
-x <- d[,.(pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+x <- d[,.(pC,cn,pH,NPP,map,mat,forest,conifer,relEM)]
 d <- cbind(y,x)
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
 
 #organize y data
-start <- which(colnames(d)=="Russula"   )
-  end <- which(colnames(d)=="Tricholoma")
+start <- which(colnames(d)=="Mortierella")
+  end <- which(colnames(d)=="Amphinema"  )
 y <- d[,start:end]
-x <- d[,(end+1):ncol(d)]
 
 #make other column
 y <- data.frame(lapply(y,crib_fun))
@@ -39,7 +39,8 @@ y <- cbind(other,y)
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
 
-#log transform map, magnitudes in 100s-1000s break this.
+#IMPORTANT: LOG TRANSFORM MAP.
+#log transform map, magnitudes in 100s-1000s break JAGS code.
 x$map <- log(x$map)
 
 #define multiple subsets
@@ -67,16 +68,3 @@ names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 cat('Saving fit...\n')
 saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
 cat('Script complete. \n')
-
-
-#visualize fits
-#par(mfrow = c(1,ncol(fit$observed)))
-#for(i in 1:ncol(fit$observed)){
-#  plot(fit$observed[,i] ~ fit$predicted[,i], ylim = c(0,1))
-#  rsq <- summary(betareg::betareg(fit$observed[,i] ~ fit$predicted[,i]))$pseudo.r.squared
-#  txt <- paste0('R2 = ',round(rsq,2))
-#  mtext(colnames(fit$predicted)[i], line = -1.5, adj = 0.05)
-#  mtext(txt, line = -3.5, adj = 0.05)
-#  abline(0,1, lwd = 2)
-#  abline(lm(fit$observed[,i] ~ fit$predicted[,i]), lty = 2, col = 'green')
-#}

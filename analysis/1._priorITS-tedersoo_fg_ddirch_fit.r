@@ -17,7 +17,8 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #load tedersoo data.
-d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path))
+#d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis dataset.
+d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
@@ -32,6 +33,7 @@ y <- as.data.frame(y)
 y <- y[c('other','Ectomycorrhizal','Pathogen','Saprotroph','Arbuscular')]
 
 #Drop in intercept, setup predictor matrix.
+#IMPORTANT: LOG TRANSFORM MAP.
 d$intercept <- rep(1,nrow(d))
 d$map <- log(d$map)
 x <- d[,.(intercept,pC,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
@@ -61,15 +63,3 @@ names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 cat('Saving fit...\n')
 saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
 cat('Script complete. \n')
-
-#visualize fits
-#par(mfrow = c(1,ncol(fit$observed)))
-#for(i in 1:ncol(fit$observed)){
-#  plot(fit$observed[,i] ~ fit$predicted[,i], ylim = c(0,1))
-#  rsq <- summary(betareg::betareg(fit$observed[,i] ~ fit$predicted[,i]))$pseudo.r.squared
-#  txt <- paste0('R2 = ',round(rsq,2))
-#  mtext(colnames(fit$predicted)[i], line = -1.5, adj = 0.05)
-#  mtext(txt, line = -3.5, adj = 0.05)
-#  abline(0,1, lwd = 2)
-#  abline(lm(fit$observed[,i] ~ fit$predicted[,i]), lty = 2, col = 'green')
-#}
