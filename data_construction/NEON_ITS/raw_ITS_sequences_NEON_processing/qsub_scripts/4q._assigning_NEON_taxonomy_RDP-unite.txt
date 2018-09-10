@@ -7,7 +7,7 @@
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
 #run on a few processors (dada2 RDP classifier can be run in parallel)
-#$ -pe omp 8
+#$ -pe omp 16
 #$ -l mem_total=250G #huge memory job.
 #
 #Give the job a name

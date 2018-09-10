@@ -11,6 +11,7 @@ figure.path <- 'figures/fg_prior_prediction.png'
 #load models and tedersoo prior data.
 mod <- readRDS(ted_ITS.prior_fg_JAGSfit)
 d <- readRDS(tedersoo_ITS.prior_for_analysis.path)
+d <- as.data.frame(d)
 
 #get covariates as complete cases.
 preds <- as.character(mod[[3]]$species_parameter_output[[1]]$predictor)
@@ -21,11 +22,10 @@ d.covs <- d.covs[complete.cases(d.covs),]
 d.covs$map <- log(d.covs$map)
 
 #isolate observed functional groups.
-obs <- d[,colnames(d) %in% c('Ectomycorrhizal','Arbuscular','Saprotroph','Pathogen')]
+obs <- d[,colnames(d) %in% c('Ectomycorrhizal','Saprotroph','Pathogen')]
 
 #get forecast
-f.cast <- ddirch_forecast_site.level(mod = mod,site_covs = d.covs)
-
+f.cast <- ddirch_forecast_site.level(mod = mod,site_covs = d.covs,n.samp = 20000)
 
 
 #getting plotting dataframes together.----
