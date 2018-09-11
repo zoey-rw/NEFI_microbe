@@ -83,6 +83,13 @@ wc_temp_raw_data.path <- paste0(wc2.dir,'worldclim2_temp_raw_data.rds')
 wc_prec_JAGS.path     <- paste0(wc2.dir,'precipitation_JAGS_model.rds')
 wc_temp_JAGS.path     <- paste0(wc2.dir,'temperature_JAGS_model.rds')
 
+#NEON soil uncertainty products.
+neon_uncertainty_dir <- paste0(dir,'NEON_soil_products/')
+cmd <- paste0('mkdir -p ',neon_uncertainty_dir)
+system(cmd)
+pC_NEON_uncertainty_model.path <- paste0(neon_uncertainty_dir,'pC_NEON_uncertainty_model.rds')
+cn_NEON_uncertainty_model.path <- paste0(neon_uncertainty_dir,'cn_NEON_uncertainty_model.rds')
+
 #### ITS/pecan_gen: Tedersoo 2014 prior data. ####
 dir <- paste0(ITS_pecan_gen_dir,'tedersoo_2014_data/')
 cmd <- paste0('mkdir -p ',dir)
