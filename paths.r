@@ -24,20 +24,32 @@ system(cmd)
 #This keeps data synced and nothing goes missing. There are transfer scripts that make sure this is done correctly.
 big_data_dir <- paste0(data.dir,'big_data/')
 data_ITS_dir <- paste0(data.dir,'ITS/')
+data_16S_dir <- paste0(data.dir,'16S/')
   ITS_scc_gen_dir <- paste0(data_ITS_dir,  'scc_gen/')
 ITS_pecan_gen_dir <- paste0(data_ITS_dir,'pecan_gen/')
+  scc_gen_16S_dir <- paste0(data_16S_dir,  'scc_gen/')
+pecan_gen_16S_dir <- paste0(data_16S_dir,'pecan_gen/')
+
 #make the directories if they don't exist.
 system(paste0('mkdir -p ',big_data_dir))
 system(paste0('mkdir -p ',data_ITS_dir))
 system(paste0('mkdir -p ',  ITS_scc_gen_dir))
 system(paste0('mkdir -p ',ITS_pecan_gen_dir))
+system(paste0('mkdir -p ', scc_gen_16S_dir))
+system(paste0('mkdir -p ', pecan_gen_16S_dir))
 
 
 #### big_data file paths. ####
+#Bahram 2018 sequences.
+bahram.seq.dir <- paste0(big_data_dir,'bahram_2018_seqs/')
+cmd <- paste0('mkdir -p ',bahram.seq.dir)
+system(cmd)
+
 #Tedersoo ITS prior paths
 #raw sequence directory.
 ted.seq.dir <- paste0(big_data_dir,'tedersoo_SRA_seqs/')
 cmd <- paste0('mkdir -p ',ted.seq.dir)
+system(cmd)
 
 #Raw NEON ITS sequence data from custom links provided by L.Stanish.
       NEON_ITS.dir <- paste0(big_data_dir,'NEON_raw_ITS_seqs/')
@@ -47,12 +59,20 @@ NEON_ITS_link_file <- paste0(NEON_ITS.dir,'NEON_rawFilesList.csv')
 
 #Raw NEON sequence data from MG-rast. only works for 16S currently.
 mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
-#setup place to save ITS data.
+#setup place to save MG-RAST sequence data.
 ASV_ITS.dir <- paste0(big_data_dir,'NEON_mgRAST_ASVs/ITS/')
 ASV_16S.dir <- paste0(big_data_dir,'NEON_mgRAST_ASVs/16S/')
 cmd <- paste0('mkdir -p ',ASV_ITS.dir)
+system(cmd)
 cmd <- paste0('mkdir -p ',ASV_16S.dir)
+system(cmd)
 
+#### 16S/scc_gen: bahram processed sequences ####
+dir <- paste0(scc_gen_16S_dir,'bahram_processed/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+ bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
+bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
 
 #### ITS/scc_gen: JAGS output paths. ####
 dir <- paste0(ITS_scc_gen_dir,'JAGS_output/')
