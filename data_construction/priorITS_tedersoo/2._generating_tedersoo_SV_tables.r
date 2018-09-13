@@ -11,8 +11,6 @@ library(data.table)
 
 #begin by testing this script with 2 .fastq files from the tedersoo study.
 seq.path <- ted.seq.dir
-#seq.path <- '/projectnb/talbot-lab-data/caverill/ted_test_fastq/' #for testing.
-#seq.path <- '/fs/data3/caverill/NEFI_microbial_data/ted_test_fastq/'
 
 #output file path.
 output_filepath1 <-  paste0(seq.path,'SV_table.rds')
@@ -147,6 +145,22 @@ out[is.na(out)] <- 0
 t.out <- t(out[,-1])
 colnames(t.out) <- as.character(out[,1])
 
+#reverse complement the SVs. For some reason these reads are 3'->5'. Thats why you trimmed the reverse primer to the left.
+to_flip <- colnames(t.out)
+dna.list <- list()
+for(i in 1:length(to_flip)){
+  dna.list[[i]] <- Biostrings::DNAString(to_flip[i])
+  dna.list[[i]] <- Biostrings::reverseComplement(dna.list[[i]])
+  dna.list[[i]] <- as.character(dna.list[[i]])
+}
+to_flip <- unlist(dna.list)
+#fix your DNA sequences as the column names of t.out
+colnames(t.out) <- to_flip
+
+#drop singletons, reads less than 100 bp.
+t.out <- t.out[,!colSums(t.out) == 1]
+t.out <- t.out[,nchar(colnames(t.out)) > 99]
+
 #convert from numeric dataframe to integer matrix. this is important for dada2 commands downstream.
 t.out <- as.matrix(t.out)
 t.out <- apply (t.out, c (1, 2), function (x) {(as.integer(x))})
@@ -157,11 +171,9 @@ cat('Removing chimeras...\n')
 t.out_nochim <- dada2::removeBimeraDenovo(t.out, method = 'consensus', multithread = T)
 cat('Chimeras removed.\n')
 
-#sequences must be at least 100bp.
-t.out_nochim <- t.out_nochim[,nchar(colnames(t.out_nochim)) > 99]
-
 #save output.
+cat('Saving output...\n')
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(t.out_nochim, output_filepath1)
 saveRDS(t.out_nochim, output_filepath2)
-cat('script complete.\n')
+cat('Output saved, script complete.\n')

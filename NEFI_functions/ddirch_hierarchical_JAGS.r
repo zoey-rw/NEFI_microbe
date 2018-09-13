@@ -94,7 +94,7 @@ hierarchical_dirlichet_jags   <- function(y,
   ###specify JAGS model.
   jags.model = "
   model {
-  #priors for each species*predictor*hierarchical-level
+  #priors for each species*predictor*hierarchical-level.----
   alpha ~ dnorm(0, 1.0E-3) 
   #core level priors
   for(i in 1:N.core.preds){
