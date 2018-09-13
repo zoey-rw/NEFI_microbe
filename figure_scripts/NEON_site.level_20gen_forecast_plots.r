@@ -5,7 +5,7 @@ source('paths.r')
 source('NEFI_functions/forecast_plot.r')
 
 #output path.
-figure.path <- paste0('figures/NEON_site.level_20gen_forecast.png')
+figure.path <- NEON_site.level_top20_forecast.fig.path
 
 #load and format forecast.----
 d <- readRDS(NEON_site_fcast_20gen.path)

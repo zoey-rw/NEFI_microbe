@@ -5,7 +5,7 @@ source('NEFI_functions/ddirch_forecast_site.level.r')
 source('NEFI_functions/forecast_plot.r')
 
 #output path
-figure.path <- 'figures/top20_prior_prediction.png'
+figure.path <- top20_prior_prediction.fig.path
 
 #data prep.----
 #load models and tedersoo prior data.

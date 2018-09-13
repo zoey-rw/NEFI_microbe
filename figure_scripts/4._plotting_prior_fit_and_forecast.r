@@ -7,7 +7,7 @@ source('NEFI_functions/ddirch_forecast_site.level.r')
 source('NEFI_functions/forecast_plot.r')
 
 #output path
-figure.path <- 'figures/ecto_prior_prediction.png'
+figure.path <- ecto_prior_prediction.fig.path
 
 #data prep for figure.----
 #load model results.

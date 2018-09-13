@@ -20,7 +20,7 @@ otu <- readRDS(ted_2014_SV.table.path)
 #load taxonomy.
 tax <- readRDS(ted_2014_tax.path)
 #load times- sent separately by Leho Tedersoo.
-time <- read.csv("/fs/data3/caverill/Microbial_Space_Time_data/tedersoo_2014.data/tedersoo2014_dates.csv", header = TRUE, row.names=1, check.names = FALSE)
+time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
 #load ecto hydrophobic status from hobbie
 em.trait <- data.table(read.csv(em_traits.path))
 
