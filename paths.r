@@ -116,6 +116,19 @@ core.table.path <- paste0(dir,'core.table.rds')
 plot.table.path <- paste0(dir,'plot.table.rds') 
 site.table.path <- paste0(dir,'site.table.rds') 
 
+#paths for hierarchical co-variate aggregation.
+core_obs.path  <- paste0(dir,'core_obs.rds')
+core_core.path <- paste0(dir,'core_core.rds')
+core_plot.path <- paste0(dir,'core_plot.rds')
+core_site.path <- paste0(dir,'core_site.rds')
+core_glob.path <- paste0(dir,'core_glob.rds')
+plot_plot.path <- paste0(dir,'plot_plot.rds')
+plot_site.path <- paste0(dir,'plot_site.rds')
+plot_glob.path <- paste0(dir,'plot_glob.rds')
+site_site.path <- paste0(dir,'site_site.rds')
+site_glob.path <- paste0(dir,'site_glob.rds')
+hierarch_filled.path <- paste0(dir,'hierarch_filled.path')
+
 #### ITS/pecan_gen: Forecast covariate paths.----
 #Aggregated NEON site level covariates and global level uncertainty for predictors
 dir <- paste0(ITS_pecan_gen_dir,'NEON_covariates/')

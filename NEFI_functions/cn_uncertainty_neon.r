@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-pC_uncertainty_neon.r <- function(x){
+cn_uncertainty_neon <- function(x){
   #load model fit.
   source('paths.r')
   mod <- readRDS(cn_NEON_uncertainty_model.path)

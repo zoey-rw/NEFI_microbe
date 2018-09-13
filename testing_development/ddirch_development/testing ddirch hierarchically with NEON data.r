@@ -1,7 +1,8 @@
 #Fit a hierarchical core/plot/site jags model.
 #clearn envirionment, source paths.
 rm(list=ls())
-source('/home/caverill/NEFI_microbe/data_formatting/formatting_NEON_microbial/core_site_plot_aggregation_May.2018/0. aggregation paths.r')
+source('paths.r')
+#source('/home/caverill/NEFI_microbe/data_formatting/formatting_NEON_microbial/core_site_plot_aggregation_May.2018/0. aggregation paths.r')
 #source some other functions
 source('NEFI_functions/hierarchical_linear_dirlichet_jags.r')
 source('NEFI_functions/crib_fun.r')
@@ -44,7 +45,7 @@ plot_plot <- as.factor(plot.table$plotID)
 site_site <- as.factor(site.table$siteID)
 
 #setup y, core, plot and site data frames, and associated sd tables where applicable.
-y <- obs.table[,2:5]
+y <- obs.table[,3:6]
 #dropping soil moisture and soil pH for now because all NA values for two site-dates of interest.
 #core <- core.table[,c('siteID','plotID','soilMoisture','soilInWaterpH','soilTemp')]
 #colnames(core)[3:5] <- c('moisture','pH','temperature')

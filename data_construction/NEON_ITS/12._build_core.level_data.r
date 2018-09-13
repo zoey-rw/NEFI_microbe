@@ -3,6 +3,9 @@
 rm(list=ls())
 library(runjags)
 source('paths.r')
+source('NEFI_functions/crib_fun.r')
+source('NEFI_functions/pC_uncertainty_neon.r')
+source('NEFI_functions/cn_uncertainty_neon.r')
 
 #1. observations made at the core level.----
 #samples with ITS data, along with DNA identifiers. Only take samples measured during peak greeness.
@@ -34,45 +37,26 @@ merged <- merged[!is.na(merged$siteID),]
 #Peak Greenness in 2014. 551 observations. 13 sites.
 merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
 
-#2. Get observation uncertainty for soil C and N, and their ratio.----
-duped <- dp1.10078[duplicated(dp1.10078$sampleID),]
-duped <- dp1.10078[dp1.10078$sampleID %in% duped$sampleID,]
+#finalize columns for core.level.
+core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','soilInWaterpH','organicCPercent','CNratio')]
+colnames(core.level)[(ncol(core.level) - 2) : ncol(core.level)] <- c('pH','pC','cn')
+core.level$pC_sd <- pC_uncertainty_neon(core.level$pC)
+core.level$cn_sd <- cn_uncertainty_neon(core.level$cn)
 
-#fit an observation uncertainty.
-pC <- duped[,c('sampleID','organicCPercent')]
-to_ag <- aggregate(organicCPercent ~ sampleID, data = pC, FUN = mean)
-colnames(to_ag)[2] <- 'mean_C'
-to_analyze <- merge(to_ag, pC[,c('sampleID','organicCPercent')], all.y=T)
-plot(organicCPercent ~ mean_C, data = to_analyze)
+#2. plot level observations.----
+#relative abundance EM trees
+dp.10098.plot <- readRDS(dp1.10098.00_plot.level.path)
 
-#jags model
-jags.model = "
-model {
-  #prior on relationship between mean and observed pC values.
-  #preliminary analysis says this is slope of 1, intercept of zero, as it should be. Not fitting an intercept.
-    m ~ dnorm(0, .0001) #flat uninformative priors.
-  
-  #magnitude of %C observation affects uncertainty.
-  #tau is still a function of sigma.
-  #sigma is now a funtion of an intercept (as before) and magnitude of C observation, with a parameter that gets fitted.
-  k0 ~ dunif(0,100)
-  k1 ~ dunif(0,100)
-  
-  #fit a linear model. x is mean C for an observation, y is observed.
-  for(i in 1:N){
-    y.hat[i] <-  m*x[i]
-    sigma[i] <- k0 + k1*x[i]
-      tau[i] <- pow(sigma[i], -2)
-        y[i] ~ dnorm(y.hat[i], tau[i])
-  }
-} #close model loop.
-"
-jd <- list(y=to_analyze$organicCPercent, x=to_analyze$mean_C, N = nrow(to_analyze))
-fit   <- run.jags(model = jags.model,
-                 data = jd,
-                 adapt = 200,
-                 burnin = 2000,
-                 sample = 3000,
-                 monitor = c('m','k0','k1')
-                  )
-out <- summary(fit)
+
+to.ag <- dp.10098.plot[,c('plotID','relEM','basal_live')]
+#gotta crib and logit transform to scale up.
+to.ag$relEM <- boot::logit(crib_fun(to.ag$relEM))
+plot.level <- aggregate(.~plotID, to.ag, mean, na.rm=T)
+plot_sd <- aggregate(.~plotID, to.ag, sd, na.rm = T)
+plot.level$siteID <- substring(plot.level$plotID,1,4)
+
+#3. site level observations.----
+site.level <- readRDS(site_level_data.path)
+
+
+

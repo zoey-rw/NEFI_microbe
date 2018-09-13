@@ -28,6 +28,7 @@ precision_matrix_match <- function(a,b){
   for(i in 1:ncol(a)){
     position <- grep(colnames(a)[i], colnames(b))
     if(length(position) > 0){
+      position <- position[1]
       colnames(b)[position] <- colnames(a)[i]
     }
   }

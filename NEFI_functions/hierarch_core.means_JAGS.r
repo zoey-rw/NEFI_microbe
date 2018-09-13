@@ -56,11 +56,16 @@ hierarch_core.means_JAGS <- function(x_mu, core_plot,
   #### setup JAGS data object. ####
   dat <- data.frame(x_mu,core_plot)
   dat <- dat[complete.cases(dat),]
+  dat <- dat[order(dat$core_plot),]
   plot_site <- substring(unique(dat$core_plot),1,4)
+  plot.names <- unique((dat$core_plot))
   site.names <- unique((plot_site))
-  #reorder site.names so it matches what they are going to be used as.
+  #reorder plot.names and site.names so it matches what they are going to be used as.
+  plot.order <- order(plot.names)
   site.order <- order(site.names)
+  plot.names <- as.character(plot.names[plot.order])
   site.names <- as.character(site.names[site.order])
+  
   
   jags.data <- list(N.core = nrow(dat), N.plot = length(plot_site), N.site = length(unique(plot_site)),
                     core_mu = dat$x_mu, core_plot = droplevels(as.factor(dat$core_plot)), plot_site = droplevels(as.factor(plot_site)))
@@ -69,20 +74,22 @@ hierarch_core.means_JAGS <- function(x_mu, core_plot,
   #runmode <- ifelse(parallel == T,T,F)
   mod  <- runjags::run.jags(model = jags.model,
                    data = jags.data,
-                   monitor = c('site_mu','global_mu'),
+                   monitor = c('plot_mu','site_mu','global_mu'),
                    adapt = n.adapt,
                    burnin = n.burnin,
                    sample = n.sample,
                    n.chains = n.chains)
   out <- summary(mod)
+  plot.table <- data.frame(out[grep('plot_mu', rownames(out)),])
+  plot.table$plotID <- plot.names
   site.table <- data.frame(out[grep('site_mu', rownames(out)),])
   site.table$siteID <- site.names
   glob.table <- data.frame(t(out[grep('global_mu', rownames(out)),]))
   
   
   #### return output ####
-  output.list <- list(out,site.table,glob.table)
-  names(output.list) <- c('jags.summary','site.table','glob.table')
+  output.list <- list(out,plot.table,site.table,glob.table)
+  names(output.list) <- c('jags.summary','plot.table','site.table','glob.table')
   return(output.list)
 
 }
