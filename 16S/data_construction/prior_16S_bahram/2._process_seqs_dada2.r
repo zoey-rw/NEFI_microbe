@@ -11,7 +11,7 @@
 rm(list=ls())
 library(dada2)
 source('paths.r')
-source('project_functions/tic_toc.r')
+source('NEFI_functions/tic_toc.r')
 
 
 #start with a test directory that includes only two samples, forward and reverse reads.
@@ -19,7 +19,7 @@ source('project_functions/tic_toc.r')
 #in an ideal world, this is all you would need to input.
 #Should have this output all figures and summary of which reads passed as separate files to check.
 #path <- bahram_test.dir
-path <- bahram_dir
+path <- bahram.seq.dir
 forward.read.motif <- '_1.fastq'
 reverse.read.motif <- '_2.fastq'
 
