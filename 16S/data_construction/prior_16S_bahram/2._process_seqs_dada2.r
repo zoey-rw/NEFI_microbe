@@ -144,6 +144,8 @@ rownames(track) <- sample.names
 #### save output path, tracking file and some plots. ####
 saveRDS        (track,     track.path)
 saveRDS(seqtab.nochim, esv.table.path)
+#also save to scc_gen data.
+saveRDS(seqtab.nochim, bahram_dada2_SV_table.path)
 
 #quality score plot.
 #plotQualityProfile(fnFs[1:2])

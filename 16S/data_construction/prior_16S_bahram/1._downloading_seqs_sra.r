@@ -26,3 +26,4 @@ system('rm -f SRAmetadb.sqlite')
 system('rm -f SRAmetadb.sqlite.gz')
 
 #end script.
+"$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
