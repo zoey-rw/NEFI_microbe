@@ -34,7 +34,7 @@ module load python/2.7.7
 #
 #
 # in the directory specified above, invoke this function:
-Rscript /project/talbot-lab-data/caverill/NEFI_16S/data_construction/prior_16S_bahram/2._trimming_samples.r
+Rscript 16S/data_construction/prior_16S_bahram/2._trimming_samples.r
 #
 #
 #End of commands.

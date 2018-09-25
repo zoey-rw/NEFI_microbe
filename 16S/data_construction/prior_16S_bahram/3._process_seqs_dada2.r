@@ -11,15 +11,15 @@
 rm(list=ls())
 library(dada2)
 source('paths.r')
-source('project_functions/tic_toc.r')
+source('NEFI_functions/tic_toc.r')
 
 
 #start with a test directory that includes only two samples, forward and reverse reads.
 #specify forward and reverse read motifs. 
 #in an ideal world, this is all you would need to input.
 #Should have this output all figures and summary of which reads passed as separate files to check.
-#path <- bahram_test.dir
-path <- bahram_dir
+path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test"
+#path <- bahram.seq.dir
 forward.read.motif <- '_1.fastq'
 reverse.read.motif <- '_2.fastq'
 
@@ -71,7 +71,7 @@ toc()
 #### "Learn" the error rates. ####
 #this takes a while, even with not a lot of reads.
 #this works with a subset of the data. So it takes about the same time with big or small data sets.
-#default number of reads is 1,000,000. You could speed up by drtopping the nreads parameter.
+#default number of reads is 1,000,000. You could speed up by dropping the nreads parameter.
 #This is a machine learning algorithm to dial in the error rate model of your reads.
 #Colin isn't really sure what an error rate model is. ¯\_(ツ)_/¯
 tic() #start timer loop.
@@ -85,8 +85,8 @@ toc() #end timer loop.
 #plotErrors(errF, nominalQ = T)
 
 
-####Depreplicate the sequences. ####
-#This combines idential reads in unique sequences.
+####Dereplicate the sequences. ####
+#This combines identical reads in unique sequences.
 #dada2 does a little more than this: it keeps quality information for downstream inference.
 #there is a mod to do this in parallel described here: https://benjjneb.github.io/dada2/bigdata.html
 tic()

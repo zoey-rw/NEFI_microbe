@@ -10,8 +10,8 @@ fwd.primer <- 'GTGYCAGCMGCCGCGGTAA'
 rev.primer <- 'GGACTACNVGGGTWTCTAAT'
 
 #Input path to sequences:
-#seq.dir <- '/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/'
-seq.dir <- bahram.seq.dir
+seq.dir <- '/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/'
+#seq.dir <- bahram.seq.dir
 
 
 #once directory and primers specified, below code is independent on user supplied parameters.
