@@ -12,6 +12,7 @@ rm(list=ls())
 library(dada2)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
+source('NEFI_functions/get_truncation_length.r')
 
 
 #start with a test directory that includes only two samples, forward and reverse reads.
@@ -36,25 +37,21 @@ fnRs <- sort(list.files(path, pattern = reverse.read.motif, full.names = T))
 sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
 
 #### quality filtering and trucantion. ####
-#We're going to perform some quality filtering and truncation to clip off the parts of the reads where the uality scores get gnarly.
-#Colin wishes there was an algorithm to decide this, rather than just eyeballing it.
-#If Zoey is reading this in the future, she should create this algorithm and call it as a function!
-#Just find where median line crosses some threshold on average or minimum for a bunch of samples, then use that.
+#We're going to perform some quality filtering and truncation to clip off the parts of the reads where the quality scores get gnarly.
 
 #setup filtered files in a filtered sub directory.
 filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
 filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
 
 #Inspect quality score patterns.
-#You can get buy on doing this with like two samples. Its just a visual check.
+#You can get by on doing this with like two samples. Its just a visual check.
 #quality scores will drop off at the end of the read. This will happen sooner for reverse reads.
 #plotQualityProfile(fnFs[1:2])
 #plotQualityProfile(fnRs[1:2])
 
 #choose truncation length.
-#Colin is calling this whenever the green line drops below 30, according to his eyeball.
-truncation.length.forward <- 240
-truncation.length.reverse <- 150
+truncation.length.forward <- min(get_truncation_length(fnFs[1:2]))
+truncation.length.reverse <- min(get_truncation_length(fnRs[1:2]))
 #filter
 tic()
 cat('Begin quality filtering...\n')
