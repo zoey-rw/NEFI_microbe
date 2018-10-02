@@ -12,7 +12,7 @@
 #' 
 #' @examples
 
-get_truncation_length <-function (fl, qscore = 30, n = 5e+05){
+get_truncation_length <-function (fl, qscore = 30, n = 5e+05, quiet = TRUE){
   trunc_lengths <- data.frame(file = character(0), early_lowqual = numeric(0),
                               trunc_length = numeric(0))
   for (f in fl) {
@@ -26,8 +26,10 @@ get_truncation_length <-function (fl, qscore = 30, n = 5e+05){
     
     trunc_lengths <- rbind(trunc_lengths, data.frame(file = f, early_lowqual = lowqual_in_first_10,
                                                     trunc_length = ifelse(is.na(lowqual_after_10), length(means), lowqual_after_10))) 
+
+if (quiet == FALSE) {
   if(lowqual_in_first_10 > 0){
-    cat(paste0(basename(f),': ', lowqual_under_10, ' bases within first 10 bases are below your quality score. Consider trimming left.\n'))
+    cat(paste0(basename(f),': ', lowqual_in_first_10, ' bases within first 10 bases are below your quality score. Consider trimming left.\n'))
     } 
   if (is.na(lowqual_after_10)){
     cat(paste0(basename(f), ': After first 10 bases, no bases with a mean under your quality score found. Truncate at end of read, base: ', length(means),'\n'))
@@ -36,6 +38,7 @@ get_truncation_length <-function (fl, qscore = 30, n = 5e+05){
     cat(paste0(basename(f),': After first 10 bases, first mean below your quality score is base: ',lowqual_after_10,'\n'))  
   
     } else "Something's wrong. Inspect function/reads."
-  } # end loop
+} # end printing to console  
+} # end loop
 return(trunc_lengths$trunc_length)  
 } # end function
