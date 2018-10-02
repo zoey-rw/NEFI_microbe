@@ -3,15 +3,16 @@
 rm(list=ls())
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
+source('NEFI_functions/fg_assign_parallel.r')
 library(doParallel)
 
 #load ASV table, set output path.----
 #this needs a lot of memory.
 d <- readRDS(NEON_SV.table.path)
-output.path <- NEON_tax.path
+output.tax.path <- NEON_tax.path
 
 #1. download unite training set.----
-#cat('downloading UNITE database...\n')
+cat('downloading UNITE database...\n')
 unite_url <- 'https://files.plutof.ut.ee/doi/B2/07/B2079372C79891519EF815160D4467BBF4AF1288A23E135E666BABF2C5779767.zip'
 unite_path.zip <- paste0(data.dir,'unite.fa.zip')
 unite_path     <- paste0(data.dir,'sh_general_release_dynamic_01.12.2017.fasta')
@@ -27,6 +28,9 @@ cat('UNITE download complete.\n')
 #2_alternate. assign taxonomy in parallel using colin's parallel hack.----
 n <- detectCores()
 registerDoParallel(cores=n)
+if(is.na(n)){
+  cat("Detect cores failed. Who knows what doParallel is doing.")
+}
 
 #set breakpoints for subsetting taxonomy list.
 to_assign <- colnames(d)
@@ -57,7 +61,7 @@ tax <- data.frame(do.call('rbind',output.list))
 
 
 #3. save output.----
-saveRDS(tax, output.path)
+saveRDS(tax, output.tax.path)
 
 #4. cleanup.----
 system(paste0('rm -f ',unite_path.zip))

@@ -53,7 +53,6 @@ system(cmd)
 
 #Raw NEON ITS sequence data from custom links provided by L.Stanish.
       NEON_ITS.dir <- paste0(big_data_dir,'NEON_raw_ITS_seqs/')
-NEON_ITS_link_file <- paste0(NEON_ITS.dir,'NEON_rawFilesList.csv')
   NEON_ITS_SV.path <- paste0(NEON_ITS.dir,'NEON_ITS_sv.rds')
  NEON_ITS_tax.path <- paste0(NEON_ITS.dir,'NEON_ITS_tax.rds')
 
@@ -89,6 +88,7 @@ ted_2014_SV.table.path <- paste0(ITS_scc_gen_dir,'ted_2014_SV.table.rds')
 #### ITS/scc_gen: NEON to forecast SV and taxonomy paths. ####
 NEON_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_SV.table.rds')
      NEON_tax.path <- paste0(ITS_scc_gen_dir,'NEON_tax.rds') 
+     NEON_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fun.rds')
      
 #### ITS/pecan_gen: Uncertainty product paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
@@ -202,6 +202,8 @@ system(cmd)
             ted_map_raw.path <- paste0(dir,'tedersoo_2014_mapping_file.csv')
             ted_otu_raw.path <- paste0(dir,'tedersoo_2014_otu_file.txt')
      ted_sampling_dates.path <- paste0(dir,'tedersoo2014_dates.csv')
+          NEON_ITS_link_file <- paste0(dir,'NEON_rawFilesList.csv')
+     
  
 #### NEON pre-release: otu tables from L. Stanish. ####
 #This is a one off, will be replaced by our own pipeline eventually.
