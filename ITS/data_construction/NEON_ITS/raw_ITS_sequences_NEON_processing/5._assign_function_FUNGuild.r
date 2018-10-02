@@ -9,6 +9,11 @@ library(doParallel)
 tax <- readRDS(NEON_tax.path)
 output.path <- NEON_fun.path
 
+#remove leading "k__".
+for(i in 1:ncol(tax)){
+  tax[,i] <- substring(tax[,i],4)
+}
+
 #2. Setup parallel environment.----
 n <- detectCores()
 registerDoParallel(cores=n)
@@ -21,11 +26,10 @@ if(is.na(n)){
 cat('Assigning function using FUNGuild in parallel...\n')
 tic()
 tax.fun <- fg_assign_parallel(tax,n.cores=n)
-saveRDS(tax.fun, output.fun.path)
 cat('Functional assignment complete.\n')
 toc()
 
-#save output.
+#4. save output.----
 saveRDS(tax.fun,output.path)
 
 #end script.

@@ -104,6 +104,6 @@ fg_assign_parallel <- function(tax_table, url = "http://www.stbates.org/funguild
   tax_table <- cbind(tax_table, out)
 
   #report and return output.
-  cat(sum(!is.na(tax_table$guild))/(nrow(tax_table))*100,'% of taxa assigned a functional guild.', sep = '')
+  cat(sum(!is.na(tax_table$guild))/(nrow(tax_table))*100,'% of taxa assigned a functional guild.\n', sep = '')
   return(tax_table)
-}
+} #end function.
