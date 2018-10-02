@@ -19,8 +19,8 @@ source('NEFI_functions/get_truncation_length.r')
 #specify forward and reverse read motifs. 
 #in an ideal world, this is all you would need to input.
 #Should have this output all figures and summary of which reads passed as separate files to check.
-path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test"
-#path <- bahram.seq.dir
+#path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test"
+path <- bahram.seq.dir
 forward.read.motif <- '_1.fastq'
 reverse.read.motif <- '_2.fastq'
 
@@ -50,8 +50,8 @@ filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
 #plotQualityProfile(fnRs[1:2])
 
 #choose truncation length.
-truncation.length.forward <- min(get_truncation_length(fnFs[1:2]))
-truncation.length.reverse <- min(get_truncation_length(fnRs[1:2]))
+truncation.length.forward <- median(get_truncation_length(fnFs[1:2]))
+truncation.length.reverse <- median(get_truncation_length(fnRs[1:2]))
 #filter
 tic()
 cat('Begin quality filtering...\n')

@@ -8,10 +8,6 @@ source('paths.r')
 source('NEFI_functions/tic_toc.r')
 library(doParallel)
 
-bahram_dada2_SV_table.path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/dada2_output/esv_table.rds"
-bahram_dada2_tax_table.path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/bahram_processed/bahram_dada2_tax_table.rds"
-data.dir <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/"
-
 #Here i load an OTU table with column names as unique sequences to assign.
 otu <- readRDS(bahram_dada2_SV_table.path)
 to_assign <- colnames(otu) #grab sequences to assign.
