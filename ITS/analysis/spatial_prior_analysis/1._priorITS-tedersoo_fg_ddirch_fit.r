@@ -12,18 +12,21 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
 source('NEFI_functions/crib_fun.r')
 
-#detect and register cores.
+#detect and register cores.----
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
-#load tedersoo data.
+#set output path.----
+output.path <- ted_ITS.prior_fg_JAGSfit
+
+#load tedersoo data.----
 #d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis dataset.
 d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
 
-#organize y data
+#organize y data----
 y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen)]
 y$other <- 1 - rowSums(y)
 y <- data.frame(lapply(y,crib_fun, N = nrow(y) * ncol(y)))
@@ -38,7 +41,7 @@ y <- as.data.frame(y)
 #reorder columns. other needs to be first.
 y <- y[,c('other','Ectomycorrhizal','Pathogen','Saprotroph')]
 
-#Drop in intercept, setup predictor matrix.
+#Drop in intercept, setup predictor matrix.----
 #IMPORTANT: LOG TRANSFORM MAP.
 d$intercept <- rep(1,nrow(d))
 d$map <- log(d$map)
@@ -50,7 +53,7 @@ x.site <- d[,.(intercept,pC,cn,pH,forest,conifer,relEM)]
 x.all  <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
 x.list <- list(x.clim,x.site,x.all)
 
-#fit model using function.
+#fit model using function.----
 #This take a long time to run, probably because there is so much going on.
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
@@ -63,9 +66,9 @@ output.list<-
 #get intercept only fit.
 output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
 
-#name the items in the list
+#name the items in the list, save output.----
 names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 
 cat('Saving fit...\n')
-saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
+saveRDS(output.list, output.path)
 cat('Script complete. \n')

@@ -156,6 +156,9 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
 NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
+  NEON_taxa_fg.path <- paste0(dir,'NEON_taxa_fg.rds')
+NEON_site.level_fg_obs.path <- paste0(dir,'NEON_site.level_fg_obs.rds')
+NEON_plot.level_fg_obs.path <- paste0(dir,'NEON_plot.level_fg_obs.rds')
 
 #### ITS/pecan_gen: Forecast output paths.----
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
