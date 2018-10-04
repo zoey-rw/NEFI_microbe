@@ -14,6 +14,9 @@ source('NEFI_functions/crib_fun.r')
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
+#set output path.----
+output.path <- ted_ITS.prior_20gen_JAGSfit
+
 #load tedersoo data.
 #d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
 d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
@@ -69,5 +72,5 @@ output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=
 names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 
 cat('Saving fit...\n')
-saveRDS(output.list, ted_ITS.prior_fg_JAGSfit)
+saveRDS(output.list, output.path)
 cat('Script complete. \n')
