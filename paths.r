@@ -114,8 +114,12 @@ cn_NEON_uncertainty_model.path <- paste0(neon_uncertainty_dir,'cn_NEON_uncertain
 dir <- paste0(ITS_pecan_gen_dir,'tedersoo_2014_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
+   tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
 tedersoo_ITS.prior_fromSV_analysis.path <- paste0(dir,'tedersoo_ITS.prior_fromSV_analysis.rds')
+            tedersoo_ITS_clean_map.path <- paste0(dir,'tedersoo_ITS_clean_map.rds')
+              tedersoo_ITS_fg_list.path <- paste0(dir,'tedersoo_ITS_fg_list.rds')
+           tedersoo_ITS_hydro_list.path <- paste0(dir,'tedersoo_ITS_hydro_list.rds')
+    tedersoo_ITS_cosmo_genera_list.path <- paste0(dir,'tedersoo_ITS_cosmo_genera_list.rds')
 
 #### ITS/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'NEON_data_aggregation/')

@@ -78,7 +78,7 @@ fun.list <- data.frame(t(do.call('rbind',fun.list)))
 colnames(fun.list) <- function_groups
 
 
-#get Cosmopolitatn genera presence/absence and counts.----
+#get Cosmopolitan genera presence/absence and counts.----
 genera <- unique(tax$genus)
 test <- data.table(cbind(tax, t(sv)))
 abundance <- list()
@@ -112,18 +112,22 @@ cosmo.counts <- count.out[rownames(count.out) %in% cosmo$genera,]
 cosmo.counts <- data.frame(t(cosmo.counts))
 
 
-#merge in cosmopolitan genera counts, calculate relative counts.----
+#merge in cosmopolitan genera counts.----
 fun.list$ID <- rownames(fun.list)
 cosmo.counts$ID <- rownames(cosmo.counts)
 counts <- merge(fun.list, cosmo.counts)
 counts$seq.depth <- rowSums(sv)
 rownames(counts) <- counts$ID
 
-#get relative counts.
+#calculate relative counts.----
 rel.counts <- counts
 rel.counts[,2:(ncol(rel.counts) - 1)] <- rel.counts[,2:(ncol(rel.counts) - 1)] / rel.counts$seq.depth
 rel.counts[is.na(rel.counts)] <- 0
 
+#get other IDs in here. deprecatedVialID does not match all products.----
+    counts <- merge(counts,map[,c('deprecatedVialID','geneticSampleID')], by.x = 'ID', by.y = 'deprecatedVialID', all.x = T)
+rel.counts <- merge(rel.counts, map[,c('deprecatedVialID','geneticSampleID')], by.x = 'ID', by.y = 'deprecatedVialID', all.x=T)
+  
 #save output.----
 dat.out <- list(counts,rel.counts)
 names(dat.out) <- c('counts','rel.counts')

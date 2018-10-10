@@ -8,7 +8,7 @@ source('NEFI_functions/pC_uncertainty_neon.r')
 source('NEFI_functions/cn_uncertainty_neon.r')
 source('NEFI_functions/hierarch_core.means_JAGS.r')
 
-#load data.
+#load data, subset and order.----
 #samples with ITS data, along with DNA identifiers. Only take samples measured during peak greeness.
 dp1.10801 <- readRDS(dp1.10108.00_output.path)
 dp1.10801$geneticSampleID <- as.character(dp1.10801$geneticSampleID)
@@ -24,7 +24,7 @@ dp1.10086$geneticSampleID <- as.character(dp1.10086$geneticSampleID)
 dp1.10078 <- readRDS(dp1.10078.00_output.path)
 dp1.10078$site_date_plot <- paste0(dp1.10078$siteID,'-',dp1.10078$dateID,'-',dp1.10078$plotID)
 
-#merge these 3 sets of observations together.
+#merge observations together.----
 to_merge <- dp1.10086[,!c(colnames(dp1.10086) %in% colnames(dp1.10801))]
 to_merge$geneticSampleID <- dp1.10086$geneticSampleID
 merged <- merge(dp1.10801,to_merge)
@@ -35,18 +35,18 @@ merged <- merge(merged,to_merge, by = 'sampleID', all.x=T)
 merged$year <- substring(merged$dateID,1,4)
 merged <- merged[!is.na(merged$siteID),]
 
-#Peak Greenness in 2014. 551 observations. 13 sites.
+#Subset to Peak Greenness in 2014. 551 observations. 13 sites.----
 merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
 #get rid of duped geneticSampleIDs.
 merged <- merged[!(duplicated(merged$geneticSampleID)),]
 
-#finalize columns for core.level.
+#finalize columns for core.level.----
 core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','soilInWaterpH','organicCPercent','CNratio')]
 colnames(core.level)[(ncol(core.level) - 2) : ncol(core.level)] <- c('pH','pC','cn')
 core.level$pC_sd <- pC_uncertainty_neon(core.level$pC)
 core.level$cn_sd <- cn_uncertainty_neon(core.level$cn)
 
-#get higher level observations and uncertainties (plot, site and global level.)
+#get higher level observations and uncertainties (plot, site and global level.)----
 #pC
 pC.ag <- hierarch_core.means_JAGS(core.level$pC,core_plot = core.level$plotID)
 pC.plot <- pC.ag$plot.table[,c('plotID','Mean','SD')]
@@ -103,14 +103,8 @@ pred <- c('pC','cn','pH')
 glob.out <- cbind(pred,glob.out)
 
 #save output.----
-saveRDS(core.obs, core_obs.path)
+saveRDS(core.obs,  core_obs.path)
 saveRDS(core.out, core_core.path)
 saveRDS(plot.out, core_plot.path)
 saveRDS(site.out, core_site.path)
 saveRDS(glob.out, core_glob.path)
-
-
-#hierarchically fill in missing values, save set of products as a list.
-
-
-

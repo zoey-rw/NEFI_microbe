@@ -8,6 +8,7 @@
 #5. Once you get this done, hope ddirch aggregation is solved. If not, ask Mike. THen we can validate.
 #6. Replication *should* be quick on the bacteria side. Clustered, binned taxonomically.
 #7. Fit prior, then send prior through core-level forecast, aggregate plot and site level using something.
+#8. NOTE: CPER, STER and WOOD are plains. You need to tell the filling that there are no ectomycorrhizal trees here.
 #clearn environment, loads paths.
 rm(list=ls())
 source('paths.r')
@@ -15,6 +16,9 @@ source('NEFI_functions/precision_matrix_match.r')
 
 #set output path.
 output.path <- hierarch_filled.path
+
+#specify sites with zero ectomycorrhizal trees (plains sites)
+no.ecm <- c('CPER','STER','WOOD')
 
 #load prior model fit- model fit at site level.
 mod <- readRDS(ted_ITS.prior_fg_JAGSfit)
@@ -130,6 +134,10 @@ for(j in 1:ncol(plot_site_mu)){
     plot_site_mu[is.na(plot_site_mu[,j]),j] <- plot_glob[plot_glob$pred == name,'Mean']
     plot_site_sd[is.na(plot_site_sd[,j]),j] <- plot_glob[plot_glob$pred == name,'SD'  ]
   }
+  if(name == 'b.relEM'){
+    plot_site_mu[plot_site_mu$siteID %in% no.ecm,j] <- -10
+    plot_site_sd[plot_site_sd$siteID %in% no.ecm,j] <- 0.01
+  }
 }
 #plot_plot
 for(j in 1:ncol(plot_plot_mu)){
@@ -143,7 +151,13 @@ for(j in 1:ncol(plot_plot_mu)){
       }
     }
   }
+  if(name == 'b.relEM'){
+    plot_plot_mu[plot_plot_mu$siteID %in% no.ecm, j] < -10
+    plot_plot_sd[plot_plot_sd$siteID %in% no.ecm, j] <- 0.01
+  }
 }
+
+
 #site_site
 site_site_mu <- site_site_mu[site_site_mu$siteID %in% core_obs$site,]
 site_site_sd <- site_site_sd[site_site_sd$siteID %in% core_obs$site,]

@@ -3,32 +3,31 @@
 #clear environment, source packages, functions and paths.
 rm(list=ls())
 source('paths.r')
-source('NEFI_functions/fg_assign.r')
-#source('NEFI_functions/lineaus.r')
 source('NEFI_functions/worldclim2_grab.r')
 source('NEFI_functions/arid_extract.r')
-#source('NEFI_functions/crib_fun.r')
+library(data.table)
 
-#number of genera to keep (top 10 or 20 most abundant)
-n.gen <- 20
+#Set output path.----
+output.path <- tedersoo_ITS_clean_map.path
 
 #load  files.----
 map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
 map <- data.table(map)
-#load SV table as otu file.
-otu <- readRDS(ted_2014_SV.table.path)
-#load taxonomy.
-tax <- readRDS(ted_2014_tax.path)
 #load times- sent separately by Leho Tedersoo.
 time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
+
+#load SV table as otu file. Needed for subsetting.
+otu <- readRDS(ted_2014_SV.table.path)
+#load taxonomy.
+#tax <- readRDS(ted_2014_tax.path)
 #load ecto hydrophobic status from hobbie
-em.trait <- data.table(read.csv(em_traits.path))
+#em.trait <- data.table(read.csv(em_traits.path))
 
 #### Format mapping file.----
 #subset to northern temperate latitudes
 map <- map[latitude < 66.5 & latitude > 23.5,]
 
-#format the time data frame (get rid of an empty column, etc.)
+#format the time data frame (get rid of an empty column, etc.)----
 colnames(time)[1] <- 'human.date'
 time[2] <- NULL
 #convert human readable date to days since epoch
@@ -50,13 +49,33 @@ map$forest <-ifelse(map$Biome %in% c('Temperate coniferous forests','Temperate d
 map$conifer <- ifelse(map$Biome %in% c('Temperate coniferous forests'),1,0)
 map[grep('Pinus',Dominant.Ectomycorrhizal.host),conifer := 1]
 
-#rename some things.
+#rename some things, subset to columns of interest.----
 map$relEM <- map$Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.
+map$SRR.id <- as.character(map$SRR.id)
+rownames(map) <- map$SRR.id
+map <- map[,.(tedersoo.code,SRR.id,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,forest,conifer,relEM)]
+setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
+             c('Mapping.ID'   ,'moisture','pN','pC','cn' ))
+map <- as.data.frame(map)
+
+#get worldclim2 cliamte variables and aridity index.----
+climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
+climate$aridity <- arid_extract(map$latitude, map$longitude)
+map <- cbind(map, climate)
+
+#subset map so that it does not include observations not in otu table.----
+map <- map[map$SRR.id %in% rownames(otu),]
+
+#save output.----
+saveRDS(map, output.path)
 
 
 #taxonomic and functional assignment.----
 #subset otu table and tax table to only include observations in map file
-map$SRR.id <- as.character(map$SRR.id)
+
+#number of genera to keep (top 10 or 20 most abundant)
+n.gen <- 20
+
 otu <- otu[rownames(otu) %in% map$SRR.id,]
 map <- map[map$SRR.id %in% rownames(otu),]
 #order OTU table to match the mapping file
@@ -119,14 +138,22 @@ colSums(otu)
 genera <- unique(tax$genus)
 test <- data.table(cbind(tax, otu))
 seq.out <- list()
+cosmo.out <- list()
 for(i in 1:length(genera)){
   z <- test[genus == genera[i],]
   start <- ncol(tax) + 1
   out <- colSums(z[,start:ncol(z)])
+  cosmo <- length(out[out > 0]) / length(out)
   seq.out[[i]] <- out
+  cosmo.out[[i]] <- cosmo
 }
 #Count genus level abundance, grab some number of most abundant genera
 seq.out <- do.call('rbind',seq.out)
+cosmo.out <- do.call('rbind',cosmo.out)
+j <- data.table(cbind(genera,cosmo.out))
+colnames(j)[2] <- 'cosmo'
+j$cosmo <- as.numeric(j$cosmo)
+j <- j[order(-cosmo),]
 counts <- rowSums(seq.out)
 k <- data.table(cbind(genera,counts))
 k$counts <- as.numeric(as.character(k$counts))
@@ -174,24 +201,12 @@ fun.list <- data.frame(t(do.call('rbind',fun.list)))
 colnames(fun.list) <- function_groups
 fun.list$Mapping.ID <- rownames(fun.list)
 
-#Merge together data aggregated groups you want for analysis.
+#Merge together data aggregated groups you want for analysis.----
 abundances <- merge(fun.list,gen.list)
 abundances <- merge(abundances,hydro.out)
 
 #final merging of files and worldclim grab.----
 #grab columns from map actually of interest.
-map <- map[,.(tedersoo.code,SRR.id,Site,longitude,latitude,pH,Moisture,N,C,C_N,human.date,doy,epoch.date,NPP,forest,conifer,relEM)]
 map <- merge(map,abundances, by.x = 'SRR.id',by.y = 'Mapping.ID')
 
-#get worldclim2 cliamte variables and aridity index
-climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
-climate$aridity <- arid_extract(map$latitude, map$longitude)
-map <- cbind(map, climate)
-
-#rename some things.
-setnames(map,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
-         c('Mapping.ID'   ,'moisture','pN','pC','cn'))
-
-#save output.----
-saveRDS(map, tedersoo_ITS.prior_fromSV_analysis.path)
 
