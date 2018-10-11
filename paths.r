@@ -153,14 +153,19 @@ site_site.path <- paste0(dir,'site_site.rds')
 site_glob.path <- paste0(dir,'site_glob.rds')
 hierarch_filled.path <- paste0(dir,'hierarch_filled.path')
 
+#cleanup of NEON fun (which also has taxonomy) and SV tables.
+NEON_SV.table_clean.path <- paste0(dir,'NEON_SV.table_clean.rds')
+     NEON_fun_clean.path <- paste0(dir,'NEON_fun_clean.rds')
+
 #### ITS/pecan_gen: Forecast covariate paths.----
 #Aggregated NEON site level covariates and global level uncertainty for predictors
 dir <- paste0(ITS_pecan_gen_dir,'NEON_covariates/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
-NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
-  NEON_taxa_fg.path <- paste0(dir,'NEON_taxa_fg.rds')
+        NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
+        NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
+          NEON_taxa_fg.path <- paste0(dir,'NEON_taxa_fg.rds')
+     NEON_cosmo_genera.path <- paste0(dir,'NEON_cosmo_genera.rds')
 NEON_site.level_fg_obs.path <- paste0(dir,'NEON_site.level_fg_obs.rds')
 NEON_plot.level_fg_obs.path <- paste0(dir,'NEON_plot.level_fg_obs.rds')
 

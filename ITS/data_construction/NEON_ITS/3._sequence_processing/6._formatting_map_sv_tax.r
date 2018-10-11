@@ -7,8 +7,10 @@ source('paths.r')
 source('NEFI_functions/fg_assign.r')
 source('NEFI_functions/fg_assign_parallel.r')
 
-#load data, set output path.----
+#set output paths.----
 output.path <- NEON_taxa_fg.path
+
+#load data.----
 sv <- readRDS(NEON_SV.table.path)
 map <- readRDS(hierarch_filled.path)
 map <- map$core.obs
