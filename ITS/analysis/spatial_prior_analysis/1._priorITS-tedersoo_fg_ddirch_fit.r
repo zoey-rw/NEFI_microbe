@@ -21,7 +21,7 @@ output.path <- ted_ITS.prior_fg_JAGSfit
 
 #load tedersoo data.----
 #d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis dataset.
-d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
+#d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
 y <- readRDS(tedersoo_ITS_fg_list.path)
 y <- y$abundances

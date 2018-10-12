@@ -17,31 +17,29 @@ registerDoParallel(cores=n.cores)
 #set output path.----
 output.path <- ted_ITS.prior_20gen_JAGSfit
 
-#load tedersoo data.
+#load tedersoo data.----
 #d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
-d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
-#d <- d[1:35,] #for testing
-start <- which(colnames(d)=="Mortierella")
-  end <- which(colnames(d)=="Amphinema"  )
-y <- d[,start:end]
-x <- d[,.(pC,cn,pH,NPP,map,mat,forest,conifer,relEM)]
-d <- cbind(y,x)
+#d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
+d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
+y <- readRDS(tedersoo_ITS_cosmo_genera_list.path)
+y <- y$abundances
+d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-y <- d[,colnames(d) %in% colnames(y), with = F]
-x <- d[,colnames(d) %in% colnames(x), with = F]
-
-#make other column
-y$other <- 1 - rowSums(y)
-y <- data.frame(lapply(y,crib_fun, N = ncol(y)*nrow(y)))
-#in the rare case where one column actually needs to be a zero for a row to prevent to summing over 1...
-for(i in 1:nrow(y)){
-  if(rowSums(y[i,]) > 1){
-    y[i,] <- y[i,] / rowSums(y[i,])
-  }
+d <- d[1:35,] #for testing
+y <- y[rownames(y) %in% d$SRR.id,]
+if(!sum(rownames(y) == d$SRR.id) == nrow(y)){
+  cat('Warning. x and y covariates not in the same order!')
 }
+
+#Get relative counts by adding 1 to all observations (can't handle zeros).----
+y <- y + 1
+y <- y/rowSums(y)
 y <- as.data.frame(y)
 
 #Drop in intercept, setup predictor matrix.
+x <- d
+rownames(x) <- x$SRR.id
+x$SRR.id <- NULL
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
 
