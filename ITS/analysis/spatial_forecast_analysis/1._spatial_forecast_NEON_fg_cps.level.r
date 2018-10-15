@@ -7,6 +7,9 @@ source('paths.r')
 source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast.r')
 
+#set output path.----
+output.path <- NEON_site_fcast_fg.path
+
 #load model results.----
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
@@ -83,6 +86,12 @@ core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=co
 plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID)
 site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID)
 
+#store output as a list and save.----
+output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
+names(output) <- c('core.fit','plot.fit','site.fit',
+                   'core.preds','plot.preds','site.preds',
+                   'core.sd','plot.sd','site.sd')
+saveRDS(output, output.path)
 
 #validate against observed data by plotting.----
 par(mfrow = c(3,1))
@@ -94,7 +103,7 @@ i = 2 #ECM fungi
 #organize data.
 fcast <- core.fit
 truth <- readRDS(NEON_taxa_fg.path)
-truth <- truth$rel.counts
+truth <- truth$rel.abundances
 rownames(truth) <- gsub('-GEN','',truth$geneticSampleID)
 truth <- truth[rownames(truth) %in% rownames(core.fit$mean),]
 for(k in 1:length(fcast)){
