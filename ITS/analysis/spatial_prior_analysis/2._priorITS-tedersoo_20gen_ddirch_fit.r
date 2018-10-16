@@ -25,7 +25,7 @@ y <- readRDS(tedersoo_ITS_cosmo_genera_list.path)
 y <- y$abundances
 d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[1:35,] #for testing
+#d <- d[1:35,] #for testing
 y <- y[rownames(y) %in% d$SRR.id,]
 if(!sum(rownames(y) == d$SRR.id) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
