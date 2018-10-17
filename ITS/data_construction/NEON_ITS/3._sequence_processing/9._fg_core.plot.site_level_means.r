@@ -9,22 +9,21 @@ site.output.path <- NEON_site.level_fg_obs.path
 
 #load data and format.----
 d <- readRDS(NEON_taxa_fg.path)
-fg.c <- d$counts
-fg.c <- fg.c[,c('ID','Ectomycorrhizal','Saprotroph','Pathogen')]
-fg.r <- d$rel.counts
-fg.r <- fg.r[,c('ID','Ectomycorrhizal','Saprotroph','Pathogen')]
-#get y dependent matrix.
+fg.c <- d$abundances
+fg.c <- fg.c[,!colnames(fg.c) %in% c('deprecatedVialID','other')]
+
+#get y dependent matrix.----
 y <- fg.c
-y$ID <- NULL
+y$geneticSampleID <- NULL
 y <- as.matrix(y)
 y <- y+1 #dirichlet doesn't like hard zeros because log-link.
-y <- y/d$counts$seq.depth
+y <- y/d$seq_total
 other <- 1- rowSums(y)
 y <- cbind(other,y)
 
 #get core_plot, core_site, plot_site
-core_plot <- substr(fg.c$ID,1,8)
-core_site <- substr(fg.c$ID,1,4)
+core_plot <- substr(fg.c$geneticSampleID,1,8)
+core_site <- substr(fg.c$geneticSampleID,1,4)
 plot_site <- unique(core_plot)
 plot_site <- substr(plot_site,1,4)
 

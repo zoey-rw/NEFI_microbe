@@ -75,12 +75,14 @@ site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
-#test the forecast function.
+#test the forecast function. works.
 ref <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID)
 zero_covariate <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_covariate_uncertainty = T)
 zero_parameter <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_parameter_uncertainty = T)
 zero_process <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_process_uncertainty = T)
 
+#generally goes down, the biggest effect is process.
+#Prob need more simulations to really lock down small differences due to parameter and process.
 head(ref$pi_0.975)
 head(zero_covariate$pi_0.975)
 head(zero_parameter$pi_0.975)

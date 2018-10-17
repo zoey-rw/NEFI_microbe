@@ -174,13 +174,15 @@ system(cmd)
      NEON_cosmo_genera.path <- paste0(dir,'NEON_cosmo_genera.rds')
 NEON_site.level_fg_obs.path <- paste0(dir,'NEON_site.level_fg_obs.rds')
 NEON_plot.level_fg_obs.path <- paste0(dir,'NEON_plot.level_fg_obs.rds')
+NEON_site.level_genera_obs.path <- paste0(dir,'NEON_site.level_genera_obs.rds')
+NEON_plot.level_genera_obs.path <- paste0(dir,'NEON_plot.level_genera_obs.rds')
 
 #### ITS/pecan_gen: Forecast and variable importance output paths.----
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_site_fcast_fg.path <- paste0(dir,'NEON_fcast_site.level_fg.rds')
-NEON_site_fcast_20gen.path <- paste0(dir,'NEON_fcast_site.level_20gen.rds')
+NEON_site_fcast_genera.path <- paste0(dir,'NEON_fcast_site.level_genera.rds')
 NEON_fg_variable_importance_data.path <- paste0(dir,'NEON_fg_variable_importance_data.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
