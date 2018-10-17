@@ -97,7 +97,7 @@ saveRDS(output, output.path)
 par(mfrow = c(3,1))
 trans <- 0.3
 limy <- c(0,1)
-i = 2 #ECM fungi
+i = 8 #3 = Russula
 
 #core.level.----
 #organize data.
@@ -106,6 +106,7 @@ truth <- readRDS(NEON_cosmo_genera.path) #UPDATE THIS FOR GENERA.
 truth <- truth$rel.abundances
 rownames(truth) <- gsub('-GEN','',truth$geneticSampleID)
 truth <- truth[rownames(truth) %in% rownames(core.fit$mean),]
+test <- truth[-grep('DSNY',rownames(truth)),]
 for(k in 1:length(fcast)){
   fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth),]
 }
@@ -116,7 +117,7 @@ ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))
 pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
 pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
 fungi_name <- colnames(fcast$mean)[i]
-obs.mu   <- truth[,i][order(match(names(truth[,c(fungi_name)]),names(mu)))]
+obs.mu   <- truth[,c(fungi_name)][order(match(names(truth[,c(fungi_name)]),names(mu)))]
 #obs.lo95 <- fg$lo95[,i][order(match(names(fg$lo95[,i]),names(mu)))]
 #obs.hi95 <- fg$hi95[,i][order(match(names(fg$hi95[,i]),names(mu)))]
 #plot
@@ -128,7 +129,7 @@ range <- mu
 polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)
 polygon(c(range, rev(range)),c(ci_0.975, rev(ci_0.025)), col=adjustcolor('blue' , trans), lty=0)
 #fraction within 95% predictive interval.
-in_it <- round(sum(obs.mu < pi_0.975 & obs.mu > pi_0.025) / length(obs.mu),2) * 100
+in_it <- round(sum(as.numeric(obs.mu) < pi_0.975 & as.numeric(obs.mu) > pi_0.025) / length(obs.mu),2) * 100
 state <- paste0(in_it,'% of observations within 95% prediction interval.')
 mtext(state,side = 3, line = -1.3, adj = 0.05)
 abline(0,1,lwd=2)
@@ -137,10 +138,14 @@ abline(0,1,lwd=2)
 #plot.level----
 #organize data.
 fcast <- plot.fit
-truth <- readRDS(NEON_plot.level_fg_obs.path)
+truth <- readRDS(NEON_plot.level_genera_obs.path)
 for(k in 1:length(truth)){
   rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
   truth[[k]] <- truth[[k]][rownames(truth[[k]]) %in% rownames(fcast$mean),]
+}
+#drop DSNY
+for(k in 1:length(truth)){
+  truth[[k]] <- truth[[k]][-(grep('DSNY',rownames(truth[[k]]))),]
 }
 for(k in 1:length(fcast)){
   fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth$mean),]
@@ -174,10 +179,14 @@ mtext(state,side = 3, line = -1.3, adj = 0.05)
 #site.level----
 #organize data.
 fcast <- site.fit
-truth <- readRDS(NEON_site.level_fg_obs.path)
+truth <- readRDS(NEON_site.level_genera_obs.path)
 for(k in 1:length(truth)){
   rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
   truth[[k]] <- truth[[k]][rownames(truth[[k]]) %in% rownames(fcast$mean),]
+}
+#drop DSNY
+for(k in 1:length(truth)){
+  truth[[k]] <- truth[[k]][-(grep('DSNY',rownames(truth[[k]]))),]
 }
 for(k in 1:length(fcast)){
   fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth$mean),]

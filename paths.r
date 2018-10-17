@@ -95,7 +95,7 @@ dir <- paste0(ITS_pecan_gen_dir,'figures/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_cps_fg_forecast_figure.path <- paste0(dir,'NEON_CPS_fg_forecast_figure.png')
-     
+NEON_cps_genera_forecast_figure.path <- paste0(dir,'NEON_CPS_genera_forecast_figure.png')
 #### ITS/pecan_gen: Uncertainty product paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
 cmd <- paste0('mkdir -p ',dir)
