@@ -2,7 +2,6 @@
 #Clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
-#library(ggplot2)
 
 #load data.
 d <- readRDS(NEON_genera_variable_importance_data.path)
@@ -40,6 +39,7 @@ for(i in 1:ncol(d$mean)){
 }
 #Outer labels.----
 mtext('Variable Importance',side = 2, line = 1, cex = outer.lab.cex, outer = T)
+mtext('Variable Importance',side = 2, line = -1.5, cex = outer.lab.cex, outer = T)
 
 
 
