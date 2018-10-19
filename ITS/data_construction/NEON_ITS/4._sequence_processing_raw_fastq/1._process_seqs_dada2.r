@@ -9,5 +9,17 @@ source('paths.r')
 library(dada2)
 source('NEFI_functions/tic_toc.r')
 
-#Set path to sequences
-path <- 
+#Set path to sequences.----
+path <- NEON_ITS_fastq.dir
+
+#set output for ESV table and tracking path.----
+output.dir <- paste0(path,'/dada2_output/')
+cmd <- paste0('mkdir -p ',output.dir)
+system(cmd)
+esv.table.path <- paste0(output.dir,'esv_table.rds')
+    track.path <- paste0(output.dir,    'track.rds')
+    
+#Grab all file paths.----
+seq.paths <- sort(list.files(path, pattern = '.fastq', full.names = T))
+sample.names <- sapply(strsplit(basename(seq.paths), ".fastq"), `[`, 1) #check this works.
+    
