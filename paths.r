@@ -56,6 +56,11 @@ system(cmd)
   NEON_ITS_SV.path <- paste0(NEON_ITS.dir,'NEON_ITS_sv.rds')
  NEON_ITS_tax.path <- paste0(NEON_ITS.dir,'NEON_ITS_tax.rds')
 
+#Raw NEON ITS provided in fastq format, both reads!
+     NEON_ITS_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/per_sample_demux/')
+ NEON_ITS_fastq_SV.path <- paste0(NEON_ITS_fastq.dir,'NEON_ITS_sv.rds')
+NEON_ITS_fastq_tax.path <- paste0(NEON_ITS_fastq.dir,'NEON_ITS_tax.rds')
+ 
 #Raw NEON sequence data from MG-rast. only works for 16S currently.
 mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
 #setup place to save MG-RAST sequence data.
