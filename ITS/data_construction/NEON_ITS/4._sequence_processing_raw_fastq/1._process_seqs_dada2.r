@@ -28,7 +28,7 @@ output_filepath2 <- NEON_ITS_fastq_SV.path
 #Grab all file paths.----
 seqs <- sort(list.files(path, pattern = '.fastq', full.names = T))
 #subset to test
-testing = T
+testing = F
 if(testing == T){
   seqs <- seqs[1:2]
 }
@@ -56,14 +56,6 @@ allOrients <- function(primer) {
 FWD.orients <- allOrients(FWD)
 REV.orients <- allOrients(REV)
 
-#Pre-filter sequences to remove Ns (ambiguous bases)----
-tic()
-cat('quality pre-filtering of ambiguous bases...\n')
-seqs.filtN <- file.path(path, "filtN", basename(seqs)) # Put N-filterd files in filtN/ subdirectory
-filterAndTrim(seqs, seqs.filtN, maxN = 0, multithread = TRUE)
-cat('quality pre-filtering of ambiguous bases complete.')
-toc()
-
 #Remove primers.----
 #Not necessary today since they wre already removed.
 
@@ -72,9 +64,10 @@ tic()
 cat('Begin quality filtering...\n')
 filtered_path <- file.path(path, 'filtered')
 filtered <- file.path(filtered_path, basename(seqs))
-#input is seqs.filtN here, but usually it would be the path to sequences after primers are remvoed.
-out <- filterAndTrim(seqs.filtN, filtered, maxN = 0, maxEE = c(2, 2), 
-                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = TRUE)
+#out <- filterAndTrim(seqs, filtered, maxN = 0, maxEE = c(2, 2), 
+#                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = T)
+out <- filterAndTrim(seqs, filtered, maxN = 0, truncQ = 2, minLen = 50, 
+                     rm.phix = TRUE, compress = TRUE, multithread = F)
 cat('quality filtering complete.')
 toc()
 
