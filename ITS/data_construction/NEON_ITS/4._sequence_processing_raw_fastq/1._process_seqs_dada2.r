@@ -28,7 +28,7 @@ output_filepath2 <- NEON_ITS_fastq_SV.path
 #Grab all file paths.----
 seqs <- sort(list.files(path, pattern = '.fastq', full.names = T))
 #subset to test
-testing = F
+testing = T
 if(testing == T){
   seqs <- seqs[1:2]
 }
@@ -62,7 +62,7 @@ REV.orients <- allOrients(REV)
 #Finish filter and trim.----
 tic()
 cat('Begin quality filtering...\n')
-filtered_path <- file.path(path, 'filtered')
+filtered_path <- file.path(path, 'filtered/')
 filtered <- file.path(filtered_path, basename(seqs))
 #out <- filterAndTrim(seqs, filtered, maxN = 0, maxEE = c(2, 2), 
 #                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = T)
@@ -70,6 +70,12 @@ out <- filterAndTrim(seqs, filtered, maxN = 0, truncQ = 2, minLen = 50,
                      rm.phix = TRUE, compress = TRUE, multithread = F)
 cat('quality filtering complete.')
 toc()
+
+#Some reads don't make it through. Update paths and sample.names.
+###THIS HAS NOT BEEN TESTED YET.
+filtered <- list.files(filtered_path)
+filtered <- file.path(filtered_path,filtered)
+sample.names <- sapply(strsplit(basename(filtered), ".fastq"), `[`, 1)
 
 #Learn the error rates.----
 #This is a machine learning algorithm to dial in the error rate model of your reads.
