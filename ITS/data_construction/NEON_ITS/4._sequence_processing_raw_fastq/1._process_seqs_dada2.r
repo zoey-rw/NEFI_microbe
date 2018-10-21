@@ -28,7 +28,7 @@ output_filepath2 <- NEON_ITS_fastq_SV.path
 #Grab all file paths.----
 seqs <- sort(list.files(path, pattern = '.fastq', full.names = T))
 #subset to test
-testing = T
+testing = F
 if(testing == T){
   seqs <- seqs[1:2]
 }
@@ -72,7 +72,6 @@ cat('quality filtering complete.')
 toc()
 
 #Some reads don't make it through. Update paths and sample.names.
-###THIS HAS NOT BEEN TESTED YET.
 filtered <- list.files(filtered_path)
 filtered <- file.path(filtered_path,filtered)
 sample.names <- sapply(strsplit(basename(filtered), ".fastq"), `[`, 1)
@@ -119,7 +118,8 @@ toc()
 #This is a useful check. If you are losing all your reads at some point this will give you an idea of where.
 #this dataframe saves to dada2_output within the sequence folder.
 getN <- function(x) sum(getUniques(x))
-track <- cbind(out, sapply(dada_out, getN), rowSums(seqtab.nochim))
+out_sub <- out[rownames(out) %in% paste0(sample.names,'.fastq'),]
+track <- cbind(out_sub, sapply(dada_out, getN), rowSums(seqtab.nochim))
 # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
 colnames(track) <- c("input", "filtered", "denoised","nonchim")
 rownames(track) <- sample.names
