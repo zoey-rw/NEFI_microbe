@@ -30,8 +30,9 @@ seqs <- sort(list.files(path, pattern = '.fastq', full.names = T))
 #subset to test
 testing = F
 if(testing == T){
-  seqs <- seqs[1:2]
+  seqs <- seqs[1:3]
 }
+
 #sample names.
 sample.names <- sapply(strsplit(basename(seqs), ".fastq"), `[`, 1)
 
@@ -64,10 +65,8 @@ tic()
 cat('Begin quality filtering...\n')
 filtered_path <- file.path(path, 'filtered/')
 filtered <- file.path(filtered_path, basename(seqs))
-#out <- filterAndTrim(seqs, filtered, maxN = 0, maxEE = c(2, 2), 
-#                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = T)
-out <- filterAndTrim(seqs, filtered, maxN = 0, truncQ = 2, minLen = 50, 
-                     rm.phix = TRUE, compress = TRUE, multithread = F)
+out <- filterAndTrim(seqs, filtered, maxN = 0, maxEE = 2,  #make maxEE = c(2,2) if processing multiple files at once (like fwd/rev reads separately).
+                     truncQ = 2, minLen = 50, rm.phix = TRUE, compress = TRUE, multithread = T)
 cat('quality filtering complete.')
 toc()
 
