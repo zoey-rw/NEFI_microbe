@@ -33,6 +33,10 @@ if(testing == T){
 }
 fastq.files <- fastq.files[grep('.fastq',fastq.files)]
 
+#you need to get rid of q.trim and filtered directories if they are left over from a previous dada2 run.
+system(paste0('rm -rf ',seq.path,'q.trim'))
+system(paste0('rm -rf ',seq.path,'filtered'))
+
 #Trim primers.----
 #from here we need to trim out primers and leading adapter/barcode sequence which is variable length.
 #DOE has a great tool to find a primer and trim anything preceding in, called bbuk.sh in the bbmap package.
