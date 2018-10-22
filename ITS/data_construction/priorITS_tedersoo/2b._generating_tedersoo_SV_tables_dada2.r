@@ -17,6 +17,7 @@ seq.path <- ted.seq.dir
 #output file path.
 output_filepath1 <-  paste0(seq.path,'SV_table.rds')
 output_filepath2 <- ted_2014_SV.table.path
+output_track     <-  paste0(seq.path,'track.rds')
 
 #reverse primers (there is a flex position)
 rev.primers <- 'TCCTGCGCTTATTGATATGC,TCCTCCGCTTATTGATATGC'
@@ -123,7 +124,7 @@ chim.retain <- sum(seqtab.nochim / sum(seqtab))
 cat('Chimeric sequences removed.',chim.retain*100,'% of sequences retained.')
 toc()
 
-#reverse complement the SVs.----
+#reverse complement the SVs (were 3' -> 5' for some reason).----
 #For some reason these reads are 3'->5'. Thats why you trimmed the reverse primer to the left.
 to_flip <- colnames(seqtab.nochim)
 dna.list <- list()
@@ -157,4 +158,5 @@ cat('Saving output...\n')
 output_filepath <- paste0(seq.path,'SV_table.rds')
 saveRDS(seqtab.nochim, output_filepath1)
 saveRDS(seqtab.nochim, output_filepath2)
+saveRDS(track        , output_track    )
 cat('Output saved, script complete.\n')
