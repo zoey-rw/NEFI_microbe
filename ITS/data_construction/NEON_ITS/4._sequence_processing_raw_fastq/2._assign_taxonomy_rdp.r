@@ -58,7 +58,7 @@ saveRDS(tax, output.path)
 cat('Taxonomy output saved.\n')
 
 #4. cleanup.----
-system('rm -f ',unite_path.zip)
-system('rm -f ',unite_path)
+system(paste0('rm -f ',unite_path.zip))
+system(paste0('rm -f ',unite_path))
 
 #end script.

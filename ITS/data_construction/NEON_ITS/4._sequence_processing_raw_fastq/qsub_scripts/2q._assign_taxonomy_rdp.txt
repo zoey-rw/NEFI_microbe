@@ -11,7 +11,7 @@
 #$ -l mem_per_core=8G #big memory.
 #
 #Give the job a name
-#$ -N ted_RDP
+#$ -N neon_RDP
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
