@@ -91,9 +91,9 @@ NEON_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_SV.table.rds')
      NEON_tax.path <- paste0(ITS_scc_gen_dir,'NEON_tax.rds') 
      NEON_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fun.rds')
 #table derived from .fastq raw files.
-     NEON_fastq_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_SV.table.rds')
-     NEON_fastq_tax.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_tax.rds')
-     NEON_fastq_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_fun.rds')
+     NEON_ITS_fastq_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_SV.table.rds')
+     NEON_ITS_fastq_tax.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_tax.rds')
+     NEON_ITS_fastq_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_fun.rds')
           
 #### ITS/pecan_gen: Figures.----
 dir <- paste0(ITS_pecan_gen_dir,'figures/')

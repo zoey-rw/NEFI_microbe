@@ -11,7 +11,6 @@ library(data.table)
 library(dada2)
 
 #set input/output paths, specify primers.----
-#begin by testing this script with 2 .fastq files from the tedersoo study.
 seq.path <- ted.seq.dir
 
 #output file path.

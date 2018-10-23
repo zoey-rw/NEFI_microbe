@@ -7,8 +7,8 @@ source('NEFI_functions/tic_toc.r')
 
 #load ASV table, set output path.----
 #this needs a lot of memory.
-d <- readRDS(NEON_ITS_fastq_SV.path)
-output.path <- NEON_fastq_tax.path
+d <- readRDS(NEON_ITS_fastq_SV.table.path)
+output.path <- NEON_ITS_fastq_tax.path
 
 #1. download unite training set.----
 cat('downloading UNITE database...\n')

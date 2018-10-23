@@ -6,8 +6,8 @@ source('NEFI_functions/tic_toc.r')
 library(doParallel)
 
 #1. load data, set output paths.----
-tax <- readRDS(NEON_fastq_tax.path)
-output.path <- NEON_fastq_fun.path
+tax <- readRDS(NEON_ITS_fastq_tax.path)
+output.path <- NEON_ITS_fastq_fun.path
 
 #remove leading "k__".
 for(i in 1:ncol(tax)){
