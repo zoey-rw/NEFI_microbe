@@ -22,7 +22,7 @@ system(cmd)
 #output file path.
 output_filepath1 <- paste0(path,'SV_table.rds')
       track.path <- paste0(path,   'track.rds')
-output_filepath2 <- NEON_ITS_fastq_SV.path
+output_filepath2 <- NEON_fastq_SV.table.path
 
 
 #Grab all file paths.----
