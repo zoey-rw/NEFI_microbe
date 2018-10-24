@@ -167,6 +167,10 @@ hierarch_filled.path <- paste0(dir,'hierarch_filled.path')
 #cleanup of NEON fun (which also has taxonomy) and SV tables.
 NEON_SV.table_clean.path <- paste0(dir,'NEON_SV.table_clean.rds')
      NEON_fun_clean.path <- paste0(dir,'NEON_fun_clean.rds')
+     
+#cleanup of NEON fun (which also has taxonomy) and SV tables - DERIVED FROM RAW FASTQ.
+NEON_ITS_fastq_SV.table_clean.path <- paste0(dir,'NEON_ITS_fastq_SV.table_clean.rds')
+     NEON_ITS_fastq_fun_clean.path <- paste0(dir,'NEON_ITS_fastq_fun_clean.rds')
 
 #### ITS/pecan_gen: Forecast covariate paths.----
 #Aggregated NEON site level covariates and global level uncertainty for predictors
