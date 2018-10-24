@@ -186,6 +186,10 @@ NEON_plot.level_fg_obs.path <- paste0(dir,'NEON_plot.level_fg_obs.rds')
 NEON_site.level_genera_obs.path <- paste0(dir,'NEON_site.level_genera_obs.rds')
 NEON_plot.level_genera_obs.path <- paste0(dir,'NEON_plot.level_genera_obs.rds')
 
+#Aggregated fg and cosmo_genera for fastq-dervied data.
+     NEON_ITS_fastq_taxa_fg.path <- paste0(dir,'NEON_ITS_fastq_taxa_fg.rds')
+NEON_ITS_fastq_cosmo_genera.path <- paste0(dir,'NEON_ITS_fastq_cosmo_genera.rds')
+
 #### ITS/pecan_gen: Forecast and variable importance output paths.----
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
 cmd <- paste0('mkdir -p ',dir)
