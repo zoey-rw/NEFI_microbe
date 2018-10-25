@@ -11,10 +11,12 @@ rev.primer <- 'GGACTACNVGGGTWTCTAAT'
 
 #Input path to sequences:
 seq.dir <- bahram.seq.dir
+seq.dir <-  "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/"
+raw_seqs <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/raw_seqs/"
 
 
 #once directory and primers specified, below code is independent on user supplied parameters.
-files <- list.files(seq.dir)
+files <- list.files(raw_seqs)
 files <- files[grep('.fastq',files)]
 #subset forward and reverse reads.
 fwd.files <- files[grep('_1.fastq',files)]
@@ -27,8 +29,8 @@ bbduk.path <- 'NEFI_functions/bbmap/bbduk.sh'
 for(i in 1:length(fwd.files)){
   sample.name1 <- fwd.files[i]
   sample.name2 <- rev.files[i]
-  input_sample.path1 <- paste0(seq.dir,sample.name1)
-  input_sample.path2 <- paste0(seq.dir,sample.name2)
+  input_sample.path1 <- paste0(raw_seqs,sample.name1)
+  input_sample.path2 <- paste0(raw_seqs,sample.name2)
   output_sample.path1 <- paste0(seq.dir,'q.trim.L/',sample.name1)
   output_sample.path2 <- paste0(seq.dir,'q.trim.L/',sample.name2)
   cmd <- paste0(bbduk.path, 

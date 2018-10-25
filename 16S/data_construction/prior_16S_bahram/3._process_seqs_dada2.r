@@ -1,122 +1,98 @@
-#Processing Bahram sequence data.
-#dada2 tutorial here: https://benjjneb.github.io/dada2/tutorial.html
-#NOTE: this is definitely a job for the cluster. Get a node with as much RAM and as many cores as you can.
-#pair ends, quality filter, generate ESV tables using dada2. You will need the cluster for (1) memory and (2) parallel computing.
-#remove junk seqs using the positive and negative controls.
-#assign taxonomy to ESVs using RDP via dada2.
-#save ESV (otu) and taxonomy tables. Make sure you can link these to mapping file of environmental data.
-#you may need to trim primers off fastq files first. This seems useful: http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/Biostrings/html/trimLRPatterns.html
+# Processing Bahram sequence data.
+# dada2 tutorial here: https://benjjneb.github.io/dada2/tutorial.html
+# NOTE: this is definitely a job for the cluster. Get a node with as much RAM and as many cores as you can.
+# pair ends, quality filter, generate ESV tables using dada2. You will need the cluster for (1) memory and (2) parallel computing.
+# remove junk seqs using the positive and negative controls.
+# assign taxonomy to ESVs using RDP via dada2.
+# save ESV (otu) and taxonomy tables. Make sure you can link these to mapping file of environmental data.
+# Should have this output all figures and summary of which reads passed as separate files to check.
 
-#load dada2 (installed via the bioconductor package. Instruction in link above.)
+#### setup and file paths ####
+
+# load dada2 (installed via the bioconductor package. Instruction in link above.)
 rm(list=ls())
 library(dada2)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/get_truncation_length.r')
 
-
-#start with a test directory that includes only two samples, forward and reverse reads.
-#specify forward and reverse read motifs. 
-#in an ideal world, this is all you would need to input.
-#Should have this output all figures and summary of which reads passed as separate files to check.
-#path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test"
-path <- bahram.seq.dir
-forward.read.motif <- '_1.fastq'
-reverse.read.motif <- '_2.fastq'
-
-#set output for ESV table and tracking path.
+# start with directory of joined fastq files, read in the file names.			
+path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/joined_reads"
+#path <- paste0(bahram.seq.dir, "joined_reads")
+read.motif <- '.fastq'
+reads <- sort(list.files(path, pattern = read.motif, full.names = T))
+sample.names <- sapply(strsplit(basename(reads), "_"), `[`, 1)											
+# set output for ESV table and tracking path.
 output.dir <- paste0(path,'/dada2_output/')
 cmd <- paste0('mkdir -p ',output.dir)
 system(cmd)
 esv.table.path <- paste0(output.dir,'esv_table.rds')
     track.path <- paste0(output.dir,    'track.rds')
 
-#### read in the names of the fastq files. ####
-fnFs <- sort(list.files(path, pattern = forward.read.motif, full.names = T))
-fnRs <- sort(list.files(path, pattern = reverse.read.motif, full.names = T))
-sample.names <- sapply(strsplit(basename(fnFs), "_"), `[`, 1)
 
-#### quality filtering and trucantion. ####
-#We're going to perform some quality filtering and truncation to clip off the parts of the reads where the quality scores get gnarly.
+#### Quality filtering and truncation. ####
 
-#setup filtered files in a filtered sub directory.
-filtFs <- file.path(path, "filtered", paste0(sample.names, "_F_filt.fastq.gz"))
-filtRs <- file.path(path, "filtered", paste0(sample.names, "_R_filt.fastq.gz"))
+# We're going to perform some quality filtering and truncation to clip off the parts of the reads where the quality scores get gnarly.
 
-#Inspect quality score patterns.
-#You can get by on doing this with like two samples. Its just a visual check.
-#quality scores will drop off at the end of the read. This will happen sooner for reverse reads.
-#plotQualityProfile(fnFs[1:2])
-#plotQualityProfile(fnRs[1:2])
+# setup filtered files in an output 'filtered' sub directory.
+filt <- file.path(path, "filtered", paste0(sample.names, "_filt.fastq.gz"))
 
-#choose truncation length.
-truncation.length.forward <- median(get_truncation_length(fnFs[1:2]))
-truncation.length.reverse <- median(get_truncation_length(fnRs[1:2]))
-#filter
+# Inspect quality score patterns.
+# You can get by on doing this with like two samples. Its just a visual check.
+# quality scores will drop off at the end of the read. This will happen sooner for reverse reads.
+# plotQualityProfile(reads[1:2])
+
+# choose truncation length - currently, median of all the sample read lengths where qscores drop below 30.
+truncation.length <- median(get_truncation_length(reads[1:2], 30))
+
+
+# filter. Can change maxEE, standard is 2 but up to 5 is fine.
 tic()
 cat('Begin quality filtering...\n')
-out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(truncation.length.forward,truncation.length.reverse),
-                     maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+out <- filterAndTrim(reads, filt, truncLen=truncation.length,
+                     maxN=0, maxEE=3, truncQ=2, rm.phix=TRUE,
                      compress=TRUE, multithread=TRUE)
 cat('quality filtering complete.')
 toc()
 
-#check whether you lost all your reads or not.
-#head(out)
+# check whether you lost all your reads or not.
+head(out)
+
+# File parsing
+filtpath <- paste0(path, "/filtered") # change to the directory containing your filtered fastq files
+filts <- list.files(filtpath, pattern="fastq.gz", full.names=TRUE) # change if different file extensions
+sample.names <- sapply(strsplit(basename(filts), "_"), `[`, 1) # Assumes filename = sample_XXX.fastq.gz
+names(filts) <- sample.names
 
 
-#### "Learn" the error rates. ####
-#this takes a while, even with not a lot of reads.
-#this works with a subset of the data. So it takes about the same time with big or small data sets.
-#default number of reads is 1,000,000. You could speed up by dropping the nreads parameter.
-#This is a machine learning algorithm to dial in the error rate model of your reads.
-#Colin isn't really sure what an error rate model is. ¯\_(ツ)_/¯
+#### Learn error rates ####
+# This works with a subset of the data. So it takes about the same time with big or small data sets.
+# This is a machine learning algorithm to dial in the error rate model of your reads.
 tic() #start timer loop.
 cat('Learning error rates...\n')
-errF <- learnErrors(filtFs, multithread=TRUE)
-errR <- learnErrors(filtRs, multithread=TRUE)
-cat('Error models fitted!')
-toc() #end timer loop.
-
-#sanity check plot. Errors should drop as quality scores increase.
-#plotErrors(errF, nominalQ = T)
-
-
-####Dereplicate the sequences. ####
-#This combines identical reads in unique sequences.
-#dada2 does a little more than this: it keeps quality information for downstream inference.
-#there is a mod to do this in parallel described here: https://benjjneb.github.io/dada2/bigdata.html
-tic()
-cat('Dereplicating sequences...\n')
-derepFs <- derepFastq(filtFs, verbose=TRUE)
-derepRs <- derepFastq(filtRs, verbose=TRUE)
-cat('Sequences dereplicated.')
+set.seed(100)
+err <- learnErrors(filts, nbases = 1e8, multithread=TRUE, randomize=TRUE)
 toc()
-# Name the derep objects by the sample names
-names(derepFs) <- sample.names
-names(derepRs) <- sample.names
+# check plots: black line should follow black points, with errors decreasing as quality scores increase. 
+#plotErrors(err, nominalQ = T)
 
-
-#### Sample Inference ####
-#RAM requirements go way down if you mod this as described in the bigdata tutorial for dada2.
-tic()
-cat('Performing sample inference with the dada2 algorithm...\n')
-dadaFs <- dada(derepFs, err=errF, multithread = T)
-dadaRs <- dada(derepRs, err=errR, multithread = T)
-cat('Sample inference complete.')
+#### Infer sequence variants and dereplicate ####
+tic() 
+cat('Performing sample inference and dereplication with the dada2 algorithm...\n')
+dds <- vector("list", length(sample.names))
+names(dds) <- sample.names
+for(sam in sample.names) {
+  cat("Processing:", sam, "\n")
+  derep <- derepFastq(filts[[sam]])
+  dds[[sam]] <- dada(derep, err=err, multithread=TRUE)
+}
 toc()
 
-
-#### Merge paired reads. ####
-tic()
-cat('Merging paired ends...\n')
-mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs)
-cat('Paired ends merged.')
-toc()
 
 #### Construct sequence table. ####
 #rownames are the samples. columnnames are sequences of the ESVs.
-seqtab <- makeSequenceTable(mergers)
+seqtab <- makeSequenceTable(dds)
+
 
 #### Remove chimeras. ####
 tic()
@@ -130,23 +106,31 @@ toc()
 
 
 #### Track reads through pipeline. ####
-#This is a useful check. If you are losing all your reads at some point this will give you an idea of where.
-#this dataframe saves to dada2_output within the sequence folder.
-getN <- function(x) sum(getUniques(x))
-track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+# This is a useful check. If you are losing all your reads at some point this will give you an idea of where.
+# this dataframe saves to dada2_output within the sequence folder.
 # If processing a single sample, remove the sapply calls: e.g. replace sapply(dadaFs, getN) with getN(dadaFs)
-colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+
+getN <- function(x) sum(getUniques(x))
+
+# old track df - in case we do need to capture the denoised values
+# track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), sapply(mergers, getN), rowSums(seqtab.nochim))
+# colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", "nonchim")
+
+# create track df
+track <- cbind(out, rowSums(seqtab), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "seqs", "seqs_nonchim")
 rownames(track) <- sample.names
+
 
 #### save output path, tracking file and some plots. ####
 saveRDS        (track,     track.path)
 saveRDS(seqtab.nochim, esv.table.path)
 
 #quality score plot.
-#plotQualityProfile(fnFs[1:2])
+#plotQualityProfile(reads[1:2])
 
 #error rate plot.
-#plotErrors(errF, nominalQ = T)
+#plotErrors(err, nominalQ = T)
 
 cat('Analysis complete.')
 #end script.

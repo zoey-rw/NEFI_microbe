@@ -9,11 +9,14 @@ source('NEFI_functions/tic_toc.r')
 library(doParallel)
 
 #Here i load an OTU table with column names as unique sequences to assign.
-otu <- readRDS(bahram_dada2_SV_table.path)
+#otu <- readRDS(bahram_dada2_SV_table.path)
+otu <- readRDS("/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/joined_reads/dada2_output/esv_table.rds")
+
 to_assign <- colnames(otu) #grab sequences to assign.
 
 #specify output path here.
-tax_output_path <- bahram_dada2_tax_table.path
+#tax_output_path <- bahram_dada2_tax_table.path
+tax_output_path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/joined_reads/dada2_output/tax_table.rds"
 
 #Everything from here below *should* just run and save where you told it to.
 #download greengenes reference database.
