@@ -10,13 +10,13 @@ library(doParallel)
 
 #Here i load an OTU table with column names as unique sequences to assign.
 #otu <- readRDS(bahram_dada2_SV_table.path)
-otu <- readRDS("/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/joined_reads/dada2_output/esv_table.rds")
+otu <- readRDS("/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/dada2_output/esv_table.rds")
 
 to_assign <- colnames(otu) #grab sequences to assign.
 
 #specify output path here.
 #tax_output_path <- bahram_dada2_tax_table.path
-tax_output_path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/joined_reads/dada2_output/tax_table.rds"
+tax_output_path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/dada2_output/tax_table.rds"
 
 #Everything from here below *should* just run and save where you told it to.
 #download greengenes reference database.

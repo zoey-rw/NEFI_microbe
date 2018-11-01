@@ -42,7 +42,7 @@ filt <- file.path(seq.dir, "filtered_seqs", paste0(sample.names, "_filt.fastq.gz
 # Inspect quality score patterns.
 # You can get by on doing this with like two samples. Its just a visual check.
 # quality scores will drop off at the end of the read. This will happen sooner for reverse reads.
-# plotQualityProfile(reads[1:2])
+# plotQualityProfile(reads[15])
 
 # choose truncation length - currently, median of all the sample read lengths where qscores drop below 30.
 truncation.length <- median(get_truncation_length(reads[1:3], 30))
@@ -51,12 +51,13 @@ truncation.length <- median(get_truncation_length(reads[1:3], 30))
 # filter. Can change maxEE, standard is 2 but up to 5 is fine.
 tic()
 cat('Begin quality filtering...\n')
-out <- filterAndTrim(reads, filt, truncLen=truncation.length,
-                     maxN=0, maxEE=3, truncQ=2, rm.phix=TRUE,
+out <- filterAndTrim(reads, filt, truncLen=273, #400, # truncation.length,
+                     maxN=0, maxEE=4, truncQ=2, rm.phix=TRUE,
                      compress=TRUE, multithread=TRUE)
 cat('quality filtering complete.')
 toc()
 
+out
 # check whether you lost all your reads or not.
 head(out)
 
@@ -77,6 +78,9 @@ err <- learnErrors(filts, nbases = 1e8, multithread=TRUE, randomize=TRUE)
 toc()
 # check plots: black line should follow black points, with errors decreasing as quality scores increase. 
 #plotErrors(err, nominalQ = T)
+
+#### save error rates just in case (delete later ####
+saveRDS(err, paste0(output.dir, "errors"))
 
 #### Infer sequence variants and dereplicate ####
 tic() 
@@ -106,6 +110,11 @@ chim.retain <- sum(seqtab.nochim / sum(seqtab))
 cat('Chimeric sequences removed.',chim.retain*100,'% of sequences retained.')
 toc()
 
+#### save output ESV table ####
+saveRDS(seqtab.nochim, esv.table.path)
+
+
+
 
 #### Track reads through pipeline. ####
 # This is a useful check. If you are losing all your reads at some point this will give you an idea of where.
@@ -124,9 +133,8 @@ colnames(track) <- c("input", "filtered", "seqs", "seqs_nonchim")
 rownames(track) <- sample.names
 
 
-#### save output path, tracking file and some plots. ####
+#### save tracking file and some plots. ####
 saveRDS        (track,     track.path)
-saveRDS(seqtab.nochim, esv.table.path)
 
 #quality score plot.
 #plotQualityProfile(reads[1:2])

@@ -10,8 +10,10 @@ fwd.primer <- 'GTGYCAGCMGCCGCGGTAA'
 rev.primer <- 'GGACTACNVGGGTWTCTAAT'
 
 #Input path to sequences:
-seq.dir <- bahram.seq.dir
+#seq.dir <- bahram.seq.dir
+#seq.dir <-  "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/"
 seq.dir <-  "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/"
+
 raw_seqs <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test/raw_seqs/"
 
 
@@ -56,7 +58,7 @@ for(i in 1:length(fwd.files)){
                 ' out1=',output_sample.path1,
                 ' out2=',output_sample.path2,
                 ' literal=',rev.primer,
-                ' ktrim=l k=10 ordered=t minlen=1')
+                ' ktrim=r k=10 ordered=t minlen=1')
   system(cmd)  
 }
 
@@ -65,4 +67,3 @@ cmd <- paste0('rm -rf ',seq.dir,'q.trim.L')
 system(cmd)
 cmd <- paste0('mv ',seq.dir,'q.trim.R ',seq.dir,'q.trim')
 system(cmd)
-
