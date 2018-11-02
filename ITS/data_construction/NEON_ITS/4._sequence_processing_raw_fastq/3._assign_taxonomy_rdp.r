@@ -5,9 +5,12 @@ library(doParallel)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 
-#load ASV table, set output path.----
+#load ASV tables and merge, set output path.----
 #this needs a lot of memory.
-d <- readRDS(NEON_ITS_fastq_SV.table.path)
+d1 <- readRDS(paste0(NEON_ITS_run150225_dada2_out.dir,'SV_table.rds'))
+d2 <- readRDS(paste0(NEON_ITS_run150922_dada2_out.dir,'SV_table.rds'))
+d <- dada2::mergeSequenceTables(d1,d2)
+
 output.path <- NEON_ITS_fastq_tax.path
 
 #1. download unite training set.----

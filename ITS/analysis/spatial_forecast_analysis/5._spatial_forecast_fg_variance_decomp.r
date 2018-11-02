@@ -79,7 +79,21 @@ names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 ref <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID)
 zero_covariate <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_covariate_uncertainty = T)
 zero_parameter <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_parameter_uncertainty = T)
-zero_process <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_process_uncertainty = T)
+  zero_process <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, zero_process_uncertainty = T)
+
+#try with plot-level.
+ref <- ddirch_forecast(mod=mod, cov_mu = plot.preds, cov_sd = plot.sd, names = plot.preds$plotID)
+zero_covariate <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID, zero_covariate_uncertainty = T)
+zero_parameter <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID, zero_parameter_uncertainty = T)
+  zero_process <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID,   zero_process_uncertainty = T)
+
+#try with site-level.
+ref <- ddirch_forecast(mod=mod, cov_mu = site.preds, cov_sd = site.sd, names = site.preds$siteID)
+zero_covariate <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID, zero_covariate_uncertainty = T)
+zero_parameter <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID, zero_parameter_uncertainty = T)
+  zero_process <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID,   zero_process_uncertainty = T)
+  
+  
 
 #generally goes down, the biggest effect is process.
 #Prob need more simulations to really lock down small differences due to parameter and process.

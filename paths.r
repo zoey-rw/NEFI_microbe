@@ -56,6 +56,16 @@ system(cmd)
 
 #Raw NEON ITS provided in fastq format, both reads!
 NEON_ITS_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/per_sample_demux/')
+#broken out per sequencing run, fwd/rev reads.
+NEON_ITS_run150225_r1_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/r1_per_sample_demux/')
+NEON_ITS_run150225_r2_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/r2_per_sample_demux/')
+NEON_ITS_run150922_r1_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/r1_per_sample_demux/')
+NEON_ITS_run150922_r2_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/r2_per_sample_demux/')
+#dada2 output- make these.
+NEON_ITS_run150225_dada2_out.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/dada2_output/')
+NEON_ITS_run150922_dada2_out.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/dada2_output/')
+system(paste0('mkdir -p ',NEON_ITS_run150225_dada2_out.dir))
+system(paste0('mkdir -p ',NEON_ITS_run150922_dada2_out.dir))
      
 #Raw NEON sequence data from MG-rast. only works for 16S currently.
 mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
