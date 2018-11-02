@@ -6,13 +6,11 @@
 ########################################
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
-# requesting an entire node that has 1024GB of memory because I am clearly doing this a very dumb way.
-#$ -l mem_per_core=28G
 # Request all cores on the node (36)
 #$ -pe omp 36
 #
 #Give the job a name
-#$ -N NEON_dada2
+#$ -N NEON_dada2_r1
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
