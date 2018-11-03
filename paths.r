@@ -16,11 +16,11 @@ if(host == 'pecan2'){data.dir <- '/fs/data3/caverill/NEFI_data/'}
 cmd <- paste0('mkdir -p ',data.dir)
 system(cmd)
 
-#NEFI_data has 3 sub-directories. big_data, ITS and 16S (16S data generated in a different R project.)
+#NEFI_data has 3 sub-directories. big_data, ITS and 16S.
 #Each ITS and 16S directory has sub directories for data generated in scc or pecan (scc_gen or pecan_gen)
 #big_data only lives in the scc.
 #scc_gen and pecan_gen live on both, but updating the directory from one computer to the other only goes one way.
-#scc_gen only goes scc->pecan. pecan_gen only goes pecan->scc.
+#scc_gen only goes scc->pecan. pecan_gen only goes pecan->scc. Setup is in an rsync.sh script.
 #This keeps data synced and nothing goes missing. There are transfer scripts that make sure this is done correctly.
 big_data_dir <- paste0(data.dir,'big_data/')
 data_ITS_dir <- paste0(data.dir,'ITS/')
