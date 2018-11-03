@@ -74,6 +74,7 @@ toc()
 filtFs <- sort(list.files(paste0(fwd.dir,'/filtered'), full.names = T))
 filtRs <- sort(list.files(paste0(rev.dir,'/filtered'), full.names = T))
 sample.names <- basename(filtFs)
+sample.names <- gsub('.fastq','',sample.names)
 
 #Learn error rates.----
 tic()
@@ -116,22 +117,21 @@ tic()
 cat('Removing chimeras...\n')
 seqtab.nochim <- removeBimeraDenovo(seqtab, method="consensus", multithread=TRUE, verbose=TRUE)
 cat('Chimeras removed.\n')
+toc()
 
 #Track reads through pipeline.----
 getN <- function(x) sum(getUniques(x))
-track <- cbind(out, sapply(dadaFs, getN), sapply(dadaRs, getN), 
-                    sapply(mergers, getN), rowSums(seqtab.nochim))
-# If processing a single sample, remove the sapply calls: e.g. replace
-# sapply(dadaFs, getN) with getN(dadaFs)
-colnames(track) <- c("input", "filtered", "denoisedF", "denoisedR", "merged", 
-                     "nonchim")
+out_sub <- out[rownames(out) %in% paste0(sample.names,'.fastq'),]
+track <- cbind(out_sub, sapply(dadaFs, getN), sapply(dadaRs, getN), 
+               sapply(mergers, getN), rowSums(seqtab.nochim))
+colnames(track) <- c("input", "filtered", "denoisedF","denoisedR","merged","nonchim")
 rownames(track) <- sample.names
 head(track)
 
 #cleanup files.----
-#1. filtered directories
-system(paste0('rm -rf ',fwd.dir,'/filtered'))
-system(paste0('rm -rf ',rev.dir,'/filtered'))
+#1. filtered directories - seems like something else remvoed these?
+#system(paste0('rm -rf ',fwd.dir,'filtered'))
+#system(paste0('rm -rf ',rev.dir,'filtered'))
 
 #Save output.----
 saveRDS(seqtab.nochim, output_filepath1)
