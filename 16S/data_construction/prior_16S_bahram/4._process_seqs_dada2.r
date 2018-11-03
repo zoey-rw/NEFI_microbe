@@ -27,8 +27,8 @@ sample.names <- sapply(strsplit(basename(reads), "_"), `[`, 1)
 output.dir <- paste0(seq.dir,'dada2_output/')
 cmd <- paste0('mkdir -p ',output.dir)
 system(cmd)
-esv.table.path <- paste0(output.dir,'esv_table.rds')
-    track.path <- paste0(output.dir,    'track.rds')
+esv.table.path <- bahram_dada2_SV_table.path
+    track.path <- bahram_dada2_track_table.path
 
 
 #### Quality filtering and truncation. ####

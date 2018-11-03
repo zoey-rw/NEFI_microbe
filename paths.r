@@ -73,6 +73,7 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
  bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
 bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
+bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
 
 #### ITS/scc_gen: JAGS output paths. ####
 dir <- paste0(ITS_scc_gen_dir,'JAGS_output/')
