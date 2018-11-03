@@ -9,6 +9,9 @@ source('NEFI_functions/tic_toc.r')
 #this needs a lot of memory.
 d1 <- readRDS(paste0(NEON_ITS_run150225_dada2_out.dir,'SV_table.rds'))
 d2 <- readRDS(paste0(NEON_ITS_run150922_dada2_out.dir,'SV_table.rds'))
+#some redundant samples. drop them.
+d2 <- d2[!(rownames(d2) %in% rownames(d1)),]
+#merge in dada2.
 d <- dada2::mergeSequenceTables(d1,d2)
 
 output.path <- NEON_ITS_fastq_tax.path

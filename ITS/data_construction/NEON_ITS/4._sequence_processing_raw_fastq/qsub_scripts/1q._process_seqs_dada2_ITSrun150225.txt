@@ -7,7 +7,7 @@
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
 # Request all cores on the node (36)
-#$ -pe omp 36
+#$ -pe omp 28
 #
 #Give the job a name
 #$ -N NEON_dada2_r1
