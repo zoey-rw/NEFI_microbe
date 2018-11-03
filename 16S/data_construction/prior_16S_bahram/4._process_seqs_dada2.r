@@ -16,16 +16,15 @@ source('paths.r')
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/get_truncation_length.r')
 
-seq.dir <- "/projectnb/talbot-lab-data/NEFI_data/big_data/bahram_test"
+seq.dir <- bahram.seq.dir
 
-# start with directory of joined fastq files, read in the file names.			
-path <- paste0(seq.dir, "/joined_seqs")
-#path <- paste0(bahram.seq.dir, "/joined_seqs")
+# start with directory of joined/trimmed fastq files, read in the file names.		
+path <- paste0(seq.dir, "q.trim")
 read.motif <- '.fastq'
 reads <- sort(list.files(path, pattern = read.motif, full.names = T))
 sample.names <- sapply(strsplit(basename(reads), "_"), `[`, 1)											
 # set output for ESV table and tracking path.
-output.dir <- paste0(seq.dir,'/dada2_output/')
+output.dir <- paste0(seq.dir,'dada2_output/')
 cmd <- paste0('mkdir -p ',output.dir)
 system(cmd)
 esv.table.path <- paste0(output.dir,'esv_table.rds')
@@ -37,22 +36,22 @@ esv.table.path <- paste0(output.dir,'esv_table.rds')
 # We're going to perform some quality filtering and truncation to clip off the parts of the reads where the quality scores get gnarly.
 
 # setup filtered files in an output 'filtered_seqs' sub directory.
-filt <- file.path(seq.dir, "filtered_seqs", paste0(sample.names, "_filt.fastq.gz"))
+filt <- file.path(seq.dir, "filtered_seqs", paste0("/", sample.names, "_filt.fastq.gz"), fsep="")
 
 # Inspect quality score patterns.
 # You can get by on doing this with like two samples. Its just a visual check.
 # quality scores will drop off at the end of the read. This will happen sooner for reverse reads.
-# plotQualityProfile(reads[15])
+# plotQualityProfile(reads[1:2])
 
 # choose truncation length - currently, median of all the sample read lengths where qscores drop below 30.
-truncation.length <- median(get_truncation_length(reads[1:3], 30))
-
+#truncation.length <- median(get_truncation_length(reads[1:5], 32))
+# anything greater than 250 -> we lose most of the reads (?)
 
 # filter. Can change maxEE, standard is 2 but up to 5 is fine.
 tic()
 cat('Begin quality filtering...\n')
-out <- filterAndTrim(reads, filt, truncLen=273, #400, # truncation.length,
-                     maxN=0, maxEE=4, truncQ=2, rm.phix=TRUE,
+out <- filterAndTrim(reads, filt, truncLen=250, #truncation.length, 
+                     maxN=0, maxEE=2, truncQ=2, rm.phix=TRUE,
                      compress=TRUE, multithread=TRUE)
 cat('quality filtering complete.')
 toc()
@@ -64,7 +63,7 @@ head(out)
 # File parsing
 filtpath <- paste0(seq.dir, "/filtered_seqs") # change to the directory containing your filtered fastq files
 filts <- list.files(filtpath, pattern="fastq.gz", full.names=TRUE) # change if different file extensions
-sample.names <- sapply(strsplit(basename(filts), "_"), `[`, 1) # Assumes filename = sample_XXX.fastq.gz
+sample.names <- sapply(strsplit(basename(filts), "_"), `[`, 1) 
 names(filts) <- sample.names
 
 
