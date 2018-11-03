@@ -44,6 +44,10 @@ system(paste0('mkdir -p ', pecan_gen_16S_dir))
 bahram.seq.dir <- paste0(big_data_dir,'bahram_2018_seqs/')
 cmd <- paste0('mkdir -p ',bahram.seq.dir)
 system(cmd)
+# NEON 16S sequences.
+NEON.seq.dir <- paste0(big_data_dir,'NEON_raw_16S_fastq/')
+cmd <- paste0('mkdir -p ',NEON.seq.dir)
+system(cmd)
 
 #Tedersoo ITS prior paths
 #raw sequence directory.
@@ -71,9 +75,12 @@ system(cmd)
 dir <- paste0(scc_gen_16S_dir,'bahram_processed/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
- bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
+bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
 bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
 bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
+NEON_dada2_SV_table.path <- paste0(dir,'NEON_dada2_SV_table.rds')
+NEON_dada2_tax_table.path <- paste0(dir,'NEON_dada2_tax_table.rds')
+NEON_dada2_track_table.path <- paste0(dir,'NEON_dada2_track_table.rds')
 
 #### ITS/scc_gen: JAGS output paths. ####
 dir <- paste0(ITS_scc_gen_dir,'JAGS_output/')

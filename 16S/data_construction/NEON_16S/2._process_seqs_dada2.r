@@ -16,22 +16,16 @@ source('paths.r')
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/get_truncation_length.r')
 
-seq.dir <- "/projectnb/talbot-lab-data/NEFI_data/big_data/NEON_16S_test/"
-
-# start with directory of joined fastq files, read in the file names.			
-#path <- paste0(seq.dir, "joined_seqs")
-#path <- paste0(bahram.seq.dir, "joined_seqs")
-path <- "/projectnb/talbot-lab-data/NEFI_data/big_data/NEON_raw_16S_fastq/per_sample_demux/"
+# start with directory of joined fastq files, read in the file names.	
+seq.dir <- NEON.seq.dir		
+path <- paste0(NEON.seq.dir, 'per_sample_demux/') #get demultiplexed reads
 read.motif <- '.fastq'
 reads <- sort(list.files(path, pattern = read.motif, full.names = T))
 sample.names <- sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(reads))
 											
 # set output for ESV table and tracking path.
-output.dir <- paste0(seq.dir,'dada2_output/')
-cmd <- paste0('mkdir -p ',output.dir)
-system(cmd)
-esv.table.path <- paste0(output.dir,'esv_table.rds')
-    track.path <- paste0(output.dir,    'track.rds')
+esv.table.path <- NEON_dada2_SV_table.path
+    track.path <- NEON_dada2_track_table.path
 
 
 #### Quality filtering and truncation. ####
@@ -80,8 +74,6 @@ toc()
 # check plots: black line should follow black points, with errors decreasing as quality scores increase. 
 #plotErrors(err, nominalQ = T)
 
-#### save error rates just in case (delete later ####
-saveRDS(err, paste0(output.dir, "errors"))
 
 #### Infer sequence variants and dereplicate ####
 tic() 
