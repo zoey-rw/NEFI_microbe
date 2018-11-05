@@ -11,8 +11,9 @@ d1 <- readRDS(paste0(NEON_ITS_run150225_dada2_out.dir,'SV_table.rds'))
 d2 <- readRDS(paste0(NEON_ITS_run150922_dada2_out.dir,'SV_table.rds'))
 #some redundant samples. drop them.
 d2 <- d2[!(rownames(d2) %in% rownames(d1)),]
-#merge in dada2.
+#merge in dada2, save compiled SV table.
 d <- dada2::mergeSequenceTables(d1,d2)
+saveRDS(NEON_ITS_fastq_SV.table.path)
 
 output.path <- NEON_ITS_fastq_tax.path
 
