@@ -78,6 +78,11 @@ system(cmd)
 bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
 bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
 bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
+
+### 16S/scc_gen:  NEON processed sequences ###
+dir <- paste0(scc_gen_16S_dir,'NEON_processed/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
 NEON_dada2_SV_table.path <- paste0(dir,'NEON_dada2_SV_table.rds')
 NEON_dada2_tax_table.path <- paste0(dir,'NEON_dada2_tax_table.rds')
 NEON_dada2_track_table.path <- paste0(dir,'NEON_dada2_track_table.rds')
