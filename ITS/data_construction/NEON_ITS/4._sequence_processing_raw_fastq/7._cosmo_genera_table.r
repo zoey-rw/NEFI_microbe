@@ -58,6 +58,12 @@ other <- seq_total - rowSums(seq.out)
 abundances <- data.frame(other,seq.out)
 rel.abundances <- abundances / seq_total
 
+for(i in 1:ncol(abundances)){
+  dat <- abundances[,i]
+  report <- paste0(round((length(dat[dat > 0]) / length(dat))*100,2), '% of samples have ',colnames(abundances)[i],'\n')
+  cat(report)
+}
+
 #get other IDs in here. deprecatedVialID does not match all products.----
 abundances$deprecatedVialID <- rownames(    abundances)
 rel.abundances$deprecatedVialID <- rownames(rel.abundances)

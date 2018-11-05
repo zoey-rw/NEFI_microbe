@@ -16,7 +16,7 @@ map <- map$core.obs
 fun <- readRDS(NEON_ITS_fastq_fun.path)
 tax <- readRDS(NEON_ITS_fastq_tax.path)
 
-#subset to sv rows in map file. deprecatedVialID links map to sv.table.----
+#subset to sv rows in map file. geneticSampleID links map to sv.table.----
 rownames(sv) <- toupper(rownames(sv))
 sv.id <- rownames(sv)
 map <- map[map$geneticSampleID %in% sv.id,]
@@ -27,9 +27,9 @@ rownames(map) <- map$geneticSampleID
 map <- map[order(rownames(map)),]
 sv <-  sv[order(rownames( sv)),]
 
-#remove samples with less than 200 reads from map and sv.----
+#remove samples with less than 250 reads from map and sv.----
 map$seq.depth <- rowSums(sv)
-map <- map[map$seq.depth > 200,]
+map <- map[map$seq.depth > 250,]
 sv <- sv[rownames(sv) %in% rownames(map),]
 
 #kill SVs that no longer have any sequences or are now singletons.----
@@ -38,6 +38,7 @@ colnames(sv.filter) <- c('sv.ID','n.seqs')
 to_remove <- sv.filter[sv.filter$n.seqs < 2,]$sv.ID
 sv <-  sv[,!(colnames(sv) %in% to_remove) ]
 fun <- fun[!(rownames(fun) %in% to_remove),]
+tax <- tax[!(rownames(tax) %in% to_remove),]
 
 #remove taxa that do not assign to fungi.----
 to_remove <- rownames(fun[is.na(fun$kingdom),])

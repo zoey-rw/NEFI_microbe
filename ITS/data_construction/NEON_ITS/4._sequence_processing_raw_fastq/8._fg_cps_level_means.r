@@ -4,13 +4,14 @@ library(runjags)
 source('paths.r')
 
 #set output.path----
-plot.output.path <- NEON_plot.level_fg_obs.path
-site.output.path <- NEON_site.level_fg_obs.path
+plot.output.path <- NEON_plot.level_fg_obs_fastq.path
+site.output.path <- NEON_site.level_fg_obs_fastq.path
 
 #load data and format.----
-d <- readRDS(NEON_taxa_fg.path)
+d <- readRDS(NEON_ITS_fastq_taxa_fg.path)
 fg.c <- d$abundances
-fg.c <- fg.c[,!colnames(fg.c) %in% c('deprecatedVialID','other')]
+seq.depth <- d$seq_total
+
 
 #get y dependent matrix.----
 y <- fg.c
@@ -18,8 +19,6 @@ y$geneticSampleID <- NULL
 y <- as.matrix(y)
 y <- y+1 #dirichlet doesn't like hard zeros because log-link.
 y <- y/d$seq_total
-other <- 1- rowSums(y)
-y <- cbind(other,y)
 
 #get core_plot, core_site, plot_site
 core_plot <- substr(fg.c$geneticSampleID,1,8)
@@ -29,34 +28,34 @@ plot_site <- substr(plot_site,1,4)
 
 #jags data object.----
 jd <- list(y=as.matrix(y), N.site = length(unique(plot_site)), N.plot =  length(plot_site), N.core = nrow(y), N.spp = ncol(y), 
-            core_plot = as.factor(core_plot), plot_site=as.factor(plot_site))
+           core_plot = as.factor(core_plot), plot_site=as.factor(plot_site))
 
 #jags model.----
 jags.model = "
 model {
-  # Observations (single set per core):
-  for(i in 1:N.core){
-    y[i,1:N.spp] ~ ddirch(plot_mu[core_plot[i],1:N.spp] * core_alpha) 
-  }
-  # Plot means:
-  for(i in 1:N.plot){
-    plot_mu[i,1:N.spp] ~ ddirch(site_mu[plot_site[i],1:N.spp] * plot_alpha)
-  }
-  
-  # Site means:
-  for(i in 1:N.site){
-    site_mu[i,1:N.spp] ~ ddirch(priors[1:N.spp] * site_alpha)
-  }
-  
-  # Priors:
-  priors[1] <- 1
-  for(s in 2:N.spp){
-    priors[s] ~ dnorm(1,1E-3) I(0,)
-  }
-  site_alpha ~ dgamma(0.01, 0.01)
-  plot_alpha ~ dgamma(0.01, 0.01)
-  core_alpha ~ dgamma(0.01, 0.01)
-  
+# Observations (single set per core):
+for(i in 1:N.core){
+y[i,1:N.spp] ~ ddirch(plot_mu[core_plot[i],1:N.spp] * core_alpha) 
+}
+# Plot means:
+for(i in 1:N.plot){
+plot_mu[i,1:N.spp] ~ ddirch(site_mu[plot_site[i],1:N.spp] * plot_alpha)
+}
+
+# Site means:
+for(i in 1:N.site){
+site_mu[i,1:N.spp] ~ ddirch(priors[1:N.spp] * site_alpha)
+}
+
+# Priors:
+priors[1] <- 1
+for(s in 2:N.spp){
+priors[s] ~ dnorm(1,1E-3) I(0,)
+}
+site_alpha ~ dgamma(0.01, 0.01)
+plot_alpha ~ dgamma(0.01, 0.01)
+core_alpha ~ dgamma(0.01, 0.01)
+
 }" #end jags model.
 
 #run JAGS model in runjags.----
@@ -65,8 +64,8 @@ test <- run.jags(model = jags.model,
                  n.chains = 3,
                  monitor = c('core_alpha','plot_alpha','site_alpha','plot_mu','site_mu','priors'),
                  adapt = 1000,
-                 burnin = 3500,
-                 sample = 5000)
+                 burnin = 10000,
+                 sample = 10000)
 
 #get matrices of mean, upper and lower confidence intervals at plot and site level.----
 #site level
