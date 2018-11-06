@@ -15,8 +15,23 @@ rownames(core.truth) <- gsub('-GEN','',core.truth$geneticSampleID)
 plot.truth <- readRDS(NEON_plot.level_fg_obs.path)
 site.truth <- readRDS(NEON_site.level_fg_obs.path)
 
+#new fastq data.
+use_new <- F
+if(use_new == T){
+  core.truth <- readRDS(NEON_ITS_fastq_taxa_fg.path)
+  core.truth <- core.truth$rel.abundances
+  rownames(core.truth) <- gsub('-GEN','',rownames(core.truth))
+  plot.truth <- readRDS(NEON_plot.level_fg_obs_fastq.path)
+  site.truth <- readRDS(NEON_site.level_fg_obs_fastq.path)
+}
+
+#setup output spec.----
+png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
+par(mfrow = c(4,3),
+    mai = c(0.3,0.3,0.3,0.3),
+    oma = c(4,6,3,1))
 trans <- 0.3
 limy <- c(0,1)
 core.cex <- 0.7
@@ -27,11 +42,6 @@ glob.pch <- 16
 names <- colnames(d$core.fit$mean)
 names <- names[c(2:(length(names)),1)]
 
-#setup output spec.----
-png(filename=output.path,width=12,height=12,units='in',res=300)
-par(mfrow = c(4,3),
-    mai = c(0.3,0.3,0.3,0.3),
-    oma = c(4,6,3,1))
 
 #loop over functional groups.----
 for(i in 1:length(names)){
@@ -39,6 +49,7 @@ for(i in 1:length(names)){
   #organize data.
   fcast <- d$core.fit
   obs <- core.truth
+  obs <- obs[,colnames(obs) %in% colnames(fcast$mean)]
   obs <- obs[rownames(obs) %in% rownames(fcast$mean),]
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(obs),]
