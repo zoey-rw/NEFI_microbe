@@ -1,0 +1,919 @@
+"","Site.Name","Site.ID","Domain.Name","Domain.Number","State","Nearest.Town","Lat..Long.","Site.Type","Site.Subtype","Site.Host","Civil.Construction","Civil.Construction.Text","Sensor.Installation","Sensor.Installation.Text","Field.Sampling","Field.Sampling.Text","Data.Status","Data.Status.Text","Construction.Status","Construction.Status.Text","Overview","Site.Access.Learn.More","Mean.Annual.Temperature","Mean.Annual.Precipitation","Dominant.NLCD.Classes","Elevation","Site.Characteristics","Data.Collection.Types","Adjacent.Research.Networks","Field.Office","Gallery","Thumbnail","Overview.Image","Google.Maps.Embed.Code","Related.Content"
+"41","Central Plains Experimental Range","CPER","Central Plains","D10","CO",NA,"40.81553,  -104.7456","Core Terrestrial","","U.S. Department of Agriculture, Agriculture Research Service, LTER","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Central Plains Experimental Range (CPER) is located at the western edge of the Pawnee National Grasslands in Colorado, 19 kilometers northeast of Nunn, Colorado. The elevation ranges between 1,500-1,700 meters.
+Site history & management
+CPER includes 6,300 hectares of undulating rangeland. Large herbivores such as cattle (and previously, bison), and burrowing animals such as the black-tailed prairie dog (Cynomys ludovicianus) play dominant roles in ecosystem function and maintenance. CPER retains most of the features representative of pre-settlement conditions, with large native herbivores. CPER is influenced by contemporary land-use practices, such as agriculture and cattle grazing.
+Total data products planned for this site: 113
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","8C/46.4F","370 mm","Grassland/Herbaceous","1648 m","Site-specific topics
+NEON collects a standard suite of data at CPER; however, data collected at this site serves as a benchmark for exploring the causes and consequences of environmental change taking place throughout the grasslands of the Central Plains Domain, with results relevant to arid and semi-arid grassland ecosystems worldwide. Overall, the Front Range of Colorado is growing at 3 times the national average with the population expected to surpass 5.7 million by 2030. Conversion of native vegetation to urban and suburban landscapes drastically alters biological diversity, reduces soil organic matter and alters the temporal and spatial distribution of plant biomass.
+Vegetation
+The dominant vegetation at CPER is moderately grazed Shortgrass steppe. The biotic communities of the Shortgrass steppe ecosystem are well adapted for drought; other vegetative species include blue grama (Bouteloua gracilis) and prickly-pear cactus (Opuntia polyacantha). CPER represents grassland communities across multiple domains and a range of climatic regions. 
+Geology: 
+Laramie formation, shales and claystone (with minor sandstone lenses).  Cretaceous.
+USGS HUC: h10190008
+Dominant Phenology Species:
+Bouteloua gracilis, Thelesperma filifolium, Hesperostipa comata
+Mean Canopy Height:
+The mean canopy height is 0.4 m.
+Soil Family:
+Fine, loamy, mixed, superactive, mesic.  Aridic Argiustolls.
+Wind Direction:
+The dominant wind direction is northwest.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 26’ with 4 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data may be collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","USDA Agricultural Research Service - Central Great Plains Research Center
+","Domain 10/13
+1685 38th Street, Suite 100Boulder, CO 80301
+Telephone: 720.836.2439
+Contact us
+","CPER Flux Tower - square, Fall Members Field Trip to CPER 2014-Tower, Thumbnail_CPER, Stephanie Cortest at CPER, CPER Aerial 5, NEONAnts specimens from CPER, CPER flux tower image 400","Thumbnail_CPER","CPER Flux Tower - square",NA,NA
+"43","North Sterling, CO","STER","Central Plains","D10","CO",NA,"40.4619,  -103.0293","Relocatable Terrestrial","","Private Owner","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The North Sterling site, located outside of Sterling in Northeastern Colorado, is characterized by flat terrain and represents an agronomic site within urban and formerly urban areas.
+Site history & management
+The site is at the edge of a non-tilled experimental field that is used for the long-term sustainable Dryland Agroecosystems Project (DAP), which was initiated in 1985 at three sites in eastern Colorado (Sterling, Stratton, and Walsh) to evaluate the effects of cropping intensity on production, water use efficiency and selected soil chemical and physical properties. The DAP site was established in 1985 and was chosen because of representative soils present in the catena.
+Total data products planned for this site: 110
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","8C/46.4F","370 mm","Cultivated Crops","1364 m","Vegetation
+Before establishment of the no-till cropping systems, the site was under conventional tillage since it was taken from native sod in about 1910. Conventional tillage from 1910 to 1985 ranged from moldboard plowing in the early years to sweep tillage in the later years. The primary crop was winter wheat grown in a wheat-fallow rotation. Proso millet also had been grown occasionally during a few years before 1985. Cropping systems under no-till management were initiated in 1985. These systems included:
+
+Winter wheat (Triticum aestivum L.)-fallow
+Winter wheat-maize (Zea mays L.)-fallow
+Winter wheat-maize-proso millet (Panicum miliaceum L.)-fallow
+Continuous cropping (crops grown over the years included maize, sorghum, winter wheat, forage millet, and sunflower)
+Perennial grass
+
+Grass stands were established in the spring of 1986 and contain a mixture of perennial species including warm and cool season grasses.
+Climate
+Summers in Sterling are hot with low humidity and winters are typically around freezing point but can drop to lower temperatures. Occasional hailstorms and thunderstorms are expected during the growing seasons. North Sterling also experiences seasonal high winds and tornados. NEON’s North Sterling site is owned privately and managed by a local farmer; it is subject to the shifting agronomic and economic needs of the area.
+Geology: 
+Ogallala Formation, alternating conglomerates and sandstones. Cenozoic.
+USGS HUC: h10250002
+Mean Canopy Height:
+The mean canopy height is 1'.
+Soil Family:
+Fine, silty, mixed, superactive, mesic. Pachic Argiustolls.
+Wind Direction:
+The dominant wind direction is northwest.
+Site-specific topics
+This site provides a baseline understanding of the regional effects of climate change and chemical climate, including dust and Front Range pollution, to understand and contrast ecological process with other within- and cross-domain analyses. NEON collects a standard suite of data at North Sterling; however, data from this particular location provides a baseline for evaluating changes due to invasive species and infectious disease along a rural wildland, suburban fringe, urban gradient in time or space. Overall, the Front Range of Colorado is growing at 3 times the national average with the population expected to surpass 5.7 million by 2030. Conversion of native vegetation to urban and suburban landscapes drastically alters biological diversity, reduces soil organic matter and alters the temporal and spatial distribution of plant biomass. This relocatable site is designed to represent economic and agronomic decisions typically found in farming practices in eastern Colorado, which is a shifting agricultural site in Domain 10.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 26’ with 4 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data may be collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall (removed in 2018 due to short stature crops)
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 10/13
+1685 38th Street, Suite 100Boulder, CO 80301
+Telephone: 720.836.2439
+Contact us
+","","","",NA,NA
+"45","UNDERC","UNDE","Great Lakes","D05","MI",NA,"46.23388,  -89.53725","Core Terrestrial","","University of Notre Dame Environmental Research Center","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"NEON's Domain 5 core site is located at the University of Notre Dame Environmental Research Center (UNDERC) East. Straddling the border between Northern Wisconsin and Michigan’s Upper Peninsula, the UNDERC property comprises approximately 7500 acres and is maintained as an environmental education and research facility. UNDERC also has 30 lakes comprising 1350 acres, including Crampton Lake, a NEON aquatics site.
+Total data products planned for this site: 119
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","3C/37.4F","854 mm","Deciduous Forest, Mixed Forest, Woody Wetlands","518 m","History
+Region-wide logging for pine in the late 1800s and early to mid-1900's led to clear-cutting of most forested areas on the property. The main parcel was donated to the University in the 1930s. Timber harvest continued into the 1950s and later, leaving a mixture of successional forest regrowth. Since the 1970s, the site has been minimally managed to maintain access for recreational, educational and research goals.
+Vegetation
+The UNDERC property primarily includes second-growth Northern mesic forest with dominant species including, red and sugar maple (Acer rubrum and A. saccharum), aspen (Populus tremuloides and P. grandidentata) ) and paper birch (Betula papyrifera.). Evergreen forests are dominated by balsam fir (Abies balsamea) and may also include hemlock (Tsuga canadensis) and in the numerous wet areas, cedar (Thuja occidentalis) and black spruce (Picea mariana).
+Poorly drained soils on the site can give rise to open, acidic sphagnum bogs dotted with tamarack (Larix laricina), black spruce and Ericaceous shrubs. Marshes surround numerous lakes including Crampton Lake, a co-located NEON aquatics site. Some wetlands are dominated by thickets of alder (Alnus incana subsp. rugosa).
+Climate
+Climate is generally humid, cool and wet with an annual average of 37.6º F at nearby Land O’ Lakes, WI with no true dry season. Temperature averages range from a low of -3.8º F and high of 49.7º F Annual precipitation is approximately 33 inches with 114 inches of snow.
+Geology: 
+ Migmatitic gneiss and amphobole. Late to Early Archean.
+USGS HUC: h04020102
+Dominant Phenology Species:
+Acer saccharum, Populus tremuloides, Corylus cornuta
+Mean Canopy Height:
+The mean canopy height is 24'.
+Soil Family:
+Coarse, loamy, mixed, superactive, frigid. Argic Fragiaquods.
+Wind Direction:
+The dominant wind direction is south-southwest.
+Site Specific Topics
+Land use and specifically forest management, is one of the major science themes the Great Lakes Domain will study. The UNDERC property represents a regenerating, minimally managed forest that is characteristic of the region. This site was selected in contrast with other Great Lakes sites, Treehaven and Steigerwaldt which have varying forestry management history/management and planned future use.
+ 
+
+ 
+
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 127’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","University of Notre Dame - Environmental Research Center
+","Domain 05
+7647 Notre Dame LaneLand O Lakes, WI 54540
+Telephone: 906.842.2119
+Contact us
+","","","",NA,NA
+"52","Ordway-Swisher Biological Station","OSBS","Southeast","D03","FL",NA,"29.68927,  -81.99343","Core Terrestrial","","University of Florida Foundation","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Ordway-Swisher Biological Station (OSBS) is operated by the University of Florida and comprises over 9,300 acres. It is a year-round field station established for the long-term study and conservation of unique ecosystems through management, research and education. The Station is located approximately 20 miles east of Gainesville in Melrose (Putnam County, Florida). There are two aquatic arrays at Ordway-Swisher, representing the two dominant aquatic features on the landscape: 1) Suggs lake, a shallow surface water lake that is rich in taxa and biologically active in structure and function; and 2) Barco lake, a deep lake connected to ground water. 
+Total data products planned for this site: 119
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","20C/68F","1290 mm","Emergent Herbaceous Wetlands, Evergreen Forest, Woody Wetlands","45 m","Site history & management
+The forest is maintained by fire and has a relatively open structure: it is managed with prescribed burns at a frequency of 3-4 years.
+Vegetation
+Ordway-Swisher is dominated by pine and turkey oak (Quercus laevis Walter) vegetation with a grass and forb groundcover. Pines are primarily Longleaf Pines (Pinus palustris Mill.) and Lobolly (P. Taeda) and the dominant perennial grass is wiregrass (Aristida stricta Michx.). Numerous species of other perennial grasses and forbs also present. Mean canopy height is approximately 23 meters.
+Geology: 
+Cypresshead Formation, sand, clay, and mud. Pliocene.
+USGS HUC: h03080103
+Dominant Phenology Species:
+Quercus laevis, Pinus palustris, Aristida beyrichiana
+Mean Canopy Height:
+The mean canopy height is 23'.
+Wind Direction:
+The dominant wind direction is northeast.
+Soils
+Dominant soil types at Ordway-Swisher are Candler fine sand, Hyperthermic and uncoated Lamellic Quartzipsamments.
+Site-specific topics
+The Ordway-Swisher Biological Station site is designed to study an intact longleaf pine ecosystem, which is one of the historically dominant forest types in the region. The longleaf pine ecosystem spans the region, with deep sandy soils through the central ridgeline from North-to-mid Florida.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 116’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 03
+4579 NW 6th Street, Unit B-2Gainesville, FL 32609
+Telephone: 352.505.2019
+Contact us
+","Ordway Fieldwork 2, Thumbnail_Ordway, Animated NDVI data visualization - OSBS, OSBS Ordway fieldwork","Thumbnail_Ordway","",NA,NA
+"54","Disney Wilderness Preserve","DSNY","Southeast","D03","FL",NA,"28.12504,  -81.4362","Relocatable Terrestrial","","The Nature Conservancy","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The 12,000-acre Disney Wilderness Preserve straddles the headwaters of the Everglades ecosystem in south-central Florida. This site is seasonally wet and flooded.
+Site history & management
+The Disney site was heavily logged and used as ranchland for decades. However, vegetation and site conditions have been restored to closely represent site condition records, documented by the area’s first Spanish missionaries. The large-scale wetland and upland restoration at Disney included the removal of non-native, invasive plants and grasses and the removal of agricultural ditches. The primary management activity is controlled burns.
+Total data products planned for this site: 111
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","22C/71.6F","1150 mm","Pasture/Hay, Woody Wetlands","15 m","Geology: 
+Undifferentiated clay, mud, and beach sand.  Pleistocene or the Holocene.
+USGS HUC: h03090101
+Dominant Phenology Species:
+Andropogon virginicus, Aristida beyrichiana, Euthamia caroliniana
+Mean Canopy Height:
+The mean canopy height is 1.5'.
+Soil Family:
+Sandy, siliceous, hyperthermic.  Aeric Alaquods.
+Wind Direction:
+The dominant wind direction is east.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 26’ with 4 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 03
+4579 NW 6th Street, Unit B-2Gainesville, FL 32609
+Telephone: 352.505.2019
+Contact us
+","","DSNY_D04_Vegetation","DSNY_D04_Vegetation",NA,NA
+"55","Jones Ecological Research Center","JERC","Southeast","D03","GA",NA,"31.19484,  -84.46861","Relocatable Terrestrial","","Private Owner","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"This terrestrial relocatable field site is located in the Joseph Jones Ecological Research Center is an 11,000-hectare reserve located within the Lower Coastal Plains and Flatwoods areas in southern Georgia. 
+Site history & management
+The Jones site has been managed with low intensity, dormant-season prescribed fires for the past 75 years at a frequency of every 3-4 years. 
+Total data products planned for this site: 115
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","19.5C/67.1F","1307 mm","Cultivated Crops, Deciduous Forest, Evergreen Forest, Mixed Forest","44 m","Geology: 
+Ocala limestone. Eocene.
+USGS HUC: h03130009
+Dominant Phenology Species:
+Aristida beyrichiana, Pinus palustris, Quercus falcata.
+Mean Canopy Height:
+The mean canopy height is 27'.
+Soil Family:
+Loamy, kaolinitic, thermic.  Arenic Kandiudults.
+Wind Direction:
+The dominant wind direction is northeast.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 138’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","Jones Ecological Research Center
+","Domain 03
+4579 NW 6th Street, Unit B-2Gainesville, FL 32609
+Telephone: 352.505.2019
+Contact us
+","","","",NA,NA
+"58","Smithsonian Conservation Biology Institute","SCBI","Mid-Atlantic","D02","VA",NA,"38.89292,  -78.1395","Core Terrestrial","","Smithsonian Institution","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Smithsonian Conservation Biology Institute (SCBI) site is a mid-continent forested eastern deciduous site, species include Oaks, Hickories, and Ash, and contains well defined ground cover and understory strata.
+Total data products planned for this site: 118
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","13C/55.4F","1054 mm","Deciduous Forest, Evergreen Forest, Pasture/Hay","361 m","Site history & management
+At the SCBI, the forest was logged multiple times during the past 300 years and was managed mostly as farmland when acquired by the federal government in 1903. One reason that wildlands are found disproportionately in the mountain province of the domain is that the steep slopes and shallow soils are relatively unproductive for agriculture. Here too the site is typical of the domain, encompassing the full range of lithologic, edaphic, hydrologic, and biogeochemical conditions found in the Mid-Atlantic Domain.
+Vegetation
+(SCBI) site consists of mature (> 100 year) and young (< 40 year) secondary forest that is primarily deciduous and indicative of hardwood forests in the Middle Atlantic Domain. This forest is Eastern Deciduous and dominated by oak, hickory, ash and tulip popular. Young forests are dominated by white ash, black locust, and dogwood. Invasive tree species (autumn olive, tree-of-heaven, princess tree) are present along edges and disturbed sites. The SCBI site is in a mid-continent forested eastern deciduous site, species include Oaks, Hickories, and Ash, and contains well-defined ground cover and understory strata.
+Geology: 
+Catoctin Formation, metabasalt. Cambrian.
+USGS HUC: h02070005
+Dominant Phenology Species:
+Liriodendron tulipifera, Microstegium vimineum, Juglans nigra
+Mean Canopy Height:
+The mean canopy height is 35'.
+Soil Family:
+Loamy, skeletal, mixed, active, mesic. Ultic Hapludalfs.
+Wind Direction:
+The dominant wind direction is south-southeast.
+Site specific topics
+This core site provides a representative wildland that is within a mosaic of other land use types with expected increases in rates of urbanization, and that are expected to influence changes in biodiversity, biogeochemistry, and infectious and invasive species biology. ).
+About the site host
+The Smithsonian Conservation Biology Institute (SCBI) facilitates and promotes research programs based in Front Royal, Virginia, the National Zoo in Washington, DC, and at field-research and training sites around the world. Learn more about SCBI here.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 171’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","Smithsonian Institute
+","Domain 02
+1500 Remount RoadMRC 5560, Bldg 90Front Royal, VA 22630
+Telephone: 540.692.1919
+Contact us
+","","","",NA,NA
+"60","Bartlett Experimental Forest","BART","Northeast","D01","NH",NA,"44.06388,  -71.28731","Relocatable Terrestrial","","U.S. Forest Service","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Bartlett Experimental Forest is an actively managed forest; managed portions (30%) reflect a range of forest patch sizes and structural distributions.
+Site history
+The Bartlett forest has a history of logging dating from colonial times through the beginning of the 20th century. Approximately 70% of the land area has remained uncut since the early 1900s. Natural disturbances include late 19th century fire, beech scale-Nectria complex (beech bark disease) beginning in the 1940s, severe wind disturbance resulting from hurricanes in 1938 and 1954 and a damaging ice storm in 1998.
+Total data products planned for this site: 116
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","8C/46.4F","1056 mm","Deciduous Forest, Evergreen Forest, Mixed Forest","232 m","NEON sampling area
+15.66 km2
+Site specific topics
+Exogenous factors likely to affect forest growth and composition into the future include climate change, increasing regional rates of atmospheric deposition (S, N and Hg), and new invasive species, such as the hemlock wooly adelgid, emerald ash borer, and Asian long horned beetle, whose ranges are likely to expand within the region. Bartlett Experimental Forest also represents the most Northeastern NEON site, and anchors the top of the north-south nitrogen deposition gradient along the eastern-side of the US.
+Vegetation
+The Bartlett site is primarily Eastern Deciduous, boreal ecotone. Nearly all of the Bartlett Experimental Forest is now covered by high forest. The primary forest cover type is the sugar maple-beech-yellow birch type. The upper elevations support stands of spruce and fir. Softwoods such as hemlock, balsam fir and spruce are commonly mixed with hardwoods, especially on cool steep slopes or on the poorly drained soils at lower elevations. Although white pine occurs mostly in stands at lower elevations, scattered specimens can be found over a large part of the forest. The site provides the deciduous-to-boreal forest transitional ecotone towards the ecosystems in the North.
+Geology: 
+White mountain plutonic-volcanic succession, conway granite.  Middle to late Jurassic.
+USGS HUC: h01060002
+Dominant Phenology Species:
+Fagus grandifolia, Tsuga canadensis, Acer pensylvanicum
+Mean Canopy Height:
+The mean canopy height is 23 m.
+Soil Family:
+Coarse-loamy, isotic, frigid.  Aquic Haplorthods.
+Wind Direction:
+The dominant wind direction is south.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 116’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 01
+166 Boulder Drive, Suite 101Fitchburg, MA 01420
+Telephone: 978.627.4010
+Contact us
+","","","",NA,NA
+"65","Woodworth","WOOD","Northern Plains","D09","ND",NA,"47.12823,  -99.24136","Core Terrestrial","","U.S. Geological Survey, U.S. Fish and Wildlife Service","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Northern Plains-Woodworth site (Woodworth), is a restored prairie in an undulating matrix of small lakes, ponds and ephemeral water bodies (re. prairie potholes). The site is administered by the Department of the Interior (DOI), National Fish and Wildlife, National Wildlife Refuge.
+Total data products planned for this site: 110
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","5C/41F","490 mm","Emergent Herbaceous Wetlands, Grassland/Herbaceous","579 m","Site location description
+The Northern Plains-Woodworth site is located at ~ 3 miles SE of the town of Woodworth, ND.  The Northern Plains-Woodworth site is part of the Chase Lake National Wildlife Refuge and is at the center of one of the largest roadless blocks of native prairie left in the Upper Great Plains.
+Site history & management
+This site has been restored to native vegetation, structure and function.
+Site specific topics & science rationale
+Woodworth provides a baseline understanding of a core wildland system that is historically representative of the region and provides meaningful comparison to the other sites in the region that are managed with different degrees of grazing intensity. While there is little urban development in the area, this site is paired with other grassland sites within the NEON continental design: it provides a contrast to sites that may receive chemical climate inputs from agronomic practices, as well as sites from nearby growing urban environments. The Woodworth site also provides an understanding of tall grass prairie environments and serves as a benchmark for detecting and exploring the causes and consequences of environmental change taking place throughout the grasslands of the Northern Plains Domain, with results relevant to semi-arid grassland ecosystems worldwide.  
+Vegetation
+Woodworth contains a mix of native grasslands, tame grasses and legumes with many species of wildflowers, and unique xeric (dry) mixed-grass prairies containing a plant community unique to North Dakota and the Great Plains. 
+Biological conditions
+Overall, the Northern Plains-Woodworth site retains most of the features representative of pre-settlement biotic and edaphic conditions, with large native herbivores. The Refuge and surrounding area also provides breeding and resting habitat for more than 293 bird species, and has been designated as one of America's Top 100 Globally Important Bird Areas (IBA) by the American Bird Conservancy.
+Geology: 
+Composing the Coleharbor Formation, river sediments (sand and gravel). Pleistocene and Holocene.
+USGS HUC: h10160002
+Dominant Phenology Species:
+Poa pratensis, Bromus inermis, Artemisia absinthium
+Mean Canopy Height:
+The mean canopy height is 1 m.
+Soil Family:
+Coarse, loamy, over-sandy or sandy, skeletal, mixed, superactive, frigid. Typic Haplustolls.
+Wind Direction:
+The dominant wind direction is northwest.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 26’ with 4 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a Double Fence Intercomparison Reference (DFIR) near the tower.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 09
+1503 Business Loop EastJamestown, ND 58401
+Telephone: 701.952.6728
+Contact us
+","D09 WOOD Woodworth plants close up 2, D09 WOOD Woodworth plants close up, D09 WOOD Woodworth lakes in distance, D09 WOOD Woodworth vegetation","D09 WOOD Woodworth vegetation","",NA,NA
+"70","Talladega National Forest","TALL","Ozarks Complex","D08","AL",NA,"32.95046,  -87.39327","Core Terrestrial","","U.S. Forest Service","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The TALL terrestrial field site covers 5300 hectares within the larger Oakmulgee District of the Talladega National Forest (475,000 hectares) in west-central Alabama. TALL is located within the Gulf Coastal Plain which is the dominant physiographic province (52%) of NEON's Domain 8: Ozarks Complex. It is also where the upper coastal plain gives rise to the Appalachian foothills. The lands of this region are rich a mosaic of forest types and habitats. Steep ridges to rolling hills fading to hardwood bottoms make up the diversity of forest conditions found in Oakmulgee. While known for its longleaf forests, over 40% of Oakmulgee is covered with a mixture of hardwoods and wetlands.
+Total data products planned for this site: 118
+This site is colocated with NEON's MAYF aquatic site.
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","17C/62.6F","1350 mm","Deciduous Forest, Evergreen Forest, Mixed Forest","135 m","Talladega’s canopy is dominated by longleaf pine (Pinus palustris), loblolly pine (Pinus taeda), and slash pine (Pinus elliotti). The site also includes a mixture of hardwoods and wetlands.
+The general management of the area includes logging, longleaf pine restoration, and restoring the natural fire regime. This is also the southern most core site in a eastern north-south design to capture chemical climate (ozone and nitrogen deposition).
+Mean Canopy Height:
+The mean canopy height is 25'.
+Geology: 
+Gordo and Coker Formations (in the Tuscaloosa Group), sand, clay, and mudstone. Cretaceous.
+USGS HUC: h03160113
+Dominant Phenology Species:
+Vaccinium arboreum, Pinus palustris, Liquidambar styraciflua
+Soil Family:
+Fine, loamy, siliceous, subactive, thermic. Typic Hapludults.
+Wind Direction:
+The dominant wind direction is north.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 116’ with 5 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","","Domain 08
+6050 Mimosa Circle, Suite CTuscaloosa, AL 35405
+Telephone: 205.409.9039
+Contact us
+","","","",NA,NA
+"76","Oak Ridge","ORNL","Appalachians & Cumberland Plateau","D07","TN",NA,"35.96412,  -84.2826","Core Terrestrial","","U.S. Department of Energy","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"Oak Ridge National Laboratory (ORNL) is located at the U.S. Department of Energy's Oak Ridge Reservation in Roane County, Tennessee. The ORNL reservation is situated within the borders of five parallel ridges and valleys to the north of the Clinch River that are part of the Ridge-and-Valley Appalachians physiographic province (Environmental Sciences Division n.d.). The NEON tower site and Walker Branch aquatic site at ORNL are located within the Walker Branch Watershed, a 100 ha area that has served as the site for long-term environmental studies by the Environmental Sciences Division at ORNL, NOAA, and many visiting university researchers.
+Total data products planned for this site: 119
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","15C/59F","1222 mm","Deciduous Forest, Evergreen Forest, Pasture/Hay","334 m","Geology: 
+Upper Knox group, dolostone, and limestone.  Ordovician and Cambrian.
+USGS HUC: h06010207
+Dominant Phenology Species:
+Quercus montana, Liriodendron tulipfera, Cornus florida
+Mean Canopy Height:
+The mean canopy height is 28'.
+Soil Family:
+Fine, kaolinitic, thermic. Typic Paleudults.
+Wind Direction:
+The dominant wind direction is west-northwest.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 127’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","DOE - Oak Ridge National Laboratory
+","Domain 07
+154 Fairbanks Road, Fairbanks PlazaOak Ridge, TN 37830
+Telephone: 865.272.0055
+Contact us
+","","","",NA,NA
+"81","Harvard Forest","HARV","Northeast","D01","MA",NA,"42.5369,  -72.17266","Core Terrestrial","","Harvard University; LTER; Massachusetts Department of Conservation and Recreation, Division of Water Supply Protection","Complete",NA,"Complete",NA,"Ongoing",NA,"Partially Available",NA,"Complete",NA,"The Harvard Forest site is comprised of 3,750 acres of land and multiple research facilities; it is the core NEON site for the Northeast region. Harvard Forest is a department of the Faculty of Arts and Sciences of Harvard University. Representative habitats at Harvard Forest include northern, transition, and central forests; marshes, swamps, and conifer-dominated bogs; and forest plantations.
+Site history & management
+Since its inception in 1907, research and education have been the focus of Harvard Forest: the original purpose was to develop a field laboratory for students, a research center in forestry and related disciplines, and a demonstration of practical sustained forestry. Since 1988, Harvard Forest has been a Long-Term Ecological Research site, funded by the National Science Foundation to conduct integrated, long-term studies of forest dynamics.
+Total data products planned for this site: 119
+","
+
+        Field Site Embed - Site Access Learn More
+    
+  
+    
+
+  
+    Contact Us to Learn More  
+
+  
+","8C/46.4F","967 mm","Deciduous Forest, Evergreen Forest, Mixed Forest, Woody Wetlands","351 m","Geology: 
+Connecticut Valley Belt schist.  Lower Devonian.
+USGS HUC: h01080204
+Dominant Phenology Species:
+Quercus rubra, Acer rubrum, Aralia nudicaulis
+Mean Canopy Height:
+The mean canopy height is 26'.
+Soil Family:
+Coarse, loamy over sandy or sandy, skeletal, mixed, semiactive, frigid.  Oxyaquic Dystrudepts.
+Wind Direction:
+The dominant wind direction is northwest.
+","Airborne Remote Sensing Surveys
+Remote sensing surveys of this field site collect lidar, spectrometer and high-resolution RGB camera data.
+Meteorological Measurements
+The flux/meteorological tower at this site is 127’ with 6 measurement levels.  The tower top extends above the vegetation canopy to allow sensors mounted at the top and along the tower to capture the full profile of atmospheric conditions from the top of the vegetation canopy to the ground. The tower collects physical and chemical properties of atmosphere-related processes, such as humidity, wind, and net ecosystem gas exchange. Precipitation data are collected by a tipping bucket at the top of the tower, a Double Fence Intercomparison Reference (DFIR) near the tower, and a series of throughfalls located in the soil array.
+Phenocams
+This site has one phenocam on the top of the flux tower and one near the bottom of the tower.
+Soil Sensor Measurements
+This site has five soil plots placed in an array within the airshed of the flux tower. The following measurements may be collected at the soil surface in each soil plot:
+
+Photosynthetically Active Radiation (PAR) at soil surface
+Soil heat flux
+Solar radiation
+Throughfall
+
+The following measurements are collected at multiple depths in each soil plot:
+
+Soil moisture
+Soil temperature
+CO2 concentration
+
+Observational Sampling
+Field ecologists collect the following types of observational data at this site:
+Terrestrial Organisms
+
+Birds
+Ground Beetles
+Mosquitoes
+Plants
+Small Mammals
+Soil Microbes
+Ticks
+
+Biogeochemical
+
+Plants
+Soil
+
+Physical Terrestrial
+
+Soil
+
+","Harvard Forest LTER
+","Domain 01
+166 Boulder Drive, Suite 101Fitchburg, MA 01420
+Telephone: 978.627.4010
+Contact us
+","View of plant canopy - HARV D01 - image, HARV D01 tower from below image, Leaf Sampling at Harvard Forest","View of plant canopy - HARV D01 - image","",NA,NA

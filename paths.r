@@ -258,6 +258,7 @@ system(cmd)
             ted_otu_raw.path <- paste0(dir,'tedersoo_2014_otu_file.txt')
      ted_sampling_dates.path <- paste0(dir,'tedersoo2014_dates.csv')
           NEON_ITS_link_file <- paste0(dir,'NEON_rawFilesList.csv')
+            field_sites.path <- paste0(dir,'field-sites.csv')
      
  
 #### NEON pre-release: otu tables from L. Stanish. ####

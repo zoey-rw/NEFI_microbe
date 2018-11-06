@@ -16,7 +16,7 @@ plot.truth <- readRDS(NEON_plot.level_fg_obs.path)
 site.truth <- readRDS(NEON_site.level_fg_obs.path)
 
 #new fastq data.
-use_new <- F
+use_new <- T
 if(use_new == T){
   core.truth <- readRDS(NEON_ITS_fastq_taxa_fg.path)
   core.truth <- core.truth$rel.abundances
@@ -25,11 +25,14 @@ if(use_new == T){
   site.truth <- readRDS(NEON_site.level_fg_obs_fastq.path)
 }
 
+#DEFINE OUTLIER SITES- DSNY in this case.----
+out_sites <- c('DSNY')
+
 #setup output spec.----
 png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
-par(mfrow = c(4,3),
+par(mfrow = c(3,3),
     mai = c(0.3,0.3,0.3,0.3),
     oma = c(4,6,3,1))
 trans <- 0.3
@@ -41,7 +44,8 @@ outer.cex <- 2
 glob.pch <- 16
 names <- colnames(d$core.fit$mean)
 names <- names[c(2:(length(names)),1)]
-
+names <- names[!(names %in% c('other'))]
+out.color <- 'gray'
 
 #loop over functional groups.----
 for(i in 1:length(names)){
@@ -65,6 +69,9 @@ for(i in 1:length(names)){
   obs.pos <- which(colnames(obs) == names[i])
   obs.mu   <- obs[,obs.pos][order(match(names(obs[,c(fungi_name)]),names(mu)))]
   
+  #make DSNY sites light gray.
+  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  
   #get y-limit.
   obs_limit <- max(obs.mu)
   if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
@@ -72,8 +79,8 @@ for(i in 1:length(names)){
   if(y_max > 0.95){y_max <- 1}
   
   #plot
-  plot(obs.mu ~ mu, cex = core.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA)
-  rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
+  plot(obs.mu ~ mu, cex = core.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
+  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   mtext(fungi_name, side = 2, line = 2.5, cex = 1.5)
   #add confidence interval.
@@ -109,6 +116,9 @@ for(i in 1:length(names)){
   obs.lo95 <- obs$lo95[,fungi_name][order(match(names(obs$lo95[,fungi_name]),names(mu)))]
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
+  #Make DSNY sites gray.
+  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  
   #get y-limit.
   obs_limit <- max(obs.hi95)
   if(max(pi_0.975) > obs_limit){obs_limit <- max(pi_0.975)}
@@ -116,9 +126,9 @@ for(i in 1:length(names)){
   if(y_max > 0.95){y_max <- 1}
   
   #plot
-  plot(obs.mu ~ mu, cex = plot.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA)
-  arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
-  rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
+  plot(obs.mu ~ mu, cex = plot.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
+  arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3, col = obs.cols)
+  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   #1:1 line
   abline(0,1, lwd = 2)
@@ -154,6 +164,9 @@ for(i in 1:length(names)){
   obs.lo95 <- obs$lo95[,fungi_name][order(match(names(obs$lo95[,fungi_name]),names(mu)))]
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
+  #Make DSNY sites gray.
+  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  
   #get y-limit.
   obs_limit <- max(obs.hi95)
   if(max(pi_0.975) > obs_limit){obs_limit <- max(pi_0.975)}
@@ -161,9 +174,9 @@ for(i in 1:length(names)){
   if(y_max > 0.95){y_max <- 1}
   
   #plot
-  plot(obs.mu ~ mu, cex = site.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA)
-  arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
-  rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
+  plot(obs.mu ~ mu, cex = site.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
+  arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3, col = obs.cols)
+  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   #1:1 line
   abline(0,1, lwd = 2)
