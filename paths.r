@@ -114,8 +114,15 @@ NEON_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_SV.table.rds')
 dir <- paste0(ITS_pecan_gen_dir,'figures/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+
+#ddirch forecast-validation.
 NEON_cps_fg_forecast_figure.path <- paste0(dir,'NEON_CPS_fg_forecast_figure.png')
 NEON_cps_genera_forecast_figure.path <- paste0(dir,'NEON_CPS_genera_forecast_figure.png')
+
+#dmulti-ddirch forecast-validation.
+NEON_dmulti.ddirch_fg_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_fg_forecast_validation.png')
+NEON_dmulti.ddirch_cosmo_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_cosmo_forecast_validation.png')
+
 #### ITS/pecan_gen: Uncertainty product paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
 cmd <- paste0('mkdir -p ',dir)
@@ -214,10 +221,18 @@ NEON_site.level_genera_obs_fastq.path <- paste0(dir,'NEON_site.level_genera_obs_
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+
+#ddirch forecasts and variable importance output.
 NEON_site_fcast_fg.path <- paste0(dir,'NEON_fcast_site.level_fg.rds')
 NEON_site_fcast_genera.path <- paste0(dir,'NEON_fcast_site.level_genera.rds')
 NEON_fg_variable_importance_data.path <- paste0(dir,'NEON_fg_variable_importance_data.rds')
 NEON_genera_variable_importance_data.path <- paste0(dir,'NEON_genera_variable_importance_data.rds')
+
+#dmulti-ddirch forecasts and variable importance output.
+NEON_dmulti.ddirch_fcast_fg.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_fg.rds')
+NEON_dmulti.ddirch_fcast_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_cosmo.rds')
+NEON_dmulti.ddirch_var.importance_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_fg.rds')
+NEON_dmulti.ddirch_var.importance_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_cosmo.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
 #This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
