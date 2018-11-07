@@ -62,7 +62,7 @@ x.list <- list(x.clim,x.site,x.all)
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(x.list)) %dopar% {
-    fit <- site.level_multi.dirich_jags(y=y,seq.depth=seq.depth,x_mu=x.list[i],adapt = 200, burnin = 4000, sample = 2000, parallel = T)
+    fit <- site.level_multi.dirich_jags(y=y,seq.depth=seq.depth,x_mu=x.list[i],adapt = 200, burnin = 16000, sample = 5000, parallel = T)
     return(fit)
   }
 

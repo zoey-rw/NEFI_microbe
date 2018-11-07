@@ -25,7 +25,7 @@ y <- y$abundances
 d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$SRR.id,]
-y$Arbuscular <- NULL
+#y$Arbuscular <- NULL
 y <- as.data.frame(y)
 testing = F
 if(testing == T){
@@ -62,7 +62,7 @@ x.list <- list(x.clim,x.site,x.all)
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(x.list)) %dopar% {
-    fit <- site.level_multi.dirich_jags(y=y,seq.depth=seq.depth,x_mu=x.list[i],adapt = 200, burnin = 4000, sample = 2000, parallel = T)
+    fit <- site.level_multi.dirich_jags(y=y,seq.depth=seq.depth,x_mu=x.list[i],adapt = 200, burnin = 16000, sample = 5000, parallel = T)
     return(fit)
   }
 
