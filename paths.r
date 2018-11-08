@@ -210,6 +210,7 @@ NEON_plot.level_genera_obs.path <- paste0(dir,'NEON_plot.level_genera_obs.rds')
 
 #Aggregated fg and cosmo_genera for fastq-dervied data.
      NEON_ITS_fastq_taxa_fg.path <- paste0(dir,'NEON_ITS_fastq_taxa_fg.rds')
+NEON_ITS_fastq_yeast_taxa.path <- paste0(dir,'NEON_ITS_fastq_yeast_taxa.rds')
 NEON_ITS_fastq_cosmo_genera.path <- paste0(dir,'NEON_ITS_fastq_cosmo_genera.rds')
 NEON_plot.level_fg_obs_fastq.path <- paste0(dir,'NEON_plot.level_fg_obs_fastq.rds')
 NEON_site.level_fg_obs_fastq.path <- paste0(dir,'NEON_site.level_fg_obs_fastq.rds')
@@ -217,7 +218,7 @@ NEON_plot.level_genera_obs_fastq.path <- paste0(dir,'NEON_plot.level_genera_obs_
 NEON_site.level_genera_obs_fastq.path <- paste0(dir,'NEON_site.level_genera_obs_fastq.rds')
 
 
-#### ITS/pecan_gen: Forecast and variable importance output paths.----
+#### ITS/pecan_gen: Forecasts, variance decomposition and variable importance output paths.----
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
@@ -228,11 +229,13 @@ NEON_site_fcast_genera.path <- paste0(dir,'NEON_fcast_site.level_genera.rds')
 NEON_fg_variable_importance_data.path <- paste0(dir,'NEON_fg_variable_importance_data.rds')
 NEON_genera_variable_importance_data.path <- paste0(dir,'NEON_genera_variable_importance_data.rds')
 
-#dmulti-ddirch forecasts and variable importance output.
+#dmulti-ddirch forecasts, variance decomposition and variable importance output.
 NEON_dmulti.ddirch_fcast_fg.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_fg.rds')
 NEON_dmulti.ddirch_fcast_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_cosmo.rds')
 NEON_dmulti.ddirch_var.importance_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_fg.rds')
 NEON_dmulti.ddirch_var.importance_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_cosmo.rds')
+NEON_dmulti.ddirch_var.decomposition_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_fg.rds')
+NEON_dmulti.ddirch_var.decomposition_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_cosmo.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
 #This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.

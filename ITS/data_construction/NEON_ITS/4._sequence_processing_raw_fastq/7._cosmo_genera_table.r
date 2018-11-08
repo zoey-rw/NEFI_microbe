@@ -65,13 +65,8 @@ for(i in 1:ncol(abundances)){
 }
 
 #get other IDs in here. deprecatedVialID does not match all products.----
-abundances$deprecatedVialID <- rownames(    abundances)
-rel.abundances$deprecatedVialID <- rownames(rel.abundances)
-
-abundances <-     merge(    abundances, map[,c('deprecatedVialID','geneticSampleID')], 
-                            by.x = 'deprecatedVialID', by.y = 'deprecatedVialID', all.x = T)
-rel.abundances <- merge(rel.abundances, map[,c('deprecatedVialID','geneticSampleID')], 
-                        by.x = 'deprecatedVialID', by.y = 'deprecatedVialID', all.x = T)
+abundances$geneticSampleID <- rownames(    abundances)
+rel.abundances$geneticSampleID <- rownames(rel.abundances)
 
 #save output.----
 dat.out <- list(abundances,rel.abundances,seq_total)

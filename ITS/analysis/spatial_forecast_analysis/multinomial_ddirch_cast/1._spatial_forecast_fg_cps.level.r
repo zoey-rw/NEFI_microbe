@@ -81,6 +81,20 @@ core.fit <- dmulti_ddirch_forecast(mod, cov_mu = core.preds, cov_sd = core.sd, n
 plot.fit <- dmulti_ddirch_forecast(mod, cov_mu = plot.preds, cov_sd = plot.sd, names = plot.preds$plotID)
 site.fit <- dmulti_ddirch_forecast(mod, cov_mu = site.preds, cov_sd = site.sd, names = site.preds$siteID)
 
+#testing function for errors
+test_it <- F
+if(test_it == T){
+  mod=mod
+  cov_mu = core.preds
+  cov_sd = core.sd
+  names = core.preds$sampleID
+  seq.depth = 2000
+  n.samp = 2
+  zero_parameter_uncertainty=F
+  zero_process_uncertainty = F
+  zero_covariate_uncertainty=F
+}
+
 #store output as a list and save.----
 output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
 names(output) <- c('core.fit','plot.fit','site.fit',

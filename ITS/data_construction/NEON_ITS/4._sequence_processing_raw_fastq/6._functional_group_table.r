@@ -5,7 +5,8 @@ library(data.table)
 source('paths.r')
 
 #set output paths.----
-output.path <- NEON_ITS_fastq_taxa_fg.path
+functional.output.path <- NEON_ITS_fastq_taxa_fg.path
+     yeast.output.path <- NEON_ITS_fastq_yeast_taxa.path
 
 #load data.----
 sv <- readRDS(NEON_ITS_fastq_SV.table_clean.path)
@@ -25,6 +26,9 @@ tax[grep('Arbuscular', tax$guild),          Arbuscular := 1]
 tax[is.na(Arbuscular),                      Arbuscular := 0]
 tax[grep('Patho', tax$guild),                 Pathogen := 1]
 tax[is.na(Pathogen),                          Pathogen := 0]
+#assign yeast / non-yeast.
+tax[grep('Yeast', tax$growthForm),               yeast := 1]
+tax[is.na(yeast),                                yeast := 0]
 #If you are ECTO you can't be SAP
 tax[Ectomycorrhizal == 1, Saprotroph := 0]
 #if you are ecto or sap you not path.
@@ -48,23 +52,39 @@ for(i in 1:length(function_groups)){
 fun.list <- data.frame(t(do.call('rbind',fun.list)))
 colnames(fun.list) <- function_groups
 
+#get a yeast list.
+yeast.list <- list()
+function_groups <- c('yeast')
+z <- data.table(cbind(tax, t(sv)))
+for(i in 1:length(function_groups)){
+  k <- z[eval(parse(text=function_groups[i]))== 1,]
+  start <- ncol(tax) + 1
+  out <- colSums(k[,start:ncol(k)])
+  yeast.list[[i]] <- out
+}
+yeast.list <- data.frame(t(do.call('rbind',yeast.list)))
+colnames(yeast.list) <- function_groups
+
+
 #Get together abundances and seq_total.----
 seq_total <- colSums(z[,start:ncol(z)])
 seq_total <- seq_total[order(match(names(seq_total),rownames(fun.list)))]
+seq_total.yeast <- seq_total[order(match(names(seq_total), rownames(yeast.list)))]
 other <- seq_total - rowSums(fun.list)
+other.yeast <- seq_total.yeast - rowSums(yeast.list)
 abundances <- cbind(other,fun.list)
+yeast.abundances <- cbind(other.yeast, yeast.list)
 rel.abundances <- abundances / seq_total
 
 #get other IDs in here. deprecatedVialID does not match all products.----
-    abundances$geneticSampleID <- rownames(    abundances)
-rel.abundances$geneticSampleID <- rownames(rel.abundances)
-
-#abundances <- merge(    abundances, map[,c('deprecatedVialID','geneticSampleID')], 
-#                        by.x = 'deprecatedVialID', by.y = 'deprecatedVialID', all.x = T)
-#rel.abundances <- merge(rel.abundances, map[,c('deprecatedVialID','geneticSampleID')], 
-#                        by.x = 'deprecatedVialID', by.y = 'deprecatedVialID', all.x = T)
+     abundances$geneticSampleID <- rownames(    abundances)
+ rel.abundances$geneticSampleID <- rownames(rel.abundances)
+yeast.abundances$geneticSampleID <- rownames(yeast.abundances)
 
 #save output.----
 dat.out <- list(abundances,rel.abundances,seq_total)
 names(dat.out) <- c('abundances','rel.abundances','seq_total')
-saveRDS(dat.out, output.path)
+yeast.out <- list(yeast.abundances, seq_total.yeast)
+names(yeast.out) <- c('abundances','seq_total')
+saveRDS(dat.out, functional.output.path)
+saveRDS(yeast.out, yeast.output.path)

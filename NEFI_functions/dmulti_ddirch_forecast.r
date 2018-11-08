@@ -102,7 +102,7 @@ dmulti_ddirch_forecast <- function(mod, seq.depth = 2000, cov_mu, names, cov_sd 
     #get mean prediction and then draw from multinomial-dirichlet distribution.
     cred.out[[j]] <- pred.x.m / rowSums(pred.x.m)
     #prediction interval passes through Dirichlet and multinomial processes.
-    dirichlet_out <- DirichletReg::rdirichlet(nrow(pred.x.m), pred.x.m)
+    dirichlet_out <- DirichletReg::rdirichlet(nrow(pred.x.m), pred.x.m + 0.1)
     multinom_out <- list()
     for(i in 1:nrow(dirichlet_out)){
       multinom_out[[i]] <- t(stats::rmultinom(1,seq.depth,dirichlet_out[i,]))

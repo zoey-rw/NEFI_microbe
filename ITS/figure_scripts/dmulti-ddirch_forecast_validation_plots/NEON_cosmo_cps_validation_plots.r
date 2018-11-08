@@ -1,29 +1,29 @@
-#plotting functional group forecasts vs. validation data.
+#plotting cosmopolitan genera forecasts vs. validation data.
 #clear environment, source paths, functions and packages.
 rm(list=ls())
 source('paths.r')
 
 #set output path.----
-output.path <- NEON_dmulti.ddirch_fg_forecast_validation.path
+output.path <- NEON_dmulti.ddirch_cosmo_forecast_validation.path
 output.path <- 'test.png'
 
 #load data.----
-d <- readRDS(NEON_dmulti.ddirch_fcast_fg.path)
-core.truth <- readRDS(NEON_ITS_fastq_taxa_fg.path)
+d <- readRDS(NEON_dmulti.ddirch_fcast_cosmo.path)
+core.truth <- readRDS(NEON_ITS_fastq_cosmo_genera.path)
 core.truth <- core.truth$rel.abundances
 rownames(core.truth) <- gsub('-GEN','',rownames(core.truth))
-plot.truth <- readRDS(NEON_plot.level_fg_obs_fastq.path)
-site.truth <- readRDS(NEON_site.level_fg_obs_fastq.path)
+plot.truth <- readRDS(NEON_plot.level_genera_obs_fastq.path)
+site.truth <- readRDS(NEON_site.level_genera_obs_fastq.path)
 
 #DEFINE OUTLIER SITES- DSNY in this case.----
-out_sites <- c('DSNY')
-out_spp   <- c('Ectomycorrhizal')
+out_sites <- c('')
+out_spp   <- c('')
 
 #setup output spec.----
 png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
-par(mfrow = c(4,3),
+par(mfrow = c(7,3),
     mai = c(0.3,0.3,0.3,0.3),
     oma = c(4,6,3,1))
 trans <- 0.3
@@ -62,7 +62,7 @@ for(i in 1:length(names)){
   obs.mu   <- obs[,obs.pos][order(match(names(obs[,c(fungi_name)]),names(mu)))]
   
   #make DSNY sites light gray for Ectos.
-  obs.cols <- rep('black',length(obs.cols))
+  obs.cols <- rep('black',length(obs))
   if(names[i] %in% out_spp){
     obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
   }
@@ -146,7 +146,7 @@ for(i in 1:length(names)){
   #1:1 line
   abline(0,1, lwd = 2)
   abline(mod_fit, lwd =2, lty = 2, col = bf_col)
-
+  
   #add confidence interval.
   range <- mu
   polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)
@@ -206,7 +206,7 @@ for(i in 1:length(names)){
   #1:1 line
   abline(0,1, lwd = 2)
   abline(mod_fit, lwd =2, lty = 2, col = bf_col)
-
+  
   #add confidence interval.
   range <- mu
   polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)
