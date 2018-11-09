@@ -10,7 +10,7 @@
 #$ -pe omp 10
 #
 #Give the job a name
-#$ -N ted_cosmo_JAGS
+#$ -N ted_yeast_JAGS
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y

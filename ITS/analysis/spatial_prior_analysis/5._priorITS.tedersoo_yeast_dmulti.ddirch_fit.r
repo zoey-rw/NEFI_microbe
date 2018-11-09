@@ -25,9 +25,10 @@ d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d$relEM_forest <- d$relEM*d$forest
 
 d <- d[complete.cases(d),] #optional. This works with missing data.
+seq.depth <- seq.depth[names(seq.depth) %in% d$SRR.id]
 y <- y[rownames(y) %in% d$SRR.id,]
 y <- as.data.frame(y)
-testing = T
+testing = F
 if(testing == T){
   d <- d[1:20,] #for testing
   y <- y[rownames(y) %in% d$SRR.id,]
@@ -42,8 +43,8 @@ x <- d[,.(intercept,pC,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM,relEM_for
 
 #define multiple subsets
 x.clim <- d[,.(intercept,NPP,mat,map)]
-x.site <- d[,.(intercept,pC,cn,pH,forest,conifer,relEM)]
-x.all  <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
+x.site <- d[,.(intercept,pC,cn,pH,forest,conifer,relEM,relEM_forest)]
+x.all  <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM,relEM_forest)]
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.----
