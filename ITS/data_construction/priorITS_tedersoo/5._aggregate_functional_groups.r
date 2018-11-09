@@ -8,6 +8,7 @@ library(data.table)
 #set output paths.----
    fg.output.path <- tedersoo_ITS_fg_list.path
 hydro.output.path <- tedersoo_ITS_hydro_list.path
+yeast.output.path <- tedersoo_ITS_yeast_list.path
 
 #load data.----
 map <- readRDS(tedersoo_ITS_clean_map.path)
@@ -45,6 +46,11 @@ tax[grep('Arbuscular', tax$guild),          Arbuscular := 1]
 tax[is.na(Arbuscular),                      Arbuscular := 0]
 tax[grep('Patho', tax$guild),                 Pathogen := 1]
 tax[is.na(Pathogen),                          Pathogen := 0]
+tax[grep('Yeast', tax$growthForm),               Yeast := 1]
+tax[grep('Facultative Yeast', tax$growthForm),   Yeast := 0]
+tax[grep('Facultative Yeast', tax$growthForm),   Facultative_Yeast := 1]
+tax[is.na(Facultative_Yeast),         Facultative_Yeast:= 0]
+tax[is.na(Yeast),                                Yeast := 0]
 
 #Things can't have multiple functional assignments in dirlichet. Creates a sum to 1 problem.
 #If you are ECTO you can't be SAP
@@ -94,11 +100,29 @@ other <- seq_total - rowSums(fun.list)
 fun.list <- cbind(other,fun.list)
 fun.list <- list(fun.list,seq_total)
 names(fun.list) <- c('abundances','seq_total')
-fun.list$rel.abundaces <- fun.list$abundances / fun.list$seq_total
+fun.list$rel.abundances <- fun.list$abundances / fun.list$seq_total
 #fun.list$Mapping.ID <- rownames(fun.list)
+
+#get abundances of yeast and non-yeast.----
+function_groups <- c('Yeast','Facultative_Yeast')
+yeast.list <- list()
+for(i in 1:length(function_groups)){
+  z <- k[eval(parse(text=function_groups[i]))== 1,]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  yeast.list[[i]] <- out
+}
+yeast.list <- do.call(cbind,yeast.list)
+colnames(yeast.list) <- function_groups
+yeast.abundances <- cbind(seq_total - rowSums(yeast.list),yeast.list)
+colnames(yeast.abundances) <- c('other',function_groups)
+yeast.rel.abundances <- yeast.abundances / seq_total
+yeast.list <- list(yeast.abundances, yeast.rel.abundances,seq_total)
+names(yeast.list) <- c('abundances','rel.abundances','seq_total')
 
 #save outputs.----
 saveRDS(hydro.list, hydro.output.path)
 saveRDS(  fun.list,    fg.output.path)
+saveRDS(yeast.list, yeast.output.path)
 cat('YOU DID IT. GREAT JOB. <3 Colin.')
 

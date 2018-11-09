@@ -62,7 +62,7 @@ for(i in 1:length(names)){
   obs.mu   <- obs[,obs.pos][order(match(names(obs[,c(fungi_name)]),names(mu)))]
   
   #make DSNY sites light gray for Ectos.
-  obs.cols <- rep('black',length(obs.cols))
+  obs.cols <- rep('black',nrow(obs))
   if(names[i] %in% out_spp){
     obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
   }
@@ -120,7 +120,7 @@ for(i in 1:length(names)){
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
   #Make out_sites sites gray for out_spp.
-  obs.cols <- rep('black',length(obs.cols))
+  obs.cols <- rep('black',length(obs.mu))
   if(names[i] %in% out_spp){
     obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
   }
@@ -180,7 +180,7 @@ for(i in 1:length(names)){
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
   #Make out_sites sites gray for out_spp.
-  obs.cols <- rep('black',length(obs.cols))
+  obs.cols <- rep('black',length(obs.mu))
   if(names[i] %in% out_spp){
     obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
   }

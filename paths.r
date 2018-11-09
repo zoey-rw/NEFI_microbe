@@ -95,7 +95,7 @@ ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.se
 #dmulti-ddirch output, fit with fastq-derived data.
 ted_ITS.prior_dmulti.ddirch_fg_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_fg_JAGSfit.rds')
 ted_ITS.prior_dmulti.ddirch_cosmo_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_cosmo_JAGSfit.rds')
-
+ted_ITS.prior_dmulti.ddirch_yeast_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_yeast_JAGSfit.rds')
 
 #### ITS/scc_gen: tedersoo 2014 SV and taxonomy paths. ####
 ted_2014_SV.table.path <- paste0(ITS_scc_gen_dir,'ted_2014_SV.table.rds')
@@ -152,6 +152,7 @@ tedersoo_ITS.prior_fromSV_analysis.path <- paste0(dir,'tedersoo_ITS.prior_fromSV
             tedersoo_ITS_clean_map.path <- paste0(dir,'tedersoo_ITS_clean_map.rds')
               tedersoo_ITS_fg_list.path <- paste0(dir,'tedersoo_ITS_fg_list.rds')
            tedersoo_ITS_hydro_list.path <- paste0(dir,'tedersoo_ITS_hydro_list.rds')
+           tedersoo_ITS_yeast_list.path <- paste0(dir,'tedersoo_ITS_yeast_list.rds')
     tedersoo_ITS_cosmo_genera_list.path <- paste0(dir,'tedersoo_ITS_cosmo_genera_list.rds')
 
 #### ITS/pecan_gen: NEON data aggregation paths. ####

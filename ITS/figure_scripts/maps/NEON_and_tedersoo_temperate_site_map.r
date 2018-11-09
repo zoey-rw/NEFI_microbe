@@ -41,7 +41,3 @@ map
 
 #end plot.----
 dev.off()
-
-#field.sites <- read.csv(field_sites.path)
-#field.sites <- field.sites[field.sites$Site.ID %in% lat$siteID,]
-#write.csv(field.sites, 'NEON_sites.csv')
