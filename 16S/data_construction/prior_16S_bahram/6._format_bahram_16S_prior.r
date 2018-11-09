@@ -10,6 +10,8 @@ rm(list=ls())
 # devtools::install_version("lubridate", "1.6.0") # something about Red Hat Enterprise Linux 6; currently need to use older version
 library(lubridate)  
 library(data.table)
+library(rgdal)
+library(raster)
 
 #library(SRAdb)
 source('paths.r')
@@ -20,16 +22,16 @@ source('NEFI_functions/arid_extract.r')
 n.gen <- 20
 
 ##### load files ####
-
+dir <- data.dir 
 # SRA RunInfo table from: https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=ERP021922
-SRA <- read.csv("/projectnb/talbot-lab-data/NEFI_data/16S/SraRunTable.csv")
+SRA <- read.csv(paste0(dir,"16S/scc_gen/SraRunTable.csv"))
 
 # metadata file that was sent to Colin
-metadata_raw <- read.csv('/projectnb/talbot-lab-data/NEFI_data/16S/metadata_bahram.csv')
+metadata_raw <- read.csv(paste0(dir,"16S/scc_gen/metadata_bahram.csv"))
 
-# from ITS script - ignore
-# map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
-# map <- data.table(map)
+# load tedersoo mapping file
+map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
+map <- data.table(map)
 
 # load SV table as otu file
 otu <- readRDS(bahram_dada2_SV_table.path)
@@ -74,7 +76,8 @@ metadata <- merge(metadata,time, by = 'Sample_Name', all.x=T)
 
 # assign forest variables
 # shouldn't this also include  'Moist tropical forests', 'Tropical montane forests' and 'Southern_temperate_forests'?
-metadata$forest <-ifelse(metadata$Biome %in% c('Temperate_coniferous_forests','Temperate_deciduous_forests','Dry_tropical_forests','Boreal_forests'),1,0)
+metadata$forest <-ifelse(metadata$Biome %in% c('Temperate_coniferous_forests',
+                                               'Temperate_deciduous_forests','Dry_tropical_forests','Boreal_forests'),1,0)
 metadata$conifer <- ifelse(metadata$Biome %in% c('Temperate_coniferous_forests'),1,0)
 
 ##### taxonomic and functional assignment #####
@@ -133,7 +136,7 @@ genera <- as.character(genera)
 k <- data.table(cbind(genera,counts))
 k$counts <- as.numeric(as.character(k$counts))
 k <- k[order(-counts),]
-k <- k[genera!=“”&!is.na(genera),] #remove NA and empty genera
+k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
 #grab genera of interest.
 of_interest <- k$genera[1:n.gen]
 
