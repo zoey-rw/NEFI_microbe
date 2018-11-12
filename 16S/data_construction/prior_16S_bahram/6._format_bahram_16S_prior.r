@@ -54,6 +54,13 @@ metadata <- data.table(metadata)
 # subset to northern temperate latitudes
 metadata <- metadata[Lat < 66.5 & Lat > 23.5,]
 
+# merge in site and moisture from Tedersoo file
+metadata <- metadata[,-c("Moisture")]
+metadata <- merge(x = metadata, 
+                  y = map[ , c("tedersoo.code", "Site", "Moisture", 
+                               "Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.")], 
+                  by.x = "Sample_Name", by.y="tedersoo.code", all.x=TRUE)
+
 # format the time data frame (get rid of an empty column, etc.)
 colnames(time)[1] <- 'human.date'
 time[2] <- NULL
@@ -98,7 +105,7 @@ otu <- otu[order(rownames(otu), metadata$Run),]
 tax <- as.data.frame(tax)
 colnames(tax) <- tolower(colnames(tax))
 
-# remove taxa that do not assign to bacteria or archaea from tax and otu table.
+# remove taxa that do not assign to a kingdom from tax and otu table.
 tax <- tax[!is.na(tax$kingdom),]
 otu <- otu[,colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
@@ -116,8 +123,9 @@ otu <- pro.function(otu)
 # make sure column sums are 1
 colSums(otu)
 
-# aggregate important classes and genera
-# get most abundant genera in dataset.
+
+
+#### get most abundant genera in dataset.####
 genera <- unique(tax$genus)
 test <- data.table(cbind(tax, otu))
 seq.out <- list()
@@ -153,26 +161,87 @@ colnames(gen.list) <- of_interest
 gen.list$Mapping.ID <- rownames(gen.list)
 
 
+#### get most cosmopolitan genera in dataset ####
+
+genera <- unique(tax$genus)
+test <- data.table(cbind(tax, otu))
+seq.out <- list()
+for(i in 1:length(genera)){
+  z <- test[genus == genera[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  seq.out[[i]] <- out
+}
+
+# Count genus level abundance
+seq.out <- do.call('rbind',seq.out)
+counts <- rowSums(seq.out)
+genera <- as.character(genera)
+k <- data.table(cbind(genera,counts))
+k$counts <- as.numeric(as.character(k$counts))
+k <- k[order(-counts),]
+k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
+#grab genera of interest (all).
+of_interest <- k$genera 
+
+# Get relative abundances of all genera
+gen.list <- list()
+for(i in 1:length(of_interest)){
+  z <- data.table(cbind(tax,otu))
+  z <- z[genus %in% of_interest[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  gen.list[[i]] <- out
+}
+gen.list <- data.frame(t(do.call('rbind',gen.list)))
+colnames(gen.list) <- of_interest
+gen.list$Mapping.ID <- rownames(gen.list)
+
+all.genera.abundances <- gen.list
+sums <- colSums(all.genera.abundances == 0)
+cosmo.gen <- names(sums[sums<2])
+cosmo.gen <- cosmo.gen[cosmo.gen != "Mapping.ID"]
+
+
+# Get relative abundances of the most cosmopolitan genera
+of_interest <- cosmo.gen
+gen.list <- list()
+for(i in 1:length(of_interest)){
+  z <- data.table(cbind(tax,otu))
+  z <- z[genus %in% of_interest[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  gen.list[[i]] <- out
+}
+gen.list <- data.frame(t(do.call('rbind',gen.list)))
+colnames(gen.list) <- of_interest
+gen.list$Mapping.ID <- rownames(gen.list)
+cosmo.gen.abundances <- gen.list
+
+
+
+
+
+
+
 # Merge together data aggregated groups you want for analysis.
 # abundances <- merge(fun.list,gen.list)
-abundances <- gen.list
+abundances <- cosmo.gen.abundances
 
-#get worldclim2 climate variables and aridity index
+#get worldclim2 climate variables and aridity index, merge with metadata
 climate <- worldclim2_grab(latitude = metadata$Lat, longitude = metadata$Lon)
 climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)
 metadata <- cbind(metadata, climate)
 
-# final merging of files and worldclim grab.----
+# final merging of abundances and metadata
 # grab columns from map actually of interest.
 metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,NPP,forest,conifer)]
-metadata1 <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
-
-# merge in site and moisture from Tedersoo file
-metadata1 <- metadata1[,-c("Moisture")]
-metadata.df <- merge(x = metadata1, y = map[ , c("tedersoo.code", "Site", "Moisture")], by.x = "Sample_Name", by.y="tedersoo.code", all.x=TRUE)
+metadata <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
 
 # rename columns
-setnames(metadata.df,c('Sample_Name','Moisture','N' ,'C' ,'C.N'), c('Mapping.ID','moisture','pN','pC','cn'))
+setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N', 
+                       'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'), 
+         c('Mapping.ID','moisture','pN','pC','cn','relEM'))
 
 # save output.----
-saveRDS(metadata.df, bahram_prior.path)
+saveRDS(metadata, bahram_prior.path)
