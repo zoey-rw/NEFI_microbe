@@ -227,3 +227,33 @@ neon_pre_release_tax.out_16S <- paste0(NEON_pre_release.dir,'16S_tax_clean.rds')
 neon_pre_release_otu.out_ITS <- paste0(NEON_pre_release.dir,'ITS_otu_clean.rds')
 neon_pre_release_map.out_ITS <- paste0(NEON_pre_release.dir,'ITS_map_clean.rds')
 neon_pre_release_tax.out_ITS <- paste0(NEON_pre_release.dir,'ITS_tax_clean.rds')
+
+#### 16S/pecan_gen: Bahram 2018 prior data. ####
+dir <- pecan_gen_16S_dir
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan genera
+
+#### 16S/pecan_gen: NEON data aggregation paths. ####
+dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+         site_dates_16S.path <- paste0(dir,'site_dates_16S.rds')
+        site_level_data_16S.path <- paste0(dir,'site_level_data_16S.rds')
+    dp1.10108.00_output_16S.path <- paste0(dir,'dp1.10108.00_output_16S.rds')
+    dp1.10109.00_output_16S.path <- paste0(dir,'dp1.10109.00_output_16S.rds')
+    dp1.10086.00_output_16S.path <- paste0(dir,'dp1.10086.00_output_16S.rds')
+    dp1.10078.00_output_16S.path <- paste0(dir,'dp1.10078.00_output_16S.rds')
+    dp1.10098.00_output_16S.path <- paste0(dir,'dp1.10098.00_output_16S.rds')
+dp1.10098.00_plot.level_16S.path <- paste0(dir,'dp1.10098.00_plot.level_16S.rds')
+
+#Paths to spatial x and y variables for modeling.
+ obs.table_16S.path <- paste0(dir, 'obs.table_16S.rds') 
+core.table_16S.path <- paste0(dir,'core.table_16S.rds') 
+plot.table_16S.path <- paste0(dir,'plot.table_16S.rds') 
+site.table_16S.path <- paste0(dir,'site.table_16S.rds') 
+
+# path to NEON 16S top 20 genera
+NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
+# path to NEON 16S all genera
+NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")

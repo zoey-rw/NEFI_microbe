@@ -136,4 +136,4 @@ saveRDS(gen.list, NEON_gen_abundances.path)
 # all.gen.list.sums <- all.gen.list[,-c(ncol(all.gen.list))]
 # colSums(all.gen.list.sums==0, na.rm = T) # view how many zeros there are for each genus.
 # 
-# saveRDS(all.gen.list, NEON_gen_abundances.path)
+# saveRDS(all.gen.list, NEON_all_gen_abundances.path)
