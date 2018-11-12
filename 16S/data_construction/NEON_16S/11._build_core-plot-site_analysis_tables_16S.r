@@ -28,6 +28,33 @@ colnames(bac)[names(bac) == "Mapping.ID"] <- "sample_ID"
 # remove characters from dp1.10801 geneticSampleID to match the tax table
 dp1.10801$sample_ID <- str_replace_all(dp1.10801$geneticSampleID, c("_" = ".", "-" = ".", ".GEN" = ""))
 
+
+
+
+# load fungal data
+fun <- readRDS(its_fun.path)
+dp1.10801_fun <- readRDS(dp1.10108.00_output.path)
+fun$dnaSampleID <- paste0(fun$geneticSampleID,'-DNA1')
+
+# change ITS sample names to match 16S
+fun$sample_ID <- rownames(fun)
+fun$sample_ID <- str_replace_all(fun$sample_ID, c("_" = ".", ".GEN" = ""))
+
+fun_samples <- fun$sample_ID
+bac_samples <- bac$sample_ID
+
+# check intersections
+both <- intersect(fun_samples, bac_samples) # 181 samples
+only_fun <- setdiff(fun_samples, bac_samples) # 877 samples
+only_bac <- setdiff(bac_samples, fun_samples) # 511 samples
+
+# all 11 sites are present in the bacterial data
+head(bac)
+bac$site <- substr(bac$sample_ID, 1,4)
+unique(bac$site)
+bac
+
+
 # we lose 342 observatinos here because they are not in dp1.10801.001. Retain 716.
 # that ^ was true for ITS. for 16S, we go from 692 observations to 226. 
 # this doesn't seem right, because we should have pretty much the same number of samples for 16S and ITS. 
