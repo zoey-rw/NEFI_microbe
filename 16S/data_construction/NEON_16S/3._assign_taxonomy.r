@@ -8,6 +8,8 @@ source('paths.r')
 source('NEFI_functions/tic_toc.r')
 library(doParallel)
 
+#### 1. Assign taxonomy ####
+
 #Here i load an OTU table with column names as unique sequences to assign.
 otu <- readRDS(NEON_dada2_SV_table.path)
 to_assign <- colnames(otu) #grab sequences to assign.
@@ -37,8 +39,17 @@ saveRDS(out, tax_output_path)
 
 
 
+#### 2. Generate relative abundance table ####
+
+# load tax and otu tables, and table of genera for priors.
 tax <- readRDS(NEON_dada2_tax_table.path)
 otu <- readRDS(NEON_dada2_SV_table.path)
+prior_gen <- readRDS(bahram_prior_gen.path)
+
+# take last 12 columns from prior, which are the 12 cosmopolitan genera
+cosmo.start.col <- ncol(prior_gen)-11
+cosmo.end.col <- ncol(prior_gen)
+cosmo.gen <- colnames(prior_gen[,cosmo.start.col:cosmo.end.col])
 
 # remove leading "k__" in taxonomy.
 for(i in 1:ncol(tax)){
@@ -68,7 +79,7 @@ otu <- pro.function(otu)
 colSums(otu)
 
 # aggregate important classes and genera
-# get most abundant genera in dataset.
+# get most cosmopolitan genera from prior dataset.
 genera <- unique(tax$genus)
 test <- data.table(cbind(tax, otu))
 seq.out <- list()
@@ -79,7 +90,7 @@ for(i in 1:length(genera)){
   seq.out[[i]] <- out
 }
 
-# Count genus level abundance, grab some number of most abundant genera
+# Count genus level abundance
 seq.out <- do.call('rbind',seq.out)
 counts <- rowSums(seq.out)
 genera <- as.character(genera)
@@ -88,9 +99,9 @@ k$counts <- as.numeric(as.character(k$counts))
 k <- k[order(-counts),]
 k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
 #grab genera of interest.
-of_interest <- k$genera[1:n.gen]
+of_interest <- cosmo.gen #k$genera[1:n.gen]
 
-# Get relative abundances of the most abundant genera
+# Get relative abundances of the most cosmopolitan genera
 gen.list <- list()
 for(i in 1:length(of_interest)){
   z <- data.table(cbind(tax,otu))
@@ -103,4 +114,26 @@ gen.list <- data.frame(t(do.call('rbind',gen.list)))
 colnames(gen.list) <- of_interest
 gen.list$Mapping.ID <- rownames(gen.list)
 
+gen.sums <- gen.list[,-c(13)] # remove mapping column to get sums
+colSums(gen.sums == 0, na.rm=T) # view how many zeros there are for each genus.
+
 saveRDS(gen.list, NEON_gen_abundances.path)
+
+
+# R freezes if I run interactively, but we don't need this right now anyways
+# # Get relative abundances of all genera
+# all.gen.list <- list()
+# for(i in 1:length(k$genera)){
+#   z <- data.table(cbind(tax,otu))
+#   #z <- z[genus %in% of_interest[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   all.gen.list[[i]] <- out
+# }
+# all.gen.list <- data.frame(t(do.call('rbind',all.gen.list)))
+# colnames(all.gen.list) <- k$genera
+# all.gen.list$Mapping.ID <- rownames(all.gen.list)
+# all.gen.list.sums <- all.gen.list[,-c(ncol(all.gen.list))]
+# colSums(all.gen.list.sums==0, na.rm = T) # view how many zeros there are for each genus.
+# 
+# saveRDS(all.gen.list, NEON_gen_abundances.path)
