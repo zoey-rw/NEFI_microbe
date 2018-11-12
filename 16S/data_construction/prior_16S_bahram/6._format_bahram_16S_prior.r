@@ -128,7 +128,6 @@ for(i in 1:length(genera)){
   seq.out[[i]] <- out
 }
 
-# something breaks here
 # Count genus level abundance, grab some number of most abundant genera
 seq.out <- do.call('rbind',seq.out)
 counts <- rowSums(seq.out)
@@ -165,12 +164,15 @@ metadata <- cbind(metadata, climate)
 
 # final merging of files and worldclim grab.----
 # grab columns from map actually of interest.
-# missing site, NPP
-metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,forest,conifer)]
-# metadata <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
+metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,NPP,forest,conifer)]
+metadata1 <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
+
+# merge in site and moisture from Tedersoo file
+metadata1 <- metadata1[,-c("Moisture")]
+metadata.df <- merge(x = metadata1, y = map[ , c("tedersoo.code", "Site", "Moisture")], by.x = "Sample_Name", by.y="tedersoo.code", all.x=TRUE)
+
 # rename columns
-# setnames(metadata,c('tedersoo.code','Moisture','N' ,'C' ,'C_N'),
-#c('Mapping.ID','moisture','pN','pC','cn'))
+setnames(metadata.df,c('Sample_Name','Moisture','N' ,'C' ,'C.N'), c('Mapping.ID','moisture','pN','pC','cn'))
 
 # save output.----
-# saveRDS(metadata, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/")
+saveRDS(metadata.df, bahram_prior.path)
