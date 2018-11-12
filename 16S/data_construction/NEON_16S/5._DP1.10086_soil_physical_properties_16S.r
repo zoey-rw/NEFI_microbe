@@ -82,5 +82,4 @@ for(i in 1:length(site_dates)){
 #collapse data frames across sites, save.
 site_output <- do.call(plyr::rbind.fill, site_output)
 
-dp1.10086.00_output_16S.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_data_aggregation/dp1.10086.00_output_16S.rds"
 saveRDS(site_output, dp1.10086.00_output_16S.path)
