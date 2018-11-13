@@ -19,7 +19,7 @@ library(stringr)
 #otu table will become an ASV table, trimmed to only include ASV's that are fungal.
 #map file with link to DP1.10801.001 by dnaSampleID. dnaSampleID will also be the column names of the OTU table. ASVs will be rownames of otu and tax tables.
 #in addition to ASV table microbial functional group (mfg) table will already be prepped as part of a FUNGuild script.
-# ZW is not sure if any of the above is relevant for 16S data.
+# ZW is not sure how much of the above is relevant for 16S data.
 
 dp1.10801 <- readRDS(dp1.10108.00_output_16S.path)
 bac <- readRDS(NEON_gen_abundances.path)
@@ -27,8 +27,6 @@ colnames(bac)[names(bac) == "Mapping.ID"] <- "sample_ID"
 
 # remove characters from dp1.10801 geneticSampleID to match the tax table
 dp1.10801$sample_ID <- str_replace_all(dp1.10801$geneticSampleID, c("_" = ".", "-" = ".", ".GEN" = ""))
-
-
 
 
 # load fungal data
@@ -54,12 +52,12 @@ bac$site <- substr(bac$sample_ID, 1,4)
 unique(bac$site)
 bac
 
-
 # we lose 342 observatinos here because they are not in dp1.10801.001. Retain 716.
-# that ^ was true for ITS. for 16S, we go from 692 observations to 226. 
-# this doesn't seem right, because we should have pretty much the same number of samples for 16S and ITS. 
-# the dp1.10801 table doesn't seem to be the problem - all sites are present there: unique(dp1.10801$siteID)
+# that ^ was true for ITS. for 16S, we go from 692 observations to 226 below. 
+# if we continue with the existing code, we end up with less than 30 unique observations for the model.
+# all sites are present in the dp1.10801 table: unique(dp1.10801$siteID)
 # and it has even more observations than the dp1.10801 table for fungi.
+
 # in this obs.table, we only have 6 sites.
 obs.table <- merge(bac,dp1.10801, by="sample_ID")
 
