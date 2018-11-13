@@ -26,34 +26,11 @@ bac <- readRDS(NEON_gen_abundances.path)
 colnames(bac)[names(bac) == "Mapping.ID"] <- "sample_ID"
 
 # remove characters from dp1.10801 geneticSampleID to match the tax table
-dp1.10801$sample_ID <- str_replace_all(dp1.10801$geneticSampleID, c("_" = ".", "-" = ".", ".GEN" = ""))
-
-
-# load fungal data
-fun <- readRDS(its_fun.path)
-dp1.10801_fun <- readRDS(dp1.10108.00_output.path)
-fun$dnaSampleID <- paste0(fun$geneticSampleID,'-DNA1')
-
-# change ITS sample names to match 16S
-fun$sample_ID <- rownames(fun)
-fun$sample_ID <- str_replace_all(fun$sample_ID, c("_" = ".", ".GEN" = ""))
-
-fun_samples <- fun$sample_ID
-bac_samples <- bac$sample_ID
-
-# check intersections
-both <- intersect(fun_samples, bac_samples) # 181 samples
-only_fun <- setdiff(fun_samples, bac_samples) # 877 samples
-only_bac <- setdiff(bac_samples, fun_samples) # 511 samples
-
-# all 11 sites are present in the bacterial data
-head(bac)
-bac$site <- substr(bac$sample_ID, 1,4)
-unique(bac$site)
-bac
+#dp1.10801$sample_ID <- str_replace_all(dp1.10801$geneticSampleID, c("_" = ".", "-" = ".", ".GEN" = ""))
+dp1.10801$sample_ID <- dp1.10801$deprecatedVialID
 
 # we lose 342 observatinos here because they are not in dp1.10801.001. Retain 716.
-# that ^ was true for ITS. for 16S, we go from 692 observations to 226 below. 
+# that ^ was true for ITS. for 16S, we keep all 692 observations. 
 # if we continue with the existing code, we end up with less than 30 unique observations for the model.
 # all sites are present in the dp1.10801 table: unique(dp1.10801$siteID)
 # and it has even more observations than the dp1.10801 table for fungi.
@@ -73,11 +50,11 @@ names(site_dates) <- sites
 #ITS: All sites have either a 2014-07 or 2014-08 observation. Lets build spatial prediction on this.
 #214 unique observations over 11 NEON sites to model.
 # 16S: some sites, like BART, do not have a 2014-07 or 2014-08 observation, so added '2014-06'
-# 27 unique observations over 6 NEON sites to model. need to fix this!!
+# 170 unique observations over 11 NEON sites to model
 
 to_keep <- c()
 for(i in 1:length(site_dates)){
-  z <- site_dates[[i]][site_dates[[i]] %in% c('2014-07','2014-08', '2014-06')]
+  z <- site_dates[[i]][site_dates[[i]] %in% c('2014-07','2014-08', '2014-06','2014-09')]
   to_keep[i] <- paste0(names(site_dates[i]),'-',z[1])
 }
 obs.table$site_date <- paste0(obs.table$siteID,'-',obs.table$dateID)
