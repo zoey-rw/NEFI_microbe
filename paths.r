@@ -257,3 +257,8 @@ site.table_16S.path <- paste0(dir,'site.table_16S.rds')
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
 # path to NEON 16S all genera
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
+ 
+# paths to NEON covariates - maybe unnecessary?
+dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')
+NEON_site_covs_16S.path <- paste0(dir,'NEON_site_covs_16S.rds')
+NEON_glob_covs_16S.path <- paste0(dir,'NEON_glob_covs_16S.rds')
