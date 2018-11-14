@@ -1,8 +1,7 @@
 ##### preparing Bahram prior, using taxonomic table and metadata. #####
 
-# a lot of this is borrowed from the ITS script: “4._format_tedersoo_2014_ITS_prior.r”
-# not completely functional yet - breaks before the most abundant genera are aggregated, 
-# and functional groups are not yet assigned
+# outputs 20 most cosmopolitan genera
+# functional groups are not yet assigned
 
 ##### clear environment, source packages, functions and paths #####
 rm(list=ls())
@@ -106,117 +105,72 @@ tax <- as.data.frame(tax)
 colnames(tax) <- tolower(colnames(tax))
 
 # remove taxa that do not assign to a kingdom from tax and otu table.
-tax <- tax[!is.na(tax$kingdom),]
+tax <- tax[tax$kingdom == 'Bacteria'|tax$kingdom == 'Archaea',] # only removes ~500 counts
 otu <- otu[,colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
 
-# normalize the otu table 
-otu <- t(otu)
-pro.function <- function(otu){
-  for(i in 1:ncol(otu)){
-    otu[,i] <- otu[,i] / sum(otu[,i])
-  }
-  return(otu)
-}
-otu <- pro.function(otu)
-
-# make sure column sums are 1
-colSums(otu)
 
 
-
-#### get most abundant genera in dataset.####
+#determine cosmopolitan genera.----
+#condition 1: present in greater than 50% of samples.
+#condition 2: top 10% sequence abundance (sensu Delgado-Barquez et al. 2018, Science)
 genera <- unique(tax$genus)
-test <- data.table(cbind(tax, otu))
+genera <- as.character(genera)
+test <- data.table(cbind(tax, t(otu)))
 seq.out <- list()
+cosmo.out <- list()
 for(i in 1:length(genera)){
   z <- test[genus == genera[i],]
   start <- ncol(tax) + 1
   out <- colSums(z[,start:ncol(z)])
+  cosmo <- length(out[out > 0]) / length(out)
   seq.out[[i]] <- out
+  cosmo.out[[i]] <- cosmo
 }
-
-# Count genus level abundance, grab some number of most abundant genera
 seq.out <- do.call('rbind',seq.out)
+cosmo.out <- do.call('rbind',cosmo.out)
+j <- data.table(cbind(genera,cosmo.out))
+colnames(j)[2] <- 'cosmo'
+j$cosmo <- as.numeric(j$cosmo)
+j <- j[order(-cosmo),]
 counts <- rowSums(seq.out)
-genera <- as.character(genera)
 k <- data.table(cbind(genera,counts))
 k$counts <- as.numeric(as.character(k$counts))
 k <- k[order(-counts),]
+k <- k[!(genera %in% c('unidentified'))] #remove the genus "unidentified".
 k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
-#grab genera of interest.
-of_interest <- k$genera[1:n.gen]
+j <- j[!(genera %in% c('unidentified'))] #remove the genus "unidentified".
+j <- j[genera!=""&!is.na(genera),] #remove NA and empty genera
+head(cbind(j,k), 20)
 
-# Get relative abundances of the most abundant genera
+#7 genera present in > 50% of samples are also in the top 10%.
+#cosmo_genera <- j[cosmo >= 0.50,]$genera
+
+# 20 genera present in > 94% of samples are also in the top 10%.
+# maybe? where is the 10% calculated?
+cosmo_genera <- j[cosmo >= 0.94,]$genera
+
+#Get seq abundances of cosmo genera.----
 gen.list <- list()
-for(i in 1:length(of_interest)){
-  z <- data.table(cbind(tax,otu))
-  z <- z[genus %in% of_interest[i],]
+k <- data.table(cbind(tax,t(otu)))
+for(i in 1:length(cosmo_genera)){
+  z <- k[genus == cosmo_genera[i],]
   start <- ncol(tax) + 1
   out <- colSums(z[,start:ncol(z)])
   gen.list[[i]] <- out
 }
 gen.list <- data.frame(t(do.call('rbind',gen.list)))
-colnames(gen.list) <- of_interest
-gen.list$Mapping.ID <- rownames(gen.list)
+colnames(gen.list) <- cosmo_genera
+seq_total <- colSums(k[,start:ncol(k)])
+other <- seq_total - rowSums(gen.list)
+gen.list <- cbind(other,gen.list)
+gen.list <- list(gen.list,seq_total)
+names(gen.list) <- c('abundances','seq_total')
+gen.list$rel.abundances <- gen.list$abundances / gen.list$seq_total
 
 
-#### get most cosmopolitan genera in dataset ####
-
-genera <- unique(tax$genus)
-test <- data.table(cbind(tax, otu))
-seq.out <- list()
-for(i in 1:length(genera)){
-  z <- test[genus == genera[i],]
-  start <- ncol(tax) + 1
-  out <- colSums(z[,start:ncol(z)])
-  seq.out[[i]] <- out
-}
-
-# Count genus level abundance
-seq.out <- do.call('rbind',seq.out)
-counts <- rowSums(seq.out)
-genera <- as.character(genera)
-k <- data.table(cbind(genera,counts))
-k$counts <- as.numeric(as.character(k$counts))
-k <- k[order(-counts),]
-k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
-#grab genera of interest (all).
-of_interest <- k$genera 
-
-# Get relative abundances of all genera
-gen.list <- list()
-for(i in 1:length(of_interest)){
-  z <- data.table(cbind(tax,otu))
-  z <- z[genus %in% of_interest[i],]
-  start <- ncol(tax) + 1
-  out <- colSums(z[,start:ncol(z)])
-  gen.list[[i]] <- out
-}
-gen.list <- data.frame(t(do.call('rbind',gen.list)))
-colnames(gen.list) <- of_interest
-gen.list$Mapping.ID <- rownames(gen.list)
-
-all.genera.abundances <- gen.list
-sums <- colSums(all.genera.abundances == 0)
-cosmo.gen <- names(sums[sums<2])
-cosmo.gen <- cosmo.gen[cosmo.gen != "Mapping.ID"]
-
-
-# Get relative abundances of the most cosmopolitan genera
-of_interest <- cosmo.gen
-gen.list <- list()
-for(i in 1:length(of_interest)){
-  z <- data.table(cbind(tax,otu))
-  z <- z[genus %in% of_interest[i],]
-  start <- ncol(tax) + 1
-  out <- colSums(z[,start:ncol(z)])
-  gen.list[[i]] <- out
-}
-gen.list <- data.frame(t(do.call('rbind',gen.list)))
-colnames(gen.list) <- of_interest
-gen.list$Mapping.ID <- rownames(gen.list)
-cosmo.gen.abundances <- gen.list
+#save output.----
+saveRDS(gen.list, cosmo_output_16S.path)
 
 
 
@@ -224,24 +178,143 @@ cosmo.gen.abundances <- gen.list
 
 
 
-# Merge together data aggregated groups you want for analysis.
-# abundances <- merge(fun.list,gen.list)
-abundances <- cosmo.gen.abundances
 
-#get worldclim2 climate variables and aridity index, merge with metadata
-climate <- worldclim2_grab(latitude = metadata$Lat, longitude = metadata$Lon)
-climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)
-metadata <- cbind(metadata, climate)
 
-# final merging of abundances and metadata
-# grab columns from map actually of interest.
-metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,NPP,forest,conifer)]
-metadata <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
 
-# rename columns
-setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N', 
-                       'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'), 
-         c('Mapping.ID','moisture','pN','pC','cn','relEM'))
-
-# save output.----
-saveRDS(metadata, bahram_prior.path)
+# don't think we need all of this anymore - remove genera in below script, just needs to be metadata
+# 
+# # normalize the otu table 
+# otu <- t(otu)
+# pro.function <- function(otu){
+#   for(i in 1:ncol(otu)){
+#     otu[,i] <- otu[,i] / sum(otu[,i])
+#   }
+#   return(otu)
+# }
+# otu <- pro.function(otu)
+# 
+# # make sure column sums are 1
+# colSums(otu)
+# 
+# 
+# 
+# #### get most abundant genera in dataset.####
+# genera <- unique(tax$genus)
+# test <- data.table(cbind(tax, otu))
+# seq.out <- list()
+# for(i in 1:length(genera)){
+#   z <- test[genus == genera[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   seq.out[[i]] <- out
+# }
+# 
+# # Count genus level abundance, grab some number of most abundant genera
+# seq.out <- do.call('rbind',seq.out)
+# counts <- rowSums(seq.out)
+# genera <- as.character(genera)
+# k <- data.table(cbind(genera,counts))
+# k$counts <- as.numeric(as.character(k$counts))
+# k <- k[order(-counts),]
+# k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
+# #grab genera of interest.
+# of_interest <- k$genera[1:n.gen]
+# 
+# # Get relative abundances of the most abundant genera
+# gen.list <- list()
+# for(i in 1:length(of_interest)){
+#   z <- data.table(cbind(tax,otu))
+#   z <- z[genus %in% of_interest[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   gen.list[[i]] <- out
+# }
+# gen.list <- data.frame(t(do.call('rbind',gen.list)))
+# colnames(gen.list) <- of_interest
+# gen.list$Mapping.ID <- rownames(gen.list)
+# 
+# 
+# #### get most cosmopolitan genera in dataset ####
+# 
+# genera <- unique(tax$genus)
+# test <- data.table(cbind(tax, otu))
+# seq.out <- list()
+# for(i in 1:length(genera)){
+#   z <- test[genus == genera[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   seq.out[[i]] <- out
+# }
+# 
+# # Count genus level abundance
+# seq.out <- do.call('rbind',seq.out)
+# counts <- rowSums(seq.out)
+# genera <- as.character(genera)
+# k <- data.table(cbind(genera,counts))
+# k$counts <- as.numeric(as.character(k$counts))
+# k <- k[order(-counts),]
+# k <- k[genera!=""&!is.na(genera),] #remove NA and empty genera
+# #grab genera of interest (all).
+# of_interest <- k$genera 
+# 
+# # Get relative abundances of all genera
+# gen.list <- list()
+# for(i in 1:length(of_interest)){
+#   z <- data.table(cbind(tax,otu))
+#   z <- z[genus %in% of_interest[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   gen.list[[i]] <- out
+# }
+# gen.list <- data.frame(t(do.call('rbind',gen.list)))
+# colnames(gen.list) <- of_interest
+# gen.list$Mapping.ID <- rownames(gen.list)
+# 
+# all.genera.abundances <- gen.list
+# sums <- colSums(all.genera.abundances == 0)
+# cosmo.gen <- names(sums[sums<2])
+# cosmo.gen <- cosmo.gen[cosmo.gen != "Mapping.ID"]
+# 
+# 
+# # Get relative abundances of the most cosmopolitan genera
+# of_interest <- cosmo.gen
+# gen.list <- list()
+# for(i in 1:length(of_interest)){
+#   z <- data.table(cbind(tax,otu))
+#   z <- z[genus %in% of_interest[i],]
+#   start <- ncol(tax) + 1
+#   out <- colSums(z[,start:ncol(z)])
+#   gen.list[[i]] <- out
+# }
+# gen.list <- data.frame(t(do.call('rbind',gen.list)))
+# colnames(gen.list) <- of_interest
+# gen.list$Mapping.ID <- rownames(gen.list)
+# cosmo.gen.abundances <- gen.list
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# # Merge together data aggregated groups you want for analysis.
+# # abundances <- merge(fun.list,gen.list)
+# abundances <- cosmo.gen.abundances
+# 
+# #get worldclim2 climate variables and aridity index, merge with metadata
+# climate <- worldclim2_grab(latitude = metadata$Lat, longitude = metadata$Lon)
+# climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)
+# metadata <- cbind(metadata, climate)
+# 
+# # final merging of abundances and metadata
+# # grab columns from map actually of interest.
+# metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,NPP,forest,conifer)]
+# metadata <- merge(metadata,abundances, by.x = 'Run',by.y = 'Mapping.ID')
+# 
+# # rename columns
+# setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N', 
+#                        'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'), 
+#          c('Mapping.ID','moisture','pN','pC','cn','relEM'))
+# 
+# # save output.----
+# saveRDS(metadata, bahram_prior.path)
