@@ -27,7 +27,7 @@ y <- readRDS(cosmo_output_16S.path)
 y <- y$abundances
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
 #d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[1:15,] #for testing
+#d <- d[1:3,] #for testing
 y <- y[rownames(y) %in% d$Run,]
 if(!sum(rownames(y) == d$Run) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
@@ -61,7 +61,7 @@ x.list <- list(x.clim,x.site,x.all)
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(x.list)) %dopar% {
-    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = F)
     return(fit)
   }
 
