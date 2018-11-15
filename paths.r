@@ -122,6 +122,7 @@ NEON_cps_genera_forecast_figure.path <- paste0(dir,'NEON_CPS_genera_forecast_fig
 #dmulti-ddirch forecast-validation.
 NEON_dmulti.ddirch_fg_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_fg_forecast_validation.png')
 NEON_dmulti.ddirch_cosmo_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_cosmo_forecast_validation.png')
+NEON_dmulti.ddirch_yeast_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_yeast_forecast_validation.png')
 
 #### ITS/pecan_gen: Uncertainty product paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
@@ -217,6 +218,9 @@ NEON_plot.level_fg_obs_fastq.path <- paste0(dir,'NEON_plot.level_fg_obs_fastq.rd
 NEON_site.level_fg_obs_fastq.path <- paste0(dir,'NEON_site.level_fg_obs_fastq.rds')
 NEON_plot.level_genera_obs_fastq.path <- paste0(dir,'NEON_plot.level_genera_obs_fastq.rds')
 NEON_site.level_genera_obs_fastq.path <- paste0(dir,'NEON_site.level_genera_obs_fastq.rds')
+NEON_plot.level_yeast_obs_fastq.path <- paste0(dir,'NEON_plot.level_yeast_obs_fastq.rds')
+NEON_site.level_yeast_obs_fastq.path <- paste0(dir,'NEON_site.level_yeast_obs_fastq.rds')
+
 
 
 #### ITS/pecan_gen: Forecasts, variance decomposition and variable importance output paths.----
@@ -233,10 +237,13 @@ NEON_genera_variable_importance_data.path <- paste0(dir,'NEON_genera_variable_im
 #dmulti-ddirch forecasts, variance decomposition and variable importance output.
 NEON_dmulti.ddirch_fcast_fg.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_fg.rds')
 NEON_dmulti.ddirch_fcast_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_cosmo.rds')
+NEON_dmulti.ddirch_fcast_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_yeast.rds')
 NEON_dmulti.ddirch_var.importance_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_fg.rds')
 NEON_dmulti.ddirch_var.importance_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_cosmo.rds')
+NEON_dmulti.ddirch_var.importance_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_yeast.rds')
 NEON_dmulti.ddirch_var.decomposition_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_fg.rds')
 NEON_dmulti.ddirch_var.decomposition_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_cosmo.rds')
+NEON_dmulti.ddirch_var.decomposition_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_yeast.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
 #This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.

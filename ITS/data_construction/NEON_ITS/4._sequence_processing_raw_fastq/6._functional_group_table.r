@@ -27,8 +27,11 @@ tax[is.na(Arbuscular),                      Arbuscular := 0]
 tax[grep('Patho', tax$guild),                 Pathogen := 1]
 tax[is.na(Pathogen),                          Pathogen := 0]
 #assign yeast / non-yeast.
-tax[grep('Yeast', tax$growthForm),               yeast := 1]
-tax[is.na(yeast),                                yeast := 0]
+tax[grep('Yeast', tax$growthForm),               Yeast := 1]
+tax[grep('Facultative Yeast', tax$growthForm),   Yeast := 0]
+tax[grep('Facultative Yeast', tax$growthForm),   Facultative_Yeast := 1]
+tax[is.na(Facultative_Yeast),         Facultative_Yeast:= 0]
+tax[is.na(Yeast),                                Yeast := 0]
 #If you are ECTO you can't be SAP
 tax[Ectomycorrhizal == 1, Saprotroph := 0]
 #if you are ecto or sap you not path.
@@ -54,7 +57,7 @@ colnames(fun.list) <- function_groups
 
 #get a yeast list.
 yeast.list <- list()
-function_groups <- c('yeast')
+function_groups <- c('Yeast','Facultative_Yeast')
 z <- data.table(cbind(tax, t(sv)))
 for(i in 1:length(function_groups)){
   k <- z[eval(parse(text=function_groups[i]))== 1,]
@@ -75,6 +78,7 @@ other.yeast <- seq_total.yeast - rowSums(yeast.list)
 abundances <- cbind(other,fun.list)
 yeast.abundances <- cbind(other.yeast, yeast.list)
 rel.abundances <- abundances / seq_total
+yeast.rel.abundances <- yeast.abundances/seq_total
 
 #get other IDs in here. deprecatedVialID does not match all products.----
      abundances$geneticSampleID <- rownames(    abundances)
@@ -84,7 +88,7 @@ yeast.abundances$geneticSampleID <- rownames(yeast.abundances)
 #save output.----
 dat.out <- list(abundances,rel.abundances,seq_total)
 names(dat.out) <- c('abundances','rel.abundances','seq_total')
-yeast.out <- list(yeast.abundances, seq_total.yeast)
-names(yeast.out) <- c('abundances','seq_total')
+yeast.out <- list(yeast.abundances, yeast.rel.abundances, seq_total.yeast)
+names(yeast.out) <- c('abundances','rel.abundances','seq_total')
 saveRDS(dat.out, functional.output.path)
 saveRDS(yeast.out, yeast.output.path)

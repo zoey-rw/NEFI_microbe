@@ -18,8 +18,6 @@ registerDoParallel(cores=n.cores)
 output.path <- ted_ITS.prior_20gen_JAGSfit
 
 #load tedersoo data.----
-#d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
-#d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
 y <- readRDS(tedersoo_ITS_cosmo_genera_list.path)
 y <- y$abundances

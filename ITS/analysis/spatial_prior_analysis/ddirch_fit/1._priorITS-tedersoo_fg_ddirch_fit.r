@@ -20,34 +20,19 @@ registerDoParallel(cores=n.cores)
 output.path <- ted_ITS.prior_fg_JAGSfit
 
 #load tedersoo data.----
-#d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis dataset.
-#d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
+#d <- d[1:35,] #for testing
 y <- readRDS(tedersoo_ITS_fg_list.path)
 y <- y$abundances
-#d <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen,Arbuscular,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$SRR.id,]
-y$Arbuscular <- NULL
-#d <- d[1:35,] #for testing
 
-#organize y data----
-#y <- d[,.(Ectomycorrhizal,Saprotroph,Pathogen)]
-#y$other <- 1 - rowSums(y)
-#y <- data.frame(lapply(y,crib_fun, N = nrow(y) * ncol(y)))
-#in the rare case where one column actually needs to be a zero for a row to prevent to summing over 1...
-#for(i in 1:nrow(y)){
-#  if(rowSums(y[i,]) > 1){
-#    y[i,] <- y[i,] / rowSums(y[i,])
-#  }
-#}
+
+#Add 1 to all abundances. dirichlet cannot handle hard zeros.----
 y <- y + 1
 y <- y/rowSums(y)
 y <- as.data.frame(y)
-
-#reorder columns. other needs to be first.
-#y <- y[,c('other','Ectomycorrhizal','Pathogen','Saprotroph')]
 
 #Drop in intercept, setup predictor matrix.----
 #IMPORTANT: LOG TRANSFORM MAP.
