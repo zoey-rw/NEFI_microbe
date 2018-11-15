@@ -5,7 +5,7 @@ source('paths.r')
 
 #set output path.----
 output.path <- NEON_cps_fg_forecast_figure.path
-output.path <- 'test.png'
+#output.path <- 'test.png'
 
 #load data.----
 d <- readRDS(NEON_site_fcast_fg.path)
@@ -27,6 +27,7 @@ if(use_new == T){
 
 #DEFINE OUTLIER SITES- DSNY in this case.----
 out_sites <- c('DSNY')
+out_spp   <- c('Ectomycorrhizal')
 
 #setup output spec.----
 png(filename=output.path,width=12,height=12,units='in',res=300)
@@ -46,6 +47,7 @@ names <- colnames(d$core.fit$mean)
 names <- names[c(2:(length(names)),1)]
 names <- names[!(names %in% c('other'))]
 out.color <- 'gray'
+bf_col <- 'magenta1' #best-fit regression line color.
 
 #loop over functional groups.----
 for(i in 1:length(names)){
@@ -69,18 +71,28 @@ for(i in 1:length(names)){
   obs.pos <- which(colnames(obs) == names[i])
   obs.mu   <- obs[,obs.pos][order(match(names(obs[,c(fungi_name)]),names(mu)))]
   
-  #make DSNY sites light gray.
-  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  #make DSNY sites light gray for Ectos.
+  obs.cols <- rep('black',nrow(obs))
+  if(names[i] %in% out_spp){
+    obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
+  }
   
   #get y-limit.
   obs_limit <- max(obs.mu)
   if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
   y_max <- as.numeric(obs_limit)*1.05
   if(y_max > 0.95){y_max <- 1}
+  if(names[i] == 'Arbuscular'){y_max = 0.1}
   
   #plot
   plot(obs.mu ~ mu, cex = core.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
-  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
+  mod_fit <- lm(obs.mu ~ mu)
+  if(names[i] %in% out_spp){
+    siteID <- substring(names(obs.mu),1,4)
+    to_keep <- ifelse(siteID %in% out_sites, F, T)
+    mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
+  }
+  rsq <- round(summary(mod_fit)$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   mtext(fungi_name, side = 2, line = 2.5, cex = 1.5)
   #add confidence interval.
@@ -92,6 +104,7 @@ for(i in 1:length(names)){
   state <- paste0(in_it,'% of obs. within interval.')
   mtext(state,side = 3, line = -1.3, adj = 0.05)
   abline(0,1,lwd=2)
+  abline(mod_fit, lwd =2, lty = 2, col = bf_col)
   
   
   #plot.level.----
@@ -116,22 +129,34 @@ for(i in 1:length(names)){
   obs.lo95 <- obs$lo95[,fungi_name][order(match(names(obs$lo95[,fungi_name]),names(mu)))]
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
-  #Make DSNY sites gray.
-  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  #Make out_sites sites gray for out_spp.
+  obs.cols <- rep('black',length(obs.mu))
+  if(names[i] %in% out_spp){
+    obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
+  }
   
   #get y-limit.
   obs_limit <- max(obs.hi95)
   if(max(pi_0.975) > obs_limit){obs_limit <- max(pi_0.975)}
   y_max <- as.numeric(obs_limit)*1.05
   if(y_max > 0.95){y_max <- 1}
+  if(names[i] == 'Arbuscular'){y_max = 0.1}
   
   #plot
   plot(obs.mu ~ mu, cex = plot.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3, col = obs.cols)
-  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
+  mod_fit <- lm(obs.mu ~ mu)
+  if(names[i] %in% out_spp){
+    siteID <- substring(names(obs.mu),1,4)
+    to_keep <- ifelse(siteID %in% out_sites, F, T)
+    mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
+  }
+  rsq <- round(summary(mod_fit)$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   #1:1 line
   abline(0,1, lwd = 2)
+  abline(mod_fit, lwd =2, lty = 2, col = bf_col)
+  
   #add confidence interval.
   range <- mu
   polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)
@@ -164,22 +189,34 @@ for(i in 1:length(names)){
   obs.lo95 <- obs$lo95[,fungi_name][order(match(names(obs$lo95[,fungi_name]),names(mu)))]
   obs.hi95 <- obs$hi95[,fungi_name][order(match(names(obs$hi95[,fungi_name]),names(mu)))]
   
-  #Make DSNY sites gray.
-  obs.cols <- ifelse(substring(names(obs.mu),1,4) == 'DSNY',out.color,'black')
+  #Make out_sites sites gray for out_spp.
+  obs.cols <- rep('black',length(obs.mu))
+  if(names[i] %in% out_spp){
+    obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
+  }
   
   #get y-limit.
   obs_limit <- max(obs.hi95)
   if(max(pi_0.975) > obs_limit){obs_limit <- max(pi_0.975)}
   y_max <- as.numeric(obs_limit)*1.05
   if(y_max > 0.95){y_max <- 1}
+  if(names[i] == 'Arbuscular'){y_max = 0.1}
   
   #plot
   plot(obs.mu ~ mu, cex = site.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3, col = obs.cols)
-  rsq <- round(summary(lm(obs.mu[!(names(obs.mu) %in% out_sites)] ~mu[!(names(mu) %in% out_sites)]))$r.squared,2)
+  mod_fit <- lm(obs.mu ~ mu)
+  if(names[i] %in% out_spp){
+    siteID <- substring(names(obs.mu),1,4)
+    to_keep <- ifelse(siteID %in% out_sites, F, T)
+    mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
+  }
+  rsq <- round(summary(mod_fit)$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
   #1:1 line
   abline(0,1, lwd = 2)
+  abline(mod_fit, lwd =2, lty = 2, col = bf_col)
+  
   #add confidence interval.
   range <- mu
   polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)

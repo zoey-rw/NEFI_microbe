@@ -3,20 +3,26 @@
 rm(list=ls())
 source('paths.r')
 
-#load data.
+#set output path.----
+output.path <- 'test.png'
+output.path <- NEON_ddirch_var.importance_cosmo_figure.path
+
+#load data.----
 d <- readRDS(NEON_genera_variable_importance_data.path)
 mu <- d$mean
 lo_95 <- d$ci_0.025
 hi_95 <- d$ci_0.975
 
+#set output spec.----
+png(filename=output.path,width=8,height=8,units='in',res=300)
+
 #Global plot settings.----
-#i = 2 #2=Ectomycorrhizal fungi.
-par(mfrow = c(3,3),
-    mar = c(rep(4,4)))
+par(mfrow = c(3,3))
 outer.lab.cex <- 1.5
 
 #loop over different fungal groups.----
-for(i in 1:ncol(d$mean)){
+#2:ncol throws out 'other' category.
+for(i in 2:ncol(d$mean)){
   #plot importance in decreasing order.
   mu   <- d$mean[,i][order(d$mean[,i], decreasing = T)]
   hi95 <- d$ci_0.975[,i][order(match(names(d$ci_0.975[,i]), names(mu)))]
@@ -38,9 +44,7 @@ for(i in 1:ncol(d$mean)){
        adj = 1, labels = lab, xpd = TRUE)
 }
 #Outer labels.----
-mtext('Variable Importance',side = 2, line = 1, cex = outer.lab.cex, outer = T)
-mtext('Variable Importance',side = 2, line = -1.5, cex = outer.lab.cex, outer = T)
+mtext('Variable Importance',side = 2, line = 2, cex = outer.lab.cex, outer = T)
 
-
-
-
+#end plot.----
+dev.off()

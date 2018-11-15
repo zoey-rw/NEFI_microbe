@@ -117,7 +117,11 @@ system(cmd)
 
 #ddirch forecast-validation.
 NEON_cps_fg_forecast_figure.path <- paste0(dir,'NEON_CPS_fg_forecast_figure.png')
-NEON_cps_genera_forecast_figure.path <- paste0(dir,'NEON_CPS_genera_forecast_figure.png')
+NEON_cps_cosmo_forecast_figure.path <- paste0(dir,'NEON_CPS_cosmo_forecast_figure.png')
+NEON_ddirch_var.decomp_fg_figure.path <- paste0(dir,'NEON_ddirch_var.decomp_fg.png')
+NEON_ddirch_var.decomp_cosmo_figure.path <- paste0(dir,'NEON_ddirch_var.decomp_cosmo.png')
+NEON_ddirch_var.importance_fg_figure.path <- paste0(dir,'NEON_ddirch_var.importance_fg.png')
+NEON_ddirch_var.importance_cosmo_figure.path <- paste0(dir,'NEON_ddirch_var.importance_fg.png')
 
 #dmulti-ddirch forecast-validation.
 NEON_dmulti.ddirch_fg_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_fg_forecast_validation.png')
