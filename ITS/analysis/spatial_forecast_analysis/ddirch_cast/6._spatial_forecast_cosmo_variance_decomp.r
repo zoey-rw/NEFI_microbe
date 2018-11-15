@@ -6,13 +6,13 @@ source('NEFI_functions/ddirch_forecast.r')
 
 
 #set output path.----
-output.path <- NEON_ddirch_var.decomp_fg.path
+output.path <- NEON_ddirch_var.decomp_cosmo.path
 
 #load model results.----
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-mod <- readRDS(ted_ITS.prior_fg_JAGSfit)
+mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
 mod <- mod[[3]] #just the all predictor case.
 
 #get core-level covariate means and sd.----
@@ -123,10 +123,10 @@ site_median_sd <- data.frame(t(unlist(site_median_sd)))
 
 
 #core-scale variance decomposition.----
-    core_ref <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale')
-    core_cov <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
-    core_par <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
-    core_pro <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
+core_ref <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale')
+core_cov <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
+core_par <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
+core_pro <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
 core_cov.par <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_process_uncertainty = T)
 core_cov.pro <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_parameter_uncertainty = T)
 core_par.pro <- ddirch_forecast(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale', zero_covariate_uncertainty = T)
@@ -141,10 +141,10 @@ rownames(core.decomp.list) <- decomp_names
 core_variance_decomp <- sweep(core.decomp.list,2, core.decomp.list[1,],'/')
 
 #plot-scale variance decomposition.----
-    plot_ref <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale')
-    plot_cov <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
-    plot_par <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
-    plot_pro <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
+plot_ref <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale')
+plot_cov <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
+plot_par <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
+plot_pro <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
 plot_cov.par <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_process_uncertainty = T)
 plot_cov.pro <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_parameter_uncertainty = T)
 plot_par.pro <- ddirch_forecast(mod = mod, cov_mu = plot_median_mu, cov_sd = plot_median_sd, names = 'plot_scale', zero_covariate_uncertainty = T)
@@ -159,10 +159,10 @@ rownames(plot.decomp.list) <- decomp_names
 plot_variance_decomp <- sweep(plot.decomp.list,2, plot.decomp.list[1,],'/')
 
 #site-scale variance decomposition.----
-    site_ref <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale')
-    site_cov <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
-    site_par <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
-    site_pro <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
+site_ref <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale')
+site_cov <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_process_uncertainty = T, zero_parameter_uncertainty = T)
+site_par <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_process_uncertainty = T, zero_covariate_uncertainty = T)
+site_pro <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_parameter_uncertainty = T, zero_covariate_uncertainty = T)
 site_cov.par <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_process_uncertainty = T)
 site_cov.pro <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_parameter_uncertainty = T)
 site_par.pro <- ddirch_forecast(mod = mod, cov_mu = site_median_mu, cov_sd = site_median_sd, names = 'site_scale', zero_covariate_uncertainty = T)

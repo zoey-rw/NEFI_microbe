@@ -32,7 +32,7 @@ out_sites <- c('DSNY')
 png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
-par(mfrow = c(3,3),
+par(mfrow = c(4,3),
     mai = c(0.3,0.3,0.3,0.3),
     oma = c(4,6,3,1))
 trans <- 0.3

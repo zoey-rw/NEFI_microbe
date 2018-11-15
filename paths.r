@@ -233,6 +233,8 @@ NEON_site_fcast_fg.path <- paste0(dir,'NEON_fcast_site.level_fg.rds')
 NEON_site_fcast_genera.path <- paste0(dir,'NEON_fcast_site.level_genera.rds')
 NEON_fg_variable_importance_data.path <- paste0(dir,'NEON_fg_variable_importance_data.rds')
 NEON_genera_variable_importance_data.path <- paste0(dir,'NEON_genera_variable_importance_data.rds')
+NEON_ddirch_var.decomp_fg.path <- paste0(dir,'NEON_ddirch_var.decomp_fg.rds')
+NEON_ddirch_var.decomp_cosmo.path <- paste0(dir,'NEON_ddirch_var.decomp_cosmo.rds')
 
 #dmulti-ddirch forecasts, variance decomposition and variable importance output.
 NEON_dmulti.ddirch_fcast_fg.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_fg.rds')

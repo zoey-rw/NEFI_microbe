@@ -11,13 +11,13 @@ fit <- fit$all.preds
 
 
 #CHECK JAGS diagnostic plots. Did chains converge?
-plot(fit$jags_model)
+#plot(fit$jags_model)
 #check prsf scores. Pathogens could run a little longer, probably because low abundance.
 fit$species_parameter_output
 
 #check plots.
 par(mfrow = c(2,2))
-for(i in 1:ncol(fit$predicted)){
+for(i in 2:ncol(fit$predicted)){
   plot(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i], pch = 16)
   abline(0,1,lwd = 2)
   abline(lm(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i]), lty = 2, col = 'purple')
@@ -33,9 +33,9 @@ for(i in 1:ncol(fit$predicted)){
 fit <- readRDS(ted_ITS.prior_dmulti.ddirch_cosmo_JAGSfit)
 fit <- fit$all.preds
 
-#check convergence plots and prsf scores.
+#check convergence plots and prsf scores. Did not all converge.
 fit$species_parameter_output
-plot(fit$jags_model)
+#plot(fit$jags_model)
 
 #check the plots.
 par(mfrow = c(3,3))
