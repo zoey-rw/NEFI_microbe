@@ -10,7 +10,7 @@
 #$ -pe omp 10
 #
 #Give the job a name
-#$ -N 16Sprior_gen
+#$ -N prior_gen_16S
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y

@@ -236,7 +236,7 @@ bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan ge
 cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan genera - use this one, it's the same approach as for ITS
 
 #### 16S/scc_gen: JAGS output ####
-dir <- paste0(scc_gen_16S_dir, 'JAGS_output')
+dir <- paste0(scc_gen_16S_dir, 'JAGS_output/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_16S.prior_12gen_JAGSfit <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit.rds')
