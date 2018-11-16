@@ -114,14 +114,15 @@ ddirch_forecast <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1000,
   pred.ci.0.975   <- apply(simplify2array(cred.out), 1:2, quantile, probs = c(0.975))
   pred.pi.0.025   <- apply(simplify2array(pred.out), 1:2, quantile, probs = c(0.025))
   pred.pi.0.975   <- apply(simplify2array(pred.out), 1:2, quantile, probs = c(0.975))
+  pred.var        <- apply(simplify2array(pred.out), 1:2, var)
   
   #batch into list, column names are group names, row names are siteIDs.
-  output <- list(pred.mean, pred.ci.0.025, pred.ci.0.975, pred.pi.0.025, pred.pi.0.975)
+  output <- list(pred.mean, pred.ci.0.025, pred.ci.0.975, pred.pi.0.025, pred.pi.0.975,pred.var)
   for(k in 1:length(output)){
     colnames(output[[k]]) <- names(mod$species_parameter_output)
     rownames(output[[k]]) <- names
   }
-  names(output) <- c('mean','ci_0.025','ci_0.975','pi_0.025','pi_0.975')
+  names(output) <- c('mean','ci_0.025','ci_0.975','pi_0.025','pi_0.975','variance')
   
   #return output.----
   return(output)

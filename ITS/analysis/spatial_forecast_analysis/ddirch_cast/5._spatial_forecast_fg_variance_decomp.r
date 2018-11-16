@@ -135,6 +135,7 @@ decomp_names <- c('All','covariate','parameter','process','covariate + parameter
 core.decomp.list <- list()
 for(i in 1:length(core_list)){
   core.decomp.list[[i]] <- core_list[[i]]$pi_0.975 - core_list[[i]]$pi_0.025
+  core.decomp.list[[i]] <- core_list[[i]]$variance
 }
 core.decomp.list <- do.call(rbind, core.decomp.list)
 rownames(core.decomp.list) <- decomp_names
@@ -153,6 +154,7 @@ decomp_names <- c('All','covariate','parameter','process','covariate + parameter
 plot.decomp.list <- list()
 for(i in 1:length(plot_list)){
   plot.decomp.list[[i]] <- plot_list[[i]]$pi_0.975 - plot_list[[i]]$pi_0.025
+  plot.decomp.list[[i]] <- plot_list[[i]]$variance
 }
 plot.decomp.list <- do.call(rbind, plot.decomp.list)
 rownames(plot.decomp.list) <- decomp_names
@@ -171,6 +173,7 @@ decomp_names <- c('All','covariate','parameter','process','covariate + parameter
 site.decomp.list <- list()
 for(i in 1:length(site_list)){
   site.decomp.list[[i]] <- site_list[[i]]$pi_0.975 - site_list[[i]]$pi_0.025
+  site.decomp.list[[i]] <- site_list[[i]]$variance
 }
 site.decomp.list <- do.call(rbind, site.decomp.list)
 rownames(site.decomp.list) <- decomp_names
