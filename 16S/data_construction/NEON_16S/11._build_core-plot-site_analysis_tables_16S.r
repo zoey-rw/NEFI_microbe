@@ -22,20 +22,13 @@ library(stringr)
 # ZW is not sure how much of the above is relevant for 16S data.
 
 dp1.10801 <- readRDS(dp1.10108.00_output_16S.path)
-bac <- readRDS(NEON_gen_abundances.path)
-colnames(bac)[names(bac) == "Mapping.ID"] <- "sample_ID"
+bac <- readRDS(NEON_cosmo_abundances.path)
+bac$sample_ID <- rownames(bac)
 
-# remove characters from dp1.10801 geneticSampleID to match the tax table
-#dp1.10801$sample_ID <- str_replace_all(dp1.10801$geneticSampleID, c("_" = ".", "-" = ".", ".GEN" = ""))
+# the relevant ID in dp1.10801 is the deprecatedVialID
 dp1.10801$sample_ID <- dp1.10801$deprecatedVialID
 
-# we lose 342 observatinos here because they are not in dp1.10801.001. Retain 716.
-# that ^ was true for ITS. for 16S, we keep all 692 observations. 
-# if we continue with the existing code, we end up with less than 30 unique observations for the model.
-# all sites are present in the dp1.10801 table: unique(dp1.10801$siteID)
-# and it has even more observations than the dp1.10801 table for fungi.
-
-# in this obs.table, we only have 6 sites.
+# we keep all 692 observations here. 
 obs.table <- merge(bac,dp1.10801, by="sample_ID")
 
 #For spatial forecast I want FIRST time soils were sampled, at peak green-ness.
@@ -48,13 +41,11 @@ for(i in 1:length(sites)){
 names(site_dates) <- sites
 
 #ITS: All sites have either a 2014-07 or 2014-08 observation. Lets build spatial prediction on this.
-#214 unique observations over 11 NEON sites to model.
-# 16S: some sites, like BART, do not have a 2014-07 or 2014-08 observation, so added '2014-06'
-# 170 unique observations over 11 NEON sites to model
+#257 unique observations over 11 NEON sites to model.
 
 to_keep <- c()
 for(i in 1:length(site_dates)){
-  z <- site_dates[[i]][site_dates[[i]] %in% c('2014-07','2014-08', '2014-06','2014-09')]
+  z <- site_dates[[i]][site_dates[[i]] %in% c('2014-07','2014-08','2014-09')]
   to_keep[i] <- paste0(names(site_dates[i]),'-',z[1])
 }
 obs.table$site_date <- paste0(obs.table$siteID,'-',obs.table$dateID)
