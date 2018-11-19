@@ -7,7 +7,7 @@
 #$ -l h_rt=80:00:00
 #
 #Taking all sockets, since I keep getting socket errors on this (only need 18...)
-#$ -pe omp 36
+#$ -pe omp 18
 #
 #Give the job a name
 #$ -N fg_seq.d

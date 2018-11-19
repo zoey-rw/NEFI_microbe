@@ -10,6 +10,7 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 
 #detect and register cores.----
 n.cores <- detectCores()
+n.cores <- 18
 registerDoParallel(cores=n.cores)
 
 #set output path.----
