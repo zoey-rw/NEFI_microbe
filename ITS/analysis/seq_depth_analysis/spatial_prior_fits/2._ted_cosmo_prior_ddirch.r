@@ -47,7 +47,7 @@ x <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(y.frame)) %dopar% {
-    fit <- site.level_dirlichet_jags(y=y.frame[[i]],x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    fit <- site.level_dirlichet_jags(y=y.frame[[i]],x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = F)
     return(fit)
   }
 

@@ -8,10 +8,13 @@ source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast.r')
 
 #set output path.----
-output.path <- 
+output.path <- ted_fg_seq.depth_ddirch_foreacsts.path
 
 #load model results.----
-mod <- readRDS(ted_fg_seq.depth_ddirch_foreacsts.path)
+mod_all <- readRDS(ted_fg_ddirch_fit_seqdepth.path)
+#we need to loop the below code over each model in the "mod_all" object. Each model is some level of sequence depth.
+super.list <- list()
+#for(kk in 1:length(mod_all)){mod <- mod_all[[kk]]}
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path)
