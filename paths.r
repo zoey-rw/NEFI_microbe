@@ -320,6 +320,7 @@ neon_pre_release_tax.out_ITS <- paste0(NEON_pre_release.dir,'ITS_tax_clean.rds')
 
 #####seq depth analysis paths.----
 dir <- paste0(ITS_scc_gen_dir,'seq_depth_analysis/')
+cmd <- paste0('mkdir -p ',dir)
 ted_fg_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
 ted_cosmo_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
 ted_fg_seq.depth_ddirch_foreacsts.path <- paste0(dir,'ted_fg_seq.depth_ddirch_foreacsts.rds')
