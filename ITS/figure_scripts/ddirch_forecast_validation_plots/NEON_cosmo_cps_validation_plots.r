@@ -9,11 +9,11 @@ output.path <- NEON_cps_cosmo_forecast_figure.path
 
 #load data.----
 d <- readRDS(NEON_site_fcast_genera.path)
-core.truth <- readRDS(NEON_cosmo_genera.path)
+core.truth <- readRDS(NEON_ITS_fastq_cosmo_genera.path)
 core.truth <- core.truth$rel.abundances
 rownames(core.truth) <- gsub('-GEN','',core.truth$geneticSampleID)
-plot.truth <- readRDS(NEON_plot.level_genera_obs.path)
-site.truth <- readRDS(NEON_site.level_genera_obs.path)
+plot.truth <- readRDS(NEON_plot.level_genera_obs_fastq.path)
+site.truth <- readRDS(NEON_site.level_genera_obs_fastq.path)
 
 #DEFINE OUTLIER SITES- Russula follow the ECM fg, so sample outliers.----
 out_sites <- c('DSNY')
