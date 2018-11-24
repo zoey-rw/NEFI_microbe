@@ -19,15 +19,11 @@ registerDoParallel(cores=n.cores)
 output.path <- bahram_16S.prior_12gen_JAGSfit
 
 #load tedersoo data.----
-#d <- data.table(readRDS(tedersoo_ITS.prior_for_analysis.path)) #old analysis path.
-#d <- data.table(readRDS(tedersoo_ITS.prior_fromSV_analysis.path))
 d <- data.table(readRDS(bahram_prior_gen.path))
-#d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
 y <- readRDS(cosmo_output_16S.path)
 y <- y$abundances
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
 #d <- d[complete.cases(d),] #optional. This works with missing data.
-#d <- d[1:3,] #for testing
 y <- y[rownames(y) %in% d$Run,]
 if(!sum(rownames(y) == d$Run) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
@@ -61,7 +57,7 @@ x.list <- list(x.clim,x.site,x.all)
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(x.list)) %dopar% {
-    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = F)
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
     return(fit)
   }
 
