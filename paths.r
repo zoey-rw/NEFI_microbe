@@ -318,11 +318,16 @@ neon_pre_release_otu.out_ITS <- paste0(NEON_pre_release.dir,'ITS_otu_clean.rds')
 neon_pre_release_map.out_ITS <- paste0(NEON_pre_release.dir,'ITS_map_clean.rds')
 neon_pre_release_tax.out_ITS <- paste0(NEON_pre_release.dir,'ITS_tax_clean.rds')
 
-#####seq depth analysis paths.----
+#####ITS/scc_gen: seq depth analysis paths.----
 dir <- paste0(ITS_scc_gen_dir,'seq_depth_analysis/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ted_fg_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
 ted_cosmo_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
+
+####ITS/pecan_gen: seq depth analysis paths.----
+dir <- paste0(ITS_pecan_gen_dir,'seq_depth_analysis/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
 ted_fg_seq.depth_ddirch_foreacsts.path <- paste0(dir,'ted_fg_seq.depth_ddirch_foreacsts.rds')
 ted_cosmo_seq.depth_ddirch_foreacsts.path <- paste0(dir,'ted_cosmo_seq.depth_ddirch_foreacsts.rds')

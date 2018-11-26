@@ -14,7 +14,7 @@ n.cores <- 18
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- ted_fg_ddirch_fit_seqdepth.path
+output.path <- ted_cosmo_ddirch_fit_seqdepth.path
 
 #load tedersoo data.----
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
