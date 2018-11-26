@@ -269,3 +269,32 @@ NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')
 NEON_site_covs_16S.path <- paste0(dir,'NEON_site_covs_16S.rds')
 NEON_glob_covs_16S.path <- paste0(dir,'NEON_glob_covs_16S.rds')
+NEON_plot.level_genera_obs_16S.path <- paste0(dir,'NEON_plot.level_genera_obs_16S.rds')
+NEON_site.level_genera_obs_16S.path <- paste0(dir,'NEON_site.level_genera_obs_16S.rds')
+
+# path to prior metadata
+dir <- paste0('pecan_gen_16S_dir')
+bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")
+
+# path to NEON cosmo forecasts
+dir <- pecan_gen_16S_dir
+NEON_cosmo_abundances.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
+NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
+hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
+
+# NEON data aggregation path
+dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
+core_obs_16S.path <- paste0(dir, "core_obs_16S.rds")
+core_core_16S.path <- paste0(dir, "core_core_16S.rds")
+core_plot_16S.path <- paste0(dir, "core_plot_16S.rds")
+core_site_16S.path <- paste0(dir, "core_site_16S.rds")
+core_glob_16S.path <- paste0(dir, "core_glob_16S.rds")
+plot_plot_16S.path <- paste0(dir, "plot_plot_16S.rds")
+plot_site_16S.path <- paste0(dir, "plot_site_16S.rds")
+plot_glob_16S.path <- paste0(dir, "plot_glob_16S.rds")
+site_site_16S.path <- paste0(dir, "site_site_16S.rds")
+site_glob_16S.path <- paste0(dir, "site_glob_16S.rds")
+
+# NEON forecast figures
+dir <- paste0(pecan_gen_16S_dir,'figures/')
+NEON_cosmo_forecast_fig_16S.path <- paste0(dir, "NEON_cosmo_forecast_fig_16S.png")
