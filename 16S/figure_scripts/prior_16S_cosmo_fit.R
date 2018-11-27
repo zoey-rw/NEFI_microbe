@@ -10,12 +10,16 @@ fit <- fit$all.preds
 
 #check convergence plots and prsf scores.
 fit$species_parameter_output
-plot(fit$jags_model)
+summary(fit$jags_model)
+#plot(fit$jags_model)
 
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
 #check the plots.
 par(mfrow = c(3,3))
+#par(mar=c(3,3,3,3))
 for(i in 1:ncol(fit$predicted)){
   plot(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i], pch = 16)
+  Axis(x="predicted", side=2)
   abline(0,1,lwd = 2)
   abline(lm(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i]), lty = 2, col = 'purple')
   mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
@@ -24,3 +28,4 @@ for(i in 1:ncol(fit$predicted)){
   mtext(paste0('R2=',rsq), side = 3, line = -1.5, adj = 0.05)
   
 }
+dev.off()
