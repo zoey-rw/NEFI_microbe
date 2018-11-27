@@ -138,13 +138,14 @@ rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
 
 
 #validate against observed data by plotting.----
-par(mfrow = c(2,2))
 trans <- 0.3
 limy <- c(0,.1)
-i = 2 
+#i = 2 
 
 #core.level.----
 pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_core.fcast_cosmo_16S.pdf")
+par(mfrow = c(2,2))
+par(mar = c(2,2,2,2))
 #organize data.
 fcast <- core.fit
 truth <- readRDS(NEON_cosmo_abundances.path) 
@@ -157,7 +158,7 @@ truth <- truth1
 truth <- truth[rownames(truth) %in% rownames(fcast$mean),]
 test <- truth[-grep('DSNY',rownames(truth)),]
 
-for (i in 1:20) {
+for (i in 2:21) {
 
 for(k in 1:length(fcast)){
   fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth),]
@@ -192,11 +193,12 @@ dev.off()
 
 # plot.level
 pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_plot.fcast_cosmo_16S.pdf")
-
+par(mfrow = c(2,2))
+par(mar = c(2,2,2,2))
 fcast <- output$plot.fit	
 truth <- readRDS(NEON_plot.level_genera_obs_16S.path)	
 
-for (i in 1:20) {
+for (i in 2:21) {
   
 for(k in 1:length(truth)){	
   rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)	
@@ -212,8 +214,8 @@ pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))
 pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]	
 bac_name <- colnames(fcast$mean)[i]	
 obs.mu   <- truth$mean[,bac_name][order(match(names(truth$mean[,bac_name]),names(mu)))]	
-#obs.lo95 <- truth$lo95[,bac_name][order(match(names(truth$lo95[,bac_name]),names(mu)))]	
-#obs.hi95 <- truth$hi95[,bac_name][order(match(names(truth$hi95[,bac_name]),names(mu)))]	
+obs.lo95 <- truth$lo95[,bac_name][order(match(names(truth$lo95[,bac_name]),names(mu)))]	
+obs.hi95 <- truth$hi95[,bac_name][order(match(names(truth$hi95[,bac_name]),names(mu)))]	
 #plot	
 plot(obs.mu ~ mu, cex = 0.7, ylim=limy, main = paste0('plot-level ', bac_name))	
 arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)	
@@ -238,11 +240,11 @@ dev.off()
 
 #site.level----
 pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_site.fcast_cosmo_16S.pdf")
+par(mfrow = c(2,2))
+par(mar = c(2,2,2,2))
 #organize data.
 fcast <- output$site.fit
 truth <- readRDS(NEON_site.level_genera_obs_16S.path)
-
-for(i in 1:20) {
   
 for(k in 1:length(truth)){
   rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
@@ -255,6 +257,8 @@ for(k in 1:length(truth)){
 for(k in 1:length(fcast)){
   fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth$mean),]
 }
+
+for(i in 2:21) {
 mu <- fcast$mean[,i][order(fcast$mean[,i])]
 ci_0.975 <- fcast$ci_0.975[,i][order(match(names(fcast$ci_0.975[,i]),names(mu)))]
 ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
@@ -281,3 +285,4 @@ state <- paste0(in_it,'% of observations within 95% prediction interval.')
 mtext(state,side = 3,  cex = .7, line = -1.3, adj = 0.05)
 }
 dev.off()
+
