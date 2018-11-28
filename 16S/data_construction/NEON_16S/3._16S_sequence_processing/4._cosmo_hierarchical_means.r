@@ -6,6 +6,7 @@ library(runjags)
 source('paths.r')
 #source('NEFI_functions/hierarch_ddirch_means.r')
 
+NEON_cosmo_abundances_16S.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_cosmo_abundances_16S.rds"
 # source hierarch means function
 library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/hierarch_ddirch_means.r", ssl.verifypeer = FALSE)
