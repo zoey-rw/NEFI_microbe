@@ -74,7 +74,10 @@ saveRDS(plot.fit, plot.output.path)
 #--------- visual check --------#
 
 site.fit <- readRDS(site.output.path)
+site.fit <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/NEON_processed/NEON_site.level_genera_obs_16S.rds")
 plot.fit <- readRDS(plot.output.path)
+plot.fit <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/NEON_processed/NEON_plot.level_genera_obs_16S.rds")
+
 
 plot_check <- T
 if(plot_check == T){

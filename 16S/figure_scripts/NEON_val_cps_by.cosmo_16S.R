@@ -1,10 +1,16 @@
+# Validation plots of forecasts to NEON core/plot/sites, 
+# plotted by genera, each with c/p/s.
+
 rm(list=ls())
 source('paths.r')
+source('NEFI_functions/crib_fun.r')
 library(data.table)
 
-output <- readRDS(NEON_site_fcast_genera_16S.path)
-map<-readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_data_aggregation/obs.table_16S.rds")
 
+# load forecast 
+output <- readRDS(NEON_site_fcast_genera_16S.path)
+# read in obs table
+map <- readRDS(obs.table_16S.path)
 
 # get rsq from priors
 # read in prior fit.
@@ -20,7 +26,7 @@ prior_rsq <- as.numeric(prior_rsq)
 names(prior_rsq) <- colnames(fit$predicted)
 
 # get % of NEON cores a genus is present in.
-truth <- readRDS(NEON_cosmo_abundances.path) 
+truth <- readRDS(NEON_cosmo_abundances_16S.path) 
 truth <- truth$rel.abundances
 present_percent <- colSums(truth!=0, na.rm=T)/colSums(!is.na(truth), na.rm = T)
 
@@ -30,7 +36,7 @@ trans <- 0.3
 limy <- c(0,.1)
 #i = 2 
 
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_cps.fcast_cosmo_16S.pdf")
+pdf(NEON_cps.fcast_cosmo_16S.path)
 par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
@@ -40,7 +46,7 @@ for (i in 2:21) {
 #core.level.----
 #organize data.
 fcast <- output$core.fit
-truth <- readRDS(NEON_cosmo_abundances.path) 
+truth <- readRDS(NEON_cosmo_abundances_16S.path) 
 truth <- truth$rel.abundances
 truth$deprecatedVialID <- rownames(truth)
 truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
@@ -127,7 +133,7 @@ truth <- readRDS(NEON_plot.level_genera_obs_16S.path)
   in_it <- round(sum(obs.mu < pi_0.975 & obs.mu > pi_0.025) / length(obs.mu),2) *100	
   state <- paste0(in_it,'% of observations within 95% prediction interval.')	
   mtext(state,side = 3, cex = .7, line = -1.3, adj = 0.05)
-#}
+
 
 
 
