@@ -243,6 +243,8 @@ dir <- paste0(scc_gen_16S_dir, 'JAGS_output/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_16S.prior_12gen_JAGSfit <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit.rds')
+bahram_16S.prior_12gen_JAGSfit_no_moisture <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_no_moisture.rds')
+
 
 #### 16S/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
