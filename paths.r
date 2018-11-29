@@ -278,7 +278,7 @@ bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")
 
 # path to NEON cosmo forecasts
 dir <- pecan_gen_16S_dir
-NEON_cosmo_abundances.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
+NEON_cosmo_abundances_16S.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
 NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
 hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
 
