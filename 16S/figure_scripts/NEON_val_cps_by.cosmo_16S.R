@@ -30,7 +30,6 @@ truth <- readRDS(NEON_cosmo_abundances_16S.path)
 truth <- truth$rel.abundances
 present_percent <- colSums(truth!=0, na.rm=T)/colSums(!is.na(truth), na.rm = T)
 
-
 #validate against observed data by plotting.----
 trans <- 0.3
 limy <- c(0,.1)
