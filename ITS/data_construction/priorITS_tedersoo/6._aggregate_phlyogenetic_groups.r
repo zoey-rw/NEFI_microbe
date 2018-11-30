@@ -6,6 +6,7 @@ library(data.table)
 
 #set output paths.----
 cosmo_output.path <- tedersoo_ITS_cosmo_genera_list.path
+phyla_output.path <- tedersoo_ITS_phyla_list.path
 
 #load data.----
 map <- readRDS(tedersoo_ITS_clean_map.path)
@@ -80,9 +81,27 @@ names(gen.list) <- c('abundances','seq_total')
 gen.list$rel.abundaces <- gen.list$abundances / gen.list$seq_total
 
 
+#get abundances of phyla (Ascomycota, Basidiomycota).----
+phyla.list <- list()
+k <- data.table(cbind(tax,t(otu)))
+phyla_ref <- c('Ascomycota','Basidiomycota')
+for(i in 1:length(phyla_ref)){
+  z <- k[phylum == phyla_ref[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  phyla.list[[i]] <- out
+}
+phyla.list <- data.frame(t(do.call('rbind',phyla.list)))
+colnames(phyla.list) <- phyla_ref
+seq_total <- colSums(k[,start:ncol(k)])
+other <- seq_total - rowSums(phyla.list)
+phyla.list <- cbind(other,phyla.list)
+phyla.list <- list(phyla.list,seq_total)
+names(phyla.list) <- c('abundances','seq_total')
+phyla.list$rel.abundaces <- phyla.list$abundances / phyla.list$seq_total
+
+
 #save output.----
 saveRDS(gen.list, cosmo_output.path)
+saveRDS(phyla.list, phyla_output.path)
 cat('YOU DID IT. GREAT JOB. <3 Colin.')
-
-
-

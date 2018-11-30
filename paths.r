@@ -103,6 +103,7 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ted_ITS.prior_fg_JAGSfit    <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
 ted_ITS.prior_20gen_JAGSfit <- paste0(dir,'ted_ITS.prior_20gen_JAGSfit.rds')
+ted_ITS.prior_phyla_JAGSfit <- paste0(dir,'ted_ITS.prior_phyla_JAGSfit.rds')
 ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.selection_JAGS.rds')
 
 #dmulti-ddirch output, fit with fastq-derived data.
@@ -172,6 +173,7 @@ tedersoo_ITS.prior_fromSV_analysis.path <- paste0(dir,'tedersoo_ITS.prior_fromSV
            tedersoo_ITS_hydro_list.path <- paste0(dir,'tedersoo_ITS_hydro_list.rds')
            tedersoo_ITS_yeast_list.path <- paste0(dir,'tedersoo_ITS_yeast_list.rds')
     tedersoo_ITS_cosmo_genera_list.path <- paste0(dir,'tedersoo_ITS_cosmo_genera_list.rds')
+           tedersoo_ITS_phyla_list.path <- paste0(dir,'tedersoo_ITS_phyla_list.rds')
 
 #### ITS/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'NEON_data_aggregation/')
@@ -231,13 +233,15 @@ NEON_plot.level_genera_obs.path <- paste0(dir,'NEON_plot.level_genera_obs.rds')
      NEON_ITS_fastq_taxa_fg.path <- paste0(dir,'NEON_ITS_fastq_taxa_fg.rds')
 NEON_ITS_fastq_yeast_taxa.path <- paste0(dir,'NEON_ITS_fastq_yeast_taxa.rds')
 NEON_ITS_fastq_cosmo_genera.path <- paste0(dir,'NEON_ITS_fastq_cosmo_genera.rds')
+NEON_ITS_fastq_phyla.path <- paste0(dir,'NEON_ITS_fastq_phyla.rds')
 NEON_plot.level_fg_obs_fastq.path <- paste0(dir,'NEON_plot.level_fg_obs_fastq.rds')
 NEON_site.level_fg_obs_fastq.path <- paste0(dir,'NEON_site.level_fg_obs_fastq.rds')
 NEON_plot.level_genera_obs_fastq.path <- paste0(dir,'NEON_plot.level_genera_obs_fastq.rds')
 NEON_site.level_genera_obs_fastq.path <- paste0(dir,'NEON_site.level_genera_obs_fastq.rds')
 NEON_plot.level_yeast_obs_fastq.path <- paste0(dir,'NEON_plot.level_yeast_obs_fastq.rds')
 NEON_site.level_yeast_obs_fastq.path <- paste0(dir,'NEON_site.level_yeast_obs_fastq.rds')
-
+NEON_plot.level_phyla_obs_fastq.path <- paste0(dir,'NEON_plot.level_phyla_obs_fastq.rds')
+NEON_site.level_phyla_obs_fastq.path <- paste0(dir,'NEON_site.level_phyla_obs_fastq.rds')
 
 
 #### ITS/pecan_gen: Forecasts, variance decomposition and variable importance output paths.----
