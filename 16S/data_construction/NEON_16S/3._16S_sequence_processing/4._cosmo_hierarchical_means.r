@@ -1,5 +1,5 @@
 # Get plot- and site-level hierarchical means of cosmopolitan genera from rel abundances at NEON cores
-
+cat("this code is running")
 # clear workspace, load libraries
 rm(list=ls())
 library(runjags)
@@ -15,6 +15,10 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
+
+dir <- paste0(scc_gen_16S_dir,'NEON_processed/')
+NEON_plot.level_genera_obs_16S.path <- paste0(dir,'NEON_plot.level_genera_obs_16S.rds')
+NEON_site.level_genera_obs_16S.path <- paste0(dir,'NEON_site.level_genera_obs_16S.rds')
 #set output.path----
 plot.output.path <- NEON_plot.level_genera_obs_16S.path
 site.output.path <- NEON_site.level_genera_obs_16S.path
@@ -52,7 +56,6 @@ plot_site <- substr(plot_site,1,4)
 
 #Get means using hierarch_ddirch_means function.----
 fit <- hierarch_ddirch_means(y = y, core_plot = core_plot, plot_site = plot_site)
-saveRDS(fit, "/fs/data3/caverill/NEFI_data/16S/scc_gen/hier_means_fit.rds")
 plot.fit <- fit$plot.fit
 site.fit <- fit$site.fit
 
