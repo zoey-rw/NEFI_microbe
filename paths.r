@@ -304,3 +304,18 @@ NEON_cps.fcast_cosmo_16S.path <- paste0(dir, "NEON_cps.fcast_cosmo_16S.pdf")
 NEON_core.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_core.fcast_cosmo_16S.pdf")
 NEON_plot.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_plot.fcast_cosmo_fig_16S.pdf")
 NEON_site.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_site.fcast_cosmo_fig_16S.pdf")
+
+
+# path to 16S raw prior metadata
+dir <-  scc_gen_16S_dir
+SRA.path <- paste0(dir, "SraRunTable.csv")
+metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
+
+# path to 16S formatted prior metadata
+dir <- pecan_gen_16S_dir
+bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds")
+bahram_metadata_south_lat.path <-  paste0(dir, "bahram_metadata_south_lat.rds")
+
+# path to 16S variable importance data
+dir <- pecan_gen_16S_dir
+NEON_genera_variable_importance_data_16S.path <- paste0(dir, "NEON_genera_variable_importance_data_16S.rds")
