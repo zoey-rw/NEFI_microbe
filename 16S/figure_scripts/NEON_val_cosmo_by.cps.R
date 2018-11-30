@@ -1,4 +1,9 @@
+# Validation plots of forecasts to NEON core/plot/sitese
+# each plotted as a separate series with all genera.
 
+rm(list=ls())
+source('paths.r')
+library(data.table)
 
 ### plot observed data onto forecast ###
 
@@ -7,11 +12,10 @@ output <- readRDS(NEON_site_fcast_genera_16S.path)
 core.fit <- output$core.fit
 
 # read in obs table to get deprecatedVialID
-map<-readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_data_aggregation/obs.table_16S.rds")
-#map$deprecatedVialID
+map <- readRDS(obs.table_16S.path)
 
 # read in relative abundances of NEON genera
-truth <- readRDS(NEON_cosmo_abundances.path) 
+truth <- readRDS(NEON_cosmo_abundances_16S.path) 
 truth <- truth$rel.abundances
 
 # check what fraction of rows are empty for each genus.
@@ -29,7 +33,7 @@ limy <- c(0,.1)
 #i = 2 
 
 #core.level.----
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_core.fcast_cosmo_16S.pdf")
+pdf(NEON_core.fcast_cosmo_fig_16S.path)
 par(mfrow = c(2,2))
 par(mar = c(2,2,2,2))
 #organize data.
@@ -78,7 +82,7 @@ dev.off()
 
 
 # plot.level
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_plot.fcast_cosmo_16S.pdf")
+pdf(NEON_plot.fcast_cosmo_fig_16S.path)
 par(mfrow = c(2,2))
 par(mar = c(2,2,2,2))
 fcast <- output$plot.fit	
@@ -125,7 +129,7 @@ dev.off()
 
 
 #site.level----
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_site.fcast_cosmo_16S.pdf")
+pdf(NEON_site.fcast_cosmo_fig_16S.path)
 par(mfrow = c(2,2))
 par(mar = c(2,2,2,2))
 #organize data.
