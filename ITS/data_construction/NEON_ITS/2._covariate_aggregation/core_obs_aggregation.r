@@ -35,8 +35,22 @@ merged <- merge(merged,to_merge, by = 'sampleID', all.x=T)
 merged$year <- substring(merged$dateID,1,4)
 merged <- merged[!is.na(merged$siteID),]
 
-#Subset to Peak Greenness in 2014. 551 observations. 13 sites.----
-merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
+#Subset to Peak Greenness and first observation. 581 observations. 13 sites.----
+#Determine which site year to grab. We want the first peak greenness observation for each site.
+merged <- merged[merged$sampleTiming == 'peakGreenness',]
+merged$siteID <- as.character(merged$siteID)
+sites <- unique(merged$siteID)
+year_grab <- list()
+for(i in 1:length(sites)){
+  year_grab[[i]] <- min(merged[merged$siteID == sites[i], ]$year)
+}
+site_years <- data.frame(sites, unlist(year_grab))
+colnames(site_years) <- c('siteID','year')
+to_keep <- list()
+for(i in 1:nrow(site_years)){
+  to_keep[[i]] <- merged[merged$siteID == site_years$siteID[i] & merged$year == site_years$year[i],]
+}
+merged <- do.call(rbind, to_keep)
 #get rid of duped geneticSampleIDs.
 merged <- merged[!(duplicated(merged$geneticSampleID)),]
 

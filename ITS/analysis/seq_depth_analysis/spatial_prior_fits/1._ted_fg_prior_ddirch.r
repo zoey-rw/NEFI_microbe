@@ -10,6 +10,7 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 
 #detect and register cores.----
 n.cores <- detectCores()
+n.cores <- 18
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -18,7 +19,7 @@ output.path <- ted_fg_ddirch_fit_seqdepth.path
 #load tedersoo data.----
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
 #d <- d[1:35,] #for testing
-y <- readRDS(tedersoo_ITS_cosmo_genera_list.path)
+y <- readRDS(tedersoo_ITS_fg_list.path)
 y <- y$abundances
 d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
@@ -47,7 +48,7 @@ x <- d[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
 #for running production fit on remote.
 output.list<-
   foreach(i = 1:length(y.frame)) %dopar% {
-    fit <- site.level_dirlichet_jags(y=y.frame[[i]],x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    fit <- site.level_dirlichet_jags(y=y.frame[[i]],x_mu=x,adapt = 200, burnin = 1000, sample = 1000, parallel = F)
     return(fit)
   }
 

@@ -1,21 +1,20 @@
-#Making a spatial forecast based on the prior data to NEON sites at core, plot and site levels.
+#Making a spatial forecast for functional groups at multiple sequence depths.
 #downstream this will log transform map, which prevents this from generalizing beyond the dirichlet example.
 #This script depends on the following packages: DirichletReg.
 #clear environment, source paths, packages and functions.
 rm(list=ls())
+library(runjags)
 source('paths.r')
 source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast.r')
 
 #set output path.----
-output.path <- NEON_site_fcast_genera.path
+output.path <- ted_fg_seq.depth_ddirch_foreacsts.path
 
 #load model results.----
-#mod 1 is data from maps.
-#mod 2 is site-specific data, no maps.
-#mod 3 is all covariates.
-mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
-mod <- mod[[3]] #just the all predictor case.
+mod_all <- readRDS(ted_fg_ddirch_fit_seqdepth.path)
+#we need to loop the below code over each model in the "mod_all" object. Each model is some level of sequence depth.
+#for(kk in 1:length(mod_all)){mod <- mod_all[[kk]]}
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path)
@@ -81,14 +80,25 @@ site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
-#Get forecasts from ddirch_forecast.----
-core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 10000)
-plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 10000)
-site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 10000)
 
-#store output as a list and save.----
-output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
-names(output) <- c('core.fit','plot.fit','site.fit',
-                   'core.preds','plot.preds','site.preds',
-                   'core.sd','plot.sd','site.sd')
-saveRDS(output, output.path)
+
+#Get forecasts from ddirch_forecast.----
+fcast_list <- list()
+for(i in 1:length(mod_all)){
+  mod <- mod_all[[i]]
+  core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 10000)
+  plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID, n.samp = 10000)
+  site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID, n.samp = 10000)
+  
+  #store output as a list and save.----
+  output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
+  names(output) <- c('core.fit','plot.fit','site.fit',
+                     'core.preds','plot.preds','site.preds',
+                     'core.sd','plot.sd','site.sd')
+  #store in list
+  fcast_list[[i]] <- output
+}
+names(fcast_list) <- names(mod_all)
+
+#save output.----
+saveRDS(fcast_list, output.path)
