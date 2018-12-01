@@ -80,8 +80,37 @@ gen.list <- cbind(other,gen.list)
 gen.list <- list(gen.list,seq_total)
 names(gen.list) <- c('abundances','seq_total')
 gen.list$rel.abundances <- gen.list$abundances / gen.list$seq_total
-saveRDS(gen.list$rel.abundances, NEON_cosmo_abundances.path)
+saveRDS(gen.list$rel.abundances, NEON_cosmo_abundances_16S.path)
 
+
+
+
+
+# Get seq abundances of top phyla----
+sort(table(tax$phylum),decreasing=TRUE)[1:15]
+
+# load top phyla abundances from prior
+prior_phyla <- readRDS(phyla_output_16S.path)
+prior_phyla <- prior_phyla$rel.abundances
+cosmo_phyla <- names(prior_phyla)[2:16] #don't want the first "other" column
+
+phyla.list <- list()
+k <- data.table(cbind(tax,t(otu)))
+for(i in 1:length(cosmo_phyla)){
+  z <- k[phylum == cosmo_phyla[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  phyla.list[[i]] <- out
+}
+phyla.list <- data.frame(t(do.call('rbind',phyla.list)))
+colnames(phyla.list) <- cosmo_phyla
+seq_total <- colSums(k[,start:ncol(k)])
+other <- seq_total - rowSums(phyla.list)
+phyla.list <- cbind(other,phyla.list)
+phyla.list <- list(phyla.list,seq_total)
+names(phyla.list) <- c('abundances','seq_total')
+phyla.list$rel.abundances <- phyla.list$abundances / phyla.list$seq_total
+saveRDS(phyla.list$rel.abundances, NEON_phyla_abundances_16S.path)
 
 
 

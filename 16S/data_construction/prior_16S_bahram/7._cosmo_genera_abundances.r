@@ -36,7 +36,7 @@ otu <- readRDS(bahram_dada2_SV_table.path)
 tax <- readRDS(bahram_dada2_tax_table.path)
 
 # load metadata from Bahram and Tedersoo - sent to Colin 
-metadata <- readRDS(bahram_prior_metadata.path)
+metadata <- readRDS(bahram_metadata.path)
 
 ##### taxonomic and functional assignment #####
 
@@ -123,3 +123,81 @@ gen.list$rel.abundances <- gen.list$abundances / gen.list$seq_total
 
 #save output.----
 saveRDS(gen.list, cosmo_output_16S.path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Get seq abundances of top phyla.
+phyla <- unique(tax$phylum)
+phyla <- as.character(phyla)
+test <- data.table(cbind(tax, t(otu)))
+seq.out <- list()
+phyla.out <- list()
+for(i in 1:length(phyla)){
+  z <- test[phylum == phyla[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  cosmo_phyla <- length(out[out > 0]) / length(out)
+  seq.out[[i]] <- out
+  phyla.out[[i]] <- cosmo_phyla
+}
+seq.out <- do.call('rbind',seq.out)
+phyla.out <- do.call('rbind',phyla.out)
+j <- data.table(cbind(phyla,phyla.out))
+colnames(j)[2] <- 'presence'
+j$presence <- as.numeric(j$presence)
+j <- j[order(-presence),]
+counts <- rowSums(seq.out)
+k <- data.table(cbind(phyla,counts))
+k$counts <- as.numeric(as.character(k$counts))
+k <- k[order(-counts),]
+k <- k[!(phyla %in% c('unidentified'))] #remove the phylum "unidentified".
+k <- k[phyla!=""&!is.na(phyla),] #remove NA and empty phyla
+j <- j[!(phyla %in% c('unidentified'))] #remove the phylum "unidentified".
+j <- j[phyla!=""&!is.na(phyla),] #remove NA and empty phyla
+head(cbind(j,k), 15)
+
+# get 15 most cosmopolitan phyla.
+cosmo_phyla <- j$phyla[1:15]
+cosmo_phyla <- j[presence >= 0.87,]$phyla
+
+#Get seq abundances of cosmo genera.----
+phyla.list <- list()
+k <- data.table(cbind(tax,t(otu)))
+for(i in 1:length(cosmo_phyla)){
+  z <- k[phylum == cosmo_phyla[i],]
+  start <- ncol(tax) + 1
+  out <- colSums(z[,start:ncol(z)])
+  phyla.list[[i]] <- out
+}
+phyla.list <- data.frame(t(do.call('rbind',phyla.list)))
+colnames(phyla.list) <- cosmo_phyla
+seq_total <- colSums(k[,start:ncol(k)])
+other <- seq_total - rowSums(phyla.list)
+phyla.list <- cbind(other,phyla.list)
+phyla.list <- list(phyla.list,seq_total)
+names(phyla.list) <- c('abundances','seq_total')
+phyla.list$rel.abundances <- phyla.list$abundances / phyla.list$seq_total
+
+#save output.----
+saveRDS(phyla.list, phyla_output_16S.path)

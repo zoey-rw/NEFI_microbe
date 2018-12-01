@@ -16,6 +16,8 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
+# multiply NEON C values by 10. checking to see if units are off.
+multiply_neonC <- TRUE
 
 #set output path.----
 output.path <- NEON_site_fcast_genera_16S.path
