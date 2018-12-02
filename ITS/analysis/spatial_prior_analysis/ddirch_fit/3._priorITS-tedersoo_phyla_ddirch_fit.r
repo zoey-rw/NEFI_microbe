@@ -15,7 +15,7 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- ted_ITS.prior_20gen_JAGSfit
+output.path <- ted_ITS.prior_phyla_JAGSfit
 
 #load tedersoo data.----
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))

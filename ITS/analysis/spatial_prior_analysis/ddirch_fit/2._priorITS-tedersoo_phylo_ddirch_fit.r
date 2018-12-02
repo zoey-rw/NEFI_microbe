@@ -15,24 +15,18 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- ted_ITS.prior_20gen_JAGSfit
+output.path <- ted_ITS_prior_phylo.group_JAGSfits
 
 #load tedersoo data.----
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
-y <- readRDS(tedersoo_ITS_cosmo_genera_list.path)
-y <- y$abundances
+y <- readRDS(tedersoo_ITS_common_phylo_groups_list.path)
 d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
-y <- y[rownames(y) %in% d$SRR.id,]
-if(!sum(rownames(y) == d$SRR.id) == nrow(y)){
-  cat('Warning. x and y covariates not in the same order!')
-}
-
-#Get relative counts by adding 1 to all observations (can't handle zeros).----
-y <- y + 1
-y <- y/rowSums(y)
-y <- as.data.frame(y)
+#y <- y[rownames(y) %in% d$SRR.id,]
+#if(!sum(rownames(y) == d$SRR.id) == nrow(y)){
+#  cat('Warning. x and y covariates not in the same order!')
+#}
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -40,32 +34,32 @@ rownames(x) <- x$SRR.id
 x$SRR.id <- NULL
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
-
 #IMPORTANT: LOG TRANSFORM MAP.
 #log transform map, magnitudes in 100s-1000s break JAGS code.
 x$map <- log(x$map)
 
-#define multiple subsets
-x.clim <- x[,.(intercept,NPP,mat,map)]
-x.site <- x[,.(intercept,pC,cn,pH,forest,conifer,relEM)]
-x.all  <- x[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
-x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
-#This take a long time to run, probably because there is so much going on.
-#fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
 output.list<-
-  foreach(i = 1:length(x.list)) %dopar% {
-    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+  foreach(i = 1:length(y)) %dopar% {
+    y.group <- y[[i]]
+    y.group <- y.group$abundances
+    y.group <- y.group[rownames(y.group) %in% d$SRR.id,]
+    y.group <- y.group + 1
+    y.group <- y.group/rowSums(y.group)
+    if(!sum(rownames(y.group) == d$SRR.id) == nrow(y.group)){
+      cat('Warning. x and y covariates not in the same order!')
+    }
+    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x,adapt = 200, burnin = 3000, sample = 2000, parallel = F)
     return(fit)
   }
 
 #get intercept only fit.
-output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
+#output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
 
 #name the items in the list
-names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
+names(output.list) <- names(y)
 
 cat('Saving fit...\n')
 saveRDS(output.list, output.path)
