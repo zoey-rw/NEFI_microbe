@@ -37,12 +37,6 @@ metadata_raw <- read.csv(metadata_bahram_raw.path)
 map <- read.csv(ted_map_raw.path, header = TRUE, na.strings=c("", "NA"))
 map <- data.table(map)
 
-# load SV table as otu file
-otu <- readRDS(bahram_dada2_SV_table.path)
-
-# load taxonomy
-tax <- readRDS(bahram_dada2_tax_table.path)
-
 # load times - sent to Colin separately by Leho Tedersoo
 time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
 
@@ -111,4 +105,4 @@ setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N',
          c('Mapping.ID','moisture','pN','pC','cn','relEM'))
 
 # save output.----
-saveRDS(metadata, bahram_metadata.path)
+saveRDS(metadata, output.path)

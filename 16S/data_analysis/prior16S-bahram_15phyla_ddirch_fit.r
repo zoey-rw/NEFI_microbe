@@ -1,4 +1,4 @@
-#Fit dirlichet models to cosmopolitan groups of bacteria/archaea from Bahram et al. Temperate Latitude only.
+#Fit dirlichet models to top 15 phyla of bacteria/archaea from Bahram et al. Temperate Latitude only.
 #No hierarchy required, as everything is observed at the site level. Each observation is a unique site.
 #Missing data are allowed.
 #clear environment
@@ -16,11 +16,11 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- bahram_16S.prior_12gen_JAGSfit
+output.path <- bahram_16S.prior_15phyla_JAGSfit
 
 #load tedersoo data.----
-d <- data.table(readRDS(bahram_prior_gen.path))
-y <- readRDS(cosmo_output_16S.path)
+d <- data.table(readRDS(bahram_metadata.path))
+y <- readRDS(phyla_output_16S.path)
 y <- y$abundances
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
 #d <- d[complete.cases(d),] #optional. This works with missing data.
