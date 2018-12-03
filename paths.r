@@ -233,6 +233,7 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_16S.prior_12gen_JAGSfit <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit.rds')
 bahram_16S.prior_12gen_JAGSfit_moisture <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_moisture.rds')
+bahram_16S.prior_12gen_JAGSfit_south_lat <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_south_lat.rds')
 bahram_16S.prior_15phyla_JAGSfit <- paste0(dir,'bahram_16S.prior_15phyla_JAGSfit.rds')
   
 #### 16S/scc_gen: raw data for prior metadata ####
@@ -246,7 +247,9 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan genera
 cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan genera - use this one, it's the same approach as for ITS
+cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds") # 20 cosmopolitan genera incl southern lats
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
+phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
 bahram_metadata_south_lat.path <-  paste0(dir, "bahram_metadata_south_lat.rds") # prior metadata - northern and souther temperate latitudes
 bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")

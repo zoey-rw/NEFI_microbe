@@ -1,4 +1,5 @@
-#Fit dirlichet models to cosmopolitan groups of bacteria/archaea from Bahram et al. Temperate Latitude only.
+#Fit dirlichet models to cosmopolitan groups of bacteria/archaea from Bahram et al. 
+# Defaults to temperate lat unless incl_southern_lat variable is changed to TRUE
 #No hierarchy required, as everything is observed at the site level. Each observation is a unique site.
 #Missing data are allowed.
 #clear environment
@@ -15,12 +16,19 @@ source('NEFI_functions/crib_fun.r')
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
-#set output path.----
-output.path <- bahram_16S.prior_12gen_JAGSfit
+# include southern latitudes?
+incl_southern_lat <- T
 
-#load tedersoo data.----
-d <- data.table(readRDS(bahram_prior_gen.path))
-y <- readRDS(cosmo_output_16S.path)
+if (incl_southern_lat == T) {
+  d <- readRDS(bahram_metadata_south_lat.path) # read in metadata.
+  y <- readRDS(cosmo_output_16S_south_lat.path) # read in abundances.
+  output.path <- bahram_16S.prior_12gen_JAGSfit_south_lat #set output path.
+} else { 
+  d <- readRDS(bahram_metadata.path) # read in metadata.
+  y <- readRDS(cosmo_output_16S.path) # read in abundances.
+  output.path <- bahram_16S.prior_12gen_JAGSfit #set output path.
+}
+
 y <- y$abundances
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
 #d <- d[complete.cases(d),] #optional. This works with missing data.

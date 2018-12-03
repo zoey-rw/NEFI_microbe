@@ -1,4 +1,4 @@
-7. ##### preparing Bahram prior, using taxonomic table and metadata. #####
+##### preparing Bahram prior - taxa abundance, using taxonomic table and metadata. #####
 
 # outputs 20 most cosmopolitan genera
 # functional groups are not yet assigned
@@ -19,6 +19,15 @@ source('NEFI_functions/arid_extract.r')
 
 # number of genera to keep (top 10 or 20 most abundant)
 n.gen <- 20
+incl_southern_lat <- T
+
+if (incl_southern_lat == T) {
+  gen_output.path <- cosmo_output_16S_south_lat.path
+  phyla_output.path <- phyla_output_16S_south_lat.path
+} else {
+  gen_output.path <- cosmo_output_16S.path
+  phyla_output.path <- phyla_output_16S.path
+}
 
 ##### load files ####
 dir <- data.dir 
@@ -36,7 +45,11 @@ otu <- readRDS(bahram_dada2_SV_table.path)
 tax <- readRDS(bahram_dada2_tax_table.path)
 
 # load metadata from Bahram and Tedersoo - sent to Colin 
-metadata <- readRDS(bahram_metadata.path)
+if (incl_southern_lat == T) {
+  metadata <- readRDS(bahram_metadata_south_lat.path) 
+} else { 
+  metadata <- readRDS(bahram_metadata.path)
+}
 
 ##### taxonomic and functional assignment #####
 
@@ -98,9 +111,9 @@ head(cbind(j,k), 20)
 #7 genera present in > 50% of samples are also in the top 10%.
 #cosmo_genera <- j[cosmo >= 0.50,]$genera
 
-# 20 genera present in > 94% of samples are also in the top 10%.
-# maybe? where is the 10% calculated?
-cosmo_genera <- j[cosmo >= 0.94,]$genera
+# 20 genera present in > 94% of samples.
+#cosmo_genera <- j[cosmo >= 0.94,]$genera
+cosmo_genera <- colnames(readRDS(cosmo_output_16S.path)$abundances)[2:21]
 
 #Get seq abundances of cosmo genera.----
 gen.list <- list()
@@ -122,7 +135,7 @@ gen.list$rel.abundances <- gen.list$abundances / gen.list$seq_total
 
 
 #save output.----
-saveRDS(gen.list, cosmo_output_16S.path)
+saveRDS(gen.list, gen_output.path)
 
 
 
@@ -200,4 +213,4 @@ names(phyla.list) <- c('abundances','seq_total')
 phyla.list$rel.abundances <- phyla.list$abundances / phyla.list$seq_total
 
 #save output.----
-saveRDS(phyla.list, phyla_output_16S.path)
+saveRDS(phyla.list, phyla_output.path)
