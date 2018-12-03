@@ -245,11 +245,16 @@ metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
 dir <- pecan_gen_16S_dir
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+
+# group abundances
 bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan genera
 cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan genera - use this one, it's the same approach as for ITS
 cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds") # 20 cosmopolitan genera incl southern lats
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
 phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
+cop_olig_16S.path <- paste0(dir,"cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances
+
+# metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
 bahram_metadata_south_lat.path <-  paste0(dir, "bahram_metadata_south_lat.rds") # prior metadata - northern and souther temperate latitudes
 bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")
