@@ -8,6 +8,7 @@ library(doParallel)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
+source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/crib_fun.r')
 
 #detect and register cores.
@@ -20,13 +21,9 @@ output.path <- ted_ITS_prior_phylo.group_JAGSfits
 #load tedersoo data.----
 d <- data.table(readRDS(tedersoo_ITS_clean_map.path))
 y <- readRDS(tedersoo_ITS_common_phylo_groups_list.path)
-d <- d[,.(SRR.id,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(SRR.id,pC,cn,pH,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 #d <- d[1:35,] #for testing
-#y <- y[rownames(y) %in% d$SRR.id,]
-#if(!sum(rownames(y) == d$SRR.id) == nrow(y)){
-#  cat('Warning. x and y covariates not in the same order!')
-#}
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -41,19 +38,25 @@ x$map <- log(x$map)
 
 #fit model using function.
 #for running production fit on remote.
+cat('Begin model fitting loop...\n')
+tic()
 output.list<-
-  foreach(i = 1:length(y)) %dopar% {
-    y.group <- y[[i]]
-    y.group <- y.group$abundances
-    y.group <- y.group[rownames(y.group) %in% d$SRR.id,]
-    y.group <- y.group + 1
-    y.group <- y.group/rowSums(y.group)
-    if(!sum(rownames(y.group) == d$SRR.id) == nrow(y.group)){
-      cat('Warning. x and y covariates not in the same order!')
-    }
-    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x,adapt = 200, burnin = 3000, sample = 2000, parallel = F)
-    return(fit)
+foreach(i = 1:length(y)) %dopar% {
+  y.group <- y[[i]]
+  y.group <- y.group$abundances
+  y.group <- y.group[rownames(y.group) %in% d$SRR.id,]
+  y.group <- y.group + 1
+  y.group <- y.group/rowSums(y.group)
+  if(!sum(rownames(y.group) == d$SRR.id) == nrow(y.group)){
+     cat('Warning. x and y covariates not in the same order!')
   }
+  fit <- site.level_dirlichet_jags(y=y.group,x_mu=x,
+                                   adapt = 200, burnin = 2000, sample = 1000, 
+                                   parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
+  return(fit)                                                                  #allows nested loop to work.
+}
+cat('Model fitting loop complete! ')
+toc()
 
 #get intercept only fit.
 #output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)

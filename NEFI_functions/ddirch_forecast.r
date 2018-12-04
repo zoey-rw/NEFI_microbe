@@ -10,7 +10,7 @@
 #' @param zero_predictor_uncertainty #turns off drawing from covariate distributions, keeps covaraites fixed at means.
 #' @param zero_process_uncertainty   #turns off process draw from rdirichlet. Basically just makes predictive interval = credible interval.
 #'
-#' @return              #returns a list of forecasts (mean, 95% CI, 95% PI) same length as model list.
+#' @return                           #returns a list of forecasts (mean, 95% CI, 95% PI) same length as model list.
 #' @export
 #'
 #' @examples
@@ -37,6 +37,16 @@ ddirch_forecast <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1000,
   #grab uncertainties in sd, if present.
   if(is.data.frame(cov_sd)){
     cov.sd <- precision_matrix_match(covs, cov_sd)
+  }
+  
+  #report iuf you have a mismatch in covariates vs predictors.----
+  check <- preds[!(preds %in% colnames(covs))]
+  if(length(check > 0)){
+    cat(paste0('Warning: the predictor(s): ',paste(check, sep = ','), ' are absent from the supplied covariate matrix.\n'))
+  }
+  check <- colnames(covs)[!(colnames(covs) %in% preds)]
+  if(length(check > 0)){
+    cat(paste0('Warning: the covariate(s):',paste(check, sep = ','), ' are absent from the model predictor list.\n'))
   }
   
   #re-order to match predictor order. Conditional otherwise it breaks the intercept only case.

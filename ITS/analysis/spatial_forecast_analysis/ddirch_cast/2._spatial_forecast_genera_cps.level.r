@@ -14,8 +14,9 @@ output.path <- NEON_site_fcast_genera.path
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
-mod <- mod[[3]] #just the all predictor case.
+all.mod <- readRDS(ted_ITS_prior_phylo.group_JAGSfits)
+#mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
+#mod <- mod[[3]] #just the all predictor case.
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path)
@@ -82,13 +83,18 @@ site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
 #Get forecasts from ddirch_forecast.----
-core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 10000)
-plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 10000)
-site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 10000)
-
-#store output as a list and save.----
-output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
-names(output) <- c('core.fit','plot.fit','site.fit',
-                   'core.preds','plot.preds','site.preds',
-                   'core.sd','plot.sd','site.sd')
+phylo.output <- list()
+for(i in 1:length(all.mod)){
+  mod <- all.mod[[i]]
+  core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 10000)
+  plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 10000)
+  site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 10000)
+  
+  #store output as a list and save.----
+  output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
+  names(output) <- c('core.fit','plot.fit','site.fit',
+                     'core.preds','plot.preds','site.preds',
+                     'core.sd','plot.sd','site.sd')
+  phylo.output[[i]] <- output
+}
 saveRDS(output, output.path)

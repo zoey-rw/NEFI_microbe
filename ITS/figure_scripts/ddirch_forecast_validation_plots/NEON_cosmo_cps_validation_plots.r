@@ -36,6 +36,7 @@ glob.pch <- 16
 names <- colnames(d$core.fit$mean)
 names <- names[c(2:(length(names)),1)]
 names <- names[!(names %in% c('other'))]
+#names <- c('Mortierella','Russula','Inocybe') #subset of interest
 out.color <- 'gray'
 bf_col <- 'magenta1' #best-fit regression line color.
 

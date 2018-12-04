@@ -18,7 +18,8 @@
 site.level_dirlichet_jags     <- function(y,
                                           x_mu, 
                                           x_sd = NA,
-                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F, silent.jags = F){
+                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, 
+                                          parallel = F, silent.jags = F, parallel_method = 'rjparallel'){
   #Load some important dependencies.
   source('NEFI_functions/crib_fun.r')
   source('NEFI_functions/sd_to_precision.r')
@@ -119,7 +120,10 @@ site.level_dirlichet_jags     <- function(y,
   
   ###Fit JAGS model.
   #parallel or not parallel.
-  run.method <- ifelse(parallel == F,'rjags','rjparallel')
+  run.method <- 'rjags'
+  if(parallel == T){
+    run.method = parallel_method
+  }
   #run jags model.
   jags.out <- runjags::run.jags(   model = jags.model,
                                    data = jags.data,
