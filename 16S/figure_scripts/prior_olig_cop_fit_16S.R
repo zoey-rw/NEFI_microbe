@@ -7,7 +7,8 @@ library(betareg)
 source('NEFI_functions/crib_fun.r')
 
 #Load JAGS model.
-fit <- readRDS(bahram_16S.prior_cop_olig_JAGSfit)
+#fit <- readRDS(bahram_16S.prior_cop_olig_JAGSfit)
+fit <- readRDS(bahram_16S.prior_cop_olig_all_nutr_JAGSfit)
 fit <- fit$all.preds
 
 #check convergence plots and prsf scores.
@@ -15,8 +16,9 @@ fit$species_parameter_output
 summary(fit$jags_model)
 #plot(fit$jags_model)
 
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_16S.pdf")
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_all_nutr_16S.pdf")
+
 
 #check the plots.
 par(mfrow = c(1,3))
