@@ -255,7 +255,8 @@ cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan g
 cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds") # 20 cosmopolitan genera incl southern lats
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
 phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
-cop_olig_16S.path <- paste0(dir,"cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances
+prior_cop_olig_16S.path <- paste0(dir,"prior_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - Bahram
+NEON_cop_olig_16S.path <- paste0(dir,"NEON_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - NEON
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes

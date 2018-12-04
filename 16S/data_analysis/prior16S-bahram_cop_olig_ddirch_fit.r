@@ -64,7 +64,7 @@ x$map <- log(x$map)
 
 #define multiple subsets
 x.clim <- x[,.(intercept,NPP,mat,map)]
-x.site <- x[,.(intercept,moisture,pC,cn,PH,forest,conifer,relEM)]
+x.site <- x[,.(intercept,pC,cn,PH,forest,conifer,relEM)]
 
 #x.all  <- x[,.(intercept,moisture,pC,cn,PH,NPP,mat,map,forest,conifer,relEM)] # original set
 #x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients

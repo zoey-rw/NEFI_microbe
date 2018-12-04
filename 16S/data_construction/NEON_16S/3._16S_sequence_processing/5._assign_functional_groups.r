@@ -1,4 +1,4 @@
-# assign functional groups to 16S taxa from Bahram.
+# assign functional groups to 16S taxa from NEON.
 
 rm(list=ls())
 library(data.table)
@@ -8,25 +8,15 @@ source('paths.r')
 fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
 
 # load Bahram SV table as otu file
-otu <- readRDS(bahram_dada2_SV_table.path)
+otu <- readRDS(NEON_dada2_SV_table.path)
 
 # load Bahram taxonomy
-tax <- readRDS(bahram_dada2_tax_table.path)
-
-# load metadata
-metadata <- readRDS(bahram_metadata.path)
+tax <- readRDS(NEON_dada2_tax_table.path)
 
 # remove leading "k__" in taxonomy.
 for(i in 1:ncol(tax)){
   tax[,i] <- substring(tax[,i],4)
 }
-
-# subset otu table and tax table to only include observations in map file
-metadata$Run <- as.character(metadata$Run)
-otu <- otu[rownames(otu) %in% metadata$Run,]
-metadata <- metadata[metadata$Run %in% rownames(otu),]
-# order OTU table to match the mapping file
-otu <- otu[order(rownames(otu), metadata$Run),]
 
 # for column names to be lower case.
 tax <- as.data.frame(tax)
@@ -83,4 +73,4 @@ cop_olig <- cbind(other,cop_olig)
 cop_olig <- list(cop_olig,seq_total)
 names(cop_olig) <- c('abundances','seq_total')
 cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
-saveRDS(cop_olig, prior_cop_olig_16S.path)
+saveRDS(cop_olig, NEON_cop_olig_16S.path)
