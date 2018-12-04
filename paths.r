@@ -235,7 +235,8 @@ bahram_16S.prior_12gen_JAGSfit <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit.rds
 bahram_16S.prior_12gen_JAGSfit_moisture <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_moisture.rds')
 bahram_16S.prior_12gen_JAGSfit_south_lat <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_south_lat.rds')
 bahram_16S.prior_15phyla_JAGSfit <- paste0(dir,'bahram_16S.prior_15phyla_JAGSfit.rds')
-  
+bahram_16S.prior_cop_olig_JAGSfit <-   paste0(dir,'bahram_16S.prior_cop_olig_JAGSfit.rds')
+
 #### 16S/scc_gen: raw data for prior metadata ####
 dir <-  scc_gen_16S_dir
 SRA.path <- paste0(dir, "SraRunTable.csv")
