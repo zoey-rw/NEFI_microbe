@@ -6,6 +6,10 @@ rm(list = ls())
 library(data.table)
 library(runjags)
 library(doParallel)
+library(future)
+library(furrr) 
+library(magrittr)
+plan(multiprocess)
 source('paths.r')
 source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
@@ -63,10 +67,11 @@ x.list <- list(x.clim,x.site,x.all)
 #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
 #for running production fit on remote.
 output.list<-
-  foreach(i = 1:length(x.list)) %dopar% {
+(1:length(x.list)) %>%	
+future_map(function(i){
     fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
     return(fit)
-  }
+  })
 
 #get intercept only fit.
 output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
