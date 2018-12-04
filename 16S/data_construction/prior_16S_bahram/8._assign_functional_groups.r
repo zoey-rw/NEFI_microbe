@@ -45,24 +45,24 @@ oligotrophs <- c_o_groups[c_o_groups$Classification=="Oligotroph",]$Taxon
 tax$group <- NA
 
 # first assign at phylum level
-tax$group[tax$phylum %in% copiotrophs] <- "copiotroph"
-tax$group[tax$phylum %in% oligotrophs] <- "oligotroph"
+tax[which(tax$phylum %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax$phylum %in% oligotrophs),]$group <- "oligotroph"
 
 # then class level
-tax$group[tax$class %in% copiotrophs] <- "copiotroph"
-tax$group[tax$class %in% oligotrophs] <- "oligotroph"
+tax[which(tax$class %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax$class %in% oligotrophs),]$group <- "oligotroph"
 
 # then order level
-tax$group[tax$order %in% copiotrophs] <- "copiotroph"
-tax$group[tax$order %in% oligotrophs] <- "oligotroph"
+tax[which(tax$order %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax$order %in% oligotrophs),]$group <- "oligotroph"
 
 # then family level
-tax$group[tax$family %in% copiotrophs] <- "copiotroph"
-tax$group[tax$family %in% oligotrophs] <- "oligotroph"
+tax[which(tax$family %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax$family %in% oligotrophs),]$group <- "oligotroph"
 
 # then genus level
-tax$group[tax$genus %in% copiotrophs] <- "copiotroph"
-tax$group[tax$genus %in% oligotrophs] <- "oligotroph"
+tax[which(tax$genus %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax$genus %in% oligotrophs),]$group <- "oligotroph"
 
 
 #Get seq abundances of copiotrophs vs oligotrophs.----
@@ -84,5 +84,3 @@ cop_olig <- list(cop_olig,seq_total)
 names(cop_olig) <- c('abundances','seq_total')
 cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
 saveRDS(cop_olig, cop_olig_16S.path)
-
-
