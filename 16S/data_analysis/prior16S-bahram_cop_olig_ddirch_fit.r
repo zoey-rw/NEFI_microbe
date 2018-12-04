@@ -17,15 +17,14 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- bahram_16S.prior_cop_olig_JAGSfit
-
-
+#output.path <- bahram_16S.prior_cop_olig_JAGSfit
+output.path <- bahram_16S.prior_cop_olig_all_nutr_JAGSfit
 
 #load tedersoo data.----
 d <- data.table(readRDS(bahram_metadata.path))
 y <- readRDS(cop_olig_16S.path)
 y <- y$abundances
-d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$Run,]
 #order abundance table to match the metadata file
@@ -55,7 +54,8 @@ x$map <- log(x$map)
 #define multiple subsets
 x.clim <- x[,.(intercept,NPP,mat,map)]
 x.site <- x[,.(intercept,moisture,pC,cn,PH,forest,conifer,relEM)]
-x.all  <- x[,.(intercept,moisture,pC,cn,PH,NPP,mat,map,forest,conifer,relEM)]
+#x.all  <- x[,.(intercept,moisture,pC,cn,PH,NPP,mat,map,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)]
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
