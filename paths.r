@@ -239,6 +239,8 @@ bahram_16S.prior_cop_olig_JAGSfit <-   paste0(dir,'bahram_16S.prior_cop_olig_JAG
 bahram_16S.prior_cop_olig_all_nutr_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_nutr_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_var_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_JAGSfit.rds')
+bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGSfit.rds')
+
 #### 16S/scc_gen: raw data for prior metadata ####
 dir <-  scc_gen_16S_dir
 SRA.path <- paste0(dir, "SraRunTable.csv")
@@ -257,6 +259,7 @@ phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan ph
 phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
 prior_cop_olig_16S.path <- paste0(dir,"prior_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - Bahram
 NEON_cop_olig_16S.path <- paste0(dir,"NEON_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - NEON
+bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
