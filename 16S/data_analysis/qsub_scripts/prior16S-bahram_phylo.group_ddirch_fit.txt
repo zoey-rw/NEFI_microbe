@@ -14,7 +14,7 @@
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
-#−oJOB_NAME.log
+# −o $JOB_NAME.log
 #
 #
 # Have the system send mail when the job begins and when the job is aborted or ended

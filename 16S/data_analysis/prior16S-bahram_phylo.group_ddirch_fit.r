@@ -25,11 +25,10 @@ output.path <- bahram_16S_prior_phylo.group_JAGSfits
 
 #load bahram data.----
 d <- data.table(readRDS(bahram_metadata.path))
-y <- readRDS(bahram_16S_common_phylo_groups_list.path)
-d <- d[,.(Run,pC,cn,PH,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Run,moisture,pC,cn,PH,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[1:5,] #for testing
 
+y <- readRDS(bahram_16S_common_phylo_groups_list.path)
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -53,6 +52,7 @@ output.list<-
     y.group <- y.group[rownames(y.group) %in% d$Run,]
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
+    d <- d[order(d$Run,rownames(y.group)),]
     if(!sum(rownames(y.group) == d$Run) == nrow(y.group)){
       cat('Warning. x and y covariates not in the same order!')
     }
