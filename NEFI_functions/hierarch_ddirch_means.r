@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-hierarch_ddirch_means <- function(y, core_plot, plot_site){
+hierarch_ddirch_means <- function(y, core_plot, plot_site, jags.method = 'rjags'){
   #specify plot data object.----
   jd.plot <- list(y=as.matrix(y), N.core = nrow(y), N.plot=length(unique(core_plot)), 
                   N.spp = ncol(y), core_plot = as.factor(core_plot))
@@ -80,7 +80,7 @@ hierarch_ddirch_means <- function(y, core_plot, plot_site){
                    burnin = 5000,
                    sample = 3000,
                    n.chains = 3,
-                   method = 'rjparallel',
+                   method = jags.method,
                    monitor = c('plot_out'))
   cat('plot level model fit.\n')
   #summarize plot fit.----
@@ -104,7 +104,7 @@ hierarch_ddirch_means <- function(y, core_plot, plot_site){
                    burnin = 5000,
                    sample = 3000,
                    n.chains = 3,
-                   method = 'rjparallel',
+                   method = jags.method,
                    monitor = c('site_out'))
   cat('site level model fit.\n')
   

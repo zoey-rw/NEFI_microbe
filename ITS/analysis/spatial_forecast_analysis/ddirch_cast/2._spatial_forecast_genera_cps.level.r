@@ -4,11 +4,12 @@
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
+source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast.r')
 
 #set output path.----
-output.path <- NEON_site_fcast_genera.path
+output.path <- NEON_site_fcast_all_phylo_levels.path
 
 #load model results.----
 #mod 1 is data from maps.
@@ -40,7 +41,6 @@ core.sd <- merge(core_sd   , plot_sd)
 core.sd <- merge(core.sd, site_sd)
 core.sd$relEM <- NULL
 names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
-
 
 #get plot-level covariate means and sd.----
 core_mu <- dat$core.plot.mu
@@ -84,11 +84,14 @@ names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
 #Get forecasts from ddirch_forecast.----
 phylo.output <- list()
+
+cat('Making forecasts...\n')
+tic()
 for(i in 1:length(all.mod)){
   mod <- all.mod[[i]]
-  core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 10000)
-  plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 10000)
-  site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 10000)
+  core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)
+  plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)
+  site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)
   
   #store output as a list and save.----
   output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
@@ -96,5 +99,12 @@ for(i in 1:length(all.mod)){
                      'core.preds','plot.preds','site.preds',
                      'core.sd','plot.sd','site.sd')
   phylo.output[[i]] <- output
+  cat(paste0(i,' of ',length(all.mod),' forecasts complete. '))
+  toc()
 }
-saveRDS(output, output.path)
+cat('All forecasts complete.')
+toc()
+
+#Save output.----
+names(phylo.output) <- names(all.mod)
+saveRDS(phylo.output, output.path)
