@@ -278,6 +278,8 @@ NEON_dada2_tax_table.path <- paste0(dir,'NEON_dada2_tax_table.rds')
 NEON_dada2_track_table.path <- paste0(dir,'NEON_dada2_track_table.rds')
 NEON_plot.level_genera_obs_16S.path <- paste0(dir, 'NEON_plot.level_genera_obs_16S.rds')
 NEON_site.level_genera_obs_16S.path <- paste0(dir, 'NEON_site.level_genera_obs_16S.rds')
+NEON_plot.level_phyla_obs_16S.path <- paste0(dir,'NEON_plot.level_phyla_obs_16S.rds')
+NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.rds')
 
 #### 16S/pecan_gen ####
 
@@ -287,6 +289,8 @@ NEON_cosmo_abundances_16S.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
 NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
 hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
 NEON_genera_variable_importance_data_16S.path <- paste0(dir, "NEON_genera_variable_importance_data_16S.rds")
+NEON_cps_fcast_all_phylo_16S.path <- paste0(dir, "NEON_cps_fcast_all_phylo_16S.rds")
+NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
 
 #### 16S/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
@@ -321,7 +325,8 @@ site.table_16S.path <- paste0(dir,'site.table_16S.rds')
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
 # path to NEON 16S all genera
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
- 
+NEON_phyla_abundances_16S.path  <- paste0(dir, "NEON_phyla_abundances.rds")
+
 #### 16S/pecan_gen: paths to NEON covariates ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')
 cmd <- paste0('mkdir -p ',dir)
@@ -337,4 +342,4 @@ NEON_cps.fcast_cosmo_16S.path <- paste0(dir, "NEON_cps.fcast_cosmo_16S.pdf")
 NEON_core.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_core.fcast_cosmo_16S.pdf")
 NEON_plot.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_plot.fcast_cosmo_fig_16S.pdf")
 NEON_site.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_site.fcast_cosmo_fig_16S.pdf")
-
+NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")

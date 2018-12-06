@@ -5,15 +5,27 @@ library(betareg)
 source('NEFI_functions/crib_fun.r')
 
 #Check cosmo genera.
-fit <- readRDS(bahram_16S.prior_12gen_JAGSfit)
-fit <- fit$all.preds
+#fit <- readRDS(bahram_16S.prior_12gen_JAGSfit)
+#fit <- fit$all.preds
+
+# Check top 15 cosmo phyla.
+#fit <- readRDS(bahram_16S.prior_15phyla_JAGSfit)
+#fit <- fit$all.preds
+
+# Check by phylogenetic group.
+fit <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+fit <- fit$phylum
 
 #check convergence plots and prsf scores.
 fit$species_parameter_output
 summary(fit$jags_model)
 #plot(fit$jags_model)
 
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
+# save plots.
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phyla_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phylo.group_phyla_no_mois_16S.pdf")
+
 #check the plots.
 par(mfrow = c(3,3))
 #par(mar=c(3,3,3,3))

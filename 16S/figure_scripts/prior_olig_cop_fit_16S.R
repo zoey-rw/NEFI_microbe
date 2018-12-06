@@ -8,7 +8,9 @@ source('NEFI_functions/crib_fun.r')
 
 #Load JAGS model.
 #fit <- readRDS(bahram_16S.prior_cop_olig_JAGSfit)
-fit <- readRDS(bahram_16S.prior_cop_olig_all_nutr_JAGSfit)
+#fit <- readRDS(bahram_16S.prior_cop_olig_all_nutr_JAGSfit)
+fit <- readRDS(bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit)
+
 fit <- fit$all.preds
 
 #check convergence plots and prsf scores.
@@ -17,14 +19,15 @@ summary(fit$jags_model)
 #plot(fit$jags_model)
 
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_16S.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_all_nutr_16S.pdf")
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_all_nutr_no_moist_16S.pdf")
 
 
 #check the plots.
 par(mfrow = c(1,3))
 #par(mar=c(3,3,3,3))
 for(i in 1:ncol(fit$predicted)){
-  plot(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i], pch = 16)
+  plot(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i], 
+       pch = 16, xlab="predicted abundance", ylab="observed abundance")
   Axis(x="predicted", side=2)
   abline(0,1,lwd = 2)
   abline(lm(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i]), lty = 2, col = 'purple')

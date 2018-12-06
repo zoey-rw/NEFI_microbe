@@ -1,11 +1,12 @@
 #Making a spatial forecast based on the prior data to NEON sites at core, plot and site levels.
+#forecasting top 15 phyla.
 #downstream this will log transform map, which prevents this from generalizing beyond the dirichlet example.
 #This script depends on the following packages: DirichletReg.
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
 source('NEFI_functions/precision_matrix_match.r')
-source('NEFI_functions/ddirch_forecast.r')
+#source('NEFI_functions/ddirch_forecast.r')
 library(data.table)
 
 library(RCurl)
@@ -17,13 +18,13 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 #set output path.----
-output.path <- NEON_site_fcast_genera_16S.path
+output.path <- NEON_cps_fcast_phyla_16S.path
 
 #load model results.----
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-mod <- readRDS(bahram_16S.prior_12gen_JAGSfit_no_moisture)
+mod <- readRDS(bahram_16S.prior_15phyla_JAGSfit)
 mod <- mod[[3]] #just the all predictor case.
 
 #get core-level covariate means and sd.----

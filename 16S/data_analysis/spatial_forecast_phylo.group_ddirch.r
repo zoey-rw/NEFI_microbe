@@ -1,30 +1,28 @@
-#Making a spatial forecast based on the prior data to NEON sites at core, plot and site levels.
+#Making a 16S spatial forecast based on the prior data to NEON sites at core, plot and site levels.
+# All phylogenetic levels. All taxa that are present in more than 50% of prior sites.
 #downstream this will log transform map, which prevents this from generalizing beyond the dirichlet example.
 #This script depends on the following packages: DirichletReg.
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
+source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast.r')
-library(data.table)
 
-library(RCurl)
-# source paths.r from colins github
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
 # source ddirch_forecast
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
 #set output path.----
-output.path <- NEON_site_fcast_genera_16S.path
+output.path <- NEON_cps_fcast_all_phylo_16S.path
 
 #load model results.----
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-mod <- readRDS(bahram_16S.prior_12gen_JAGSfit_no_moisture)
-mod <- mod[[3]] #just the all predictor case.
+all.mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+#mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
+#mod <- mod[[3]] #just the all predictor case.
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_16S.path)
@@ -48,7 +46,6 @@ core.sd <- merge(core_sd   , plot_sd)
 core.sd <- merge(core.sd, site_sd)
 core.sd$relEM <- NULL
 names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
-
 
 #get plot-level covariate means and sd.----
 core_mu <- dat$core.plot.mu
@@ -99,13 +96,28 @@ setnames(site.preds, "pH", "PH")
 setnames(site.sd, "pH", "PH")
 
 #Get forecasts from ddirch_forecast.----
-core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID)
-plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID)
-site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID)
+phylo.output <- list()
 
-#store output as a list and save.----
-output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
-names(output) <- c('core.fit','plot.fit','site.fit',
-                   'core.preds','plot.preds','site.preds',
-                   'core.sd','plot.sd','site.sd')
-saveRDS(output, output.path)
+cat('Making forecasts...\n')
+tic()
+for(i in 1:length(all.mod)){
+  mod <- all.mod[[i]]
+  core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)
+  plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)
+  site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)
+  
+  #store output as a list and save.----
+  output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
+  names(output) <- c('core.fit','plot.fit','site.fit',
+                     'core.preds','plot.preds','site.preds',
+                     'core.sd','plot.sd','site.sd')
+  phylo.output[[i]] <- output
+  cat(paste0(i,' of ',length(all.mod),' forecasts complete. '))
+  toc()
+}
+cat('All forecasts complete.')
+toc()
+
+#Save output.----
+names(phylo.output) <- names(all.mod)
+saveRDS(phylo.output, output.path)

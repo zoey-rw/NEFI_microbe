@@ -15,7 +15,8 @@ glob.out <- data.frame(preds,Mean, SD)
 siteID <- c("ORNL", "CPER", "WOOD", "TALL", "JERC", "OSBS", "RMNP", "HARV", "BART", "STER", "SCBI", "DSNY", "UNDE")
 forest <- c(1,0,0,1,0,1,1,1,1,0,1,0,1)
 conifer <- c(1,0,0,1,0,1,1,1,1,0,0,1,1)
-to_merge <- data.frame(siteID,forest,conifer)  
+moisture <- extract_soil_moist(site.out[,2], site.out[,3])
+to_merge <- data.frame(siteID,forest,conifer,moisture)  
 site.out <- merge(site.out, to_merge, all.x=T)
 
 #save output.

@@ -110,7 +110,7 @@ phyla.list <- cbind(other,phyla.list)
 phyla.list <- list(phyla.list,seq_total)
 names(phyla.list) <- c('abundances','seq_total')
 phyla.list$rel.abundances <- phyla.list$abundances / phyla.list$seq_total
-saveRDS(phyla.list$rel.abundances, NEON_phyla_abundances_16S.path)
+saveRDS(phyla.list, NEON_phyla_abundances_16S.path)
 
 
 
