@@ -1,16 +1,15 @@
 #!/bin/bash -l
-# qsun for fitting functional group models.
+#
 ########################################
 ####      commands for scc qsub     ####
 ########################################
-#Specfiy hard time limit for the job.
-#$ -l h_rt=80:00:00
-#
-#Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 10
+#Specfiy hard time limit for the job. 100 hours is plenty.
+#$ -l h_rt=100:00:00
+#run on a few processors (dada2 RDP classifier can be run in parallel)
+#$ -pe omp 18
 #
 #Give the job a name
-#$ -N ted_yeast_JAGS
+#$ -N phylo_cps
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -19,10 +18,6 @@
 #
 # Have the system send mail when the job begins and when the job is aborted or ended
 #$ -m ae
-#
-# Inherit the current environment (load modules python/2.7.7, qiime, and find binaries)
-# Make sure th load those modules in the command line before you submit the qsub
-#$ -V 
 #
 # end of qsub arguments
 #
@@ -35,11 +30,11 @@
 module load R/3.4.0
 module load jags
 #
-# cd into directory, for safety purposes
+#move to directory that contains the project
 cd /projectnb/talbot-lab-data/caverill/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript ITS/analysis/spatial_prior_analysis/5._priorITS.tedersoo_yeast_dmulti.ddirch_fit.r
+Rscript ITS/data_construction/NEON_ITS/4._sequence_processing_raw_fastq/all_cosmo_phylo_groups_cps_means.r
 #
 #
 #End of commands.
