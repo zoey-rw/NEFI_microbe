@@ -32,6 +32,7 @@ y <- fg.c
 rownames(y) <- NULL
 y <- as.matrix(y)
 y <- y+1 #dirichlet doesn't like hard zeros because log-link.
+seq_total <- seq_total + 15
 y <- y/seq_total
 other <- 1- rowSums(y)
 y <- cbind(other,y)
