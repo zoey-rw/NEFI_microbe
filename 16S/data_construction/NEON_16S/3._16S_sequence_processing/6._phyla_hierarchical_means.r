@@ -73,20 +73,18 @@ saveRDS(plot.fit, plot.output.path)
 
 #--------- visual check --------#
 
-site.fit <- readRDS(site.output.path)
-site.fit <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/NEON_processed/NEON_site.level_phyla_obs_16S.rds")
-plot.fit <- readRDS(plot.output.path)
-plot.fit <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/NEON_processed/NEON_plot.level_phyla_obs_16S.rds")
-
-
 plot_check <- T
 if(plot_check == T){
+  
+  site.fit <- readRDS(site.output.path)
+  plot.fit <- readRDS(plot.output.path)
+  
   #DO THESE MODELS BALL-PARK FIT STRAIGHTFORWARD MEANS?
   #Fit doesn't need to be perfect and can be biased, just need to be ~linear.
   #check if this is similar to just aggregating by site.
   par(mfrow = c(1,2))
   test.mu <- data.frame(core_plot,core_site, y)
-  #setnames(test.mu, old = "Candidatus.Solibacter", new = "Candidatus Solibacter")
+  setnames(test.mu, old = "WPS.2", new = "WPS-2")
   
   #site level.
   k <- aggregate(. ~ core_site, FUN=mean, data = test.mu[,colnames(test.mu) %in% colnames(y)])
