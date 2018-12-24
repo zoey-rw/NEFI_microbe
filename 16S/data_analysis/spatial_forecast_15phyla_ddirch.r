@@ -6,6 +6,7 @@
 rm(list=ls())
 source('paths.r')
 source('NEFI_functions/precision_matrix_match.r')
+source('NEFI_functions/tic_toc.r')
 #source('NEFI_functions/ddirch_forecast.r')
 library(data.table)
 
@@ -100,9 +101,11 @@ setnames(site.preds, "pH", "PH")
 setnames(site.sd, "pH", "PH")
 
 #Get forecasts from ddirch_forecast.----
+tic()
 core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID)
 plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID)
 site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID)
+toc()
 
 #store output as a list and save.----
 output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)

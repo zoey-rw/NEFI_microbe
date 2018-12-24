@@ -9,7 +9,7 @@ library(data.table)
 
 # load forecast 
 output <- readRDS(NEON_cps_fcast_phyla_16S.path)
-# read in obs table
+# read in obs table that links deprecatedVialID and geneticSampleID
 map <- readRDS(obs.table_16S.path)
 
 # get rsq from priors
@@ -45,12 +45,12 @@ for (i in 2:16) {
   truth <- readRDS(NEON_phyla_abundances_16S.path) 
   truth <- truth$rel.abundances
   truth$deprecatedVialID <- rownames(truth)
-  truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
+  truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID", "siteID")], by = "deprecatedVialID")
   truth1 <- truth1[!duplicated(truth1$geneticSampleID),]
   rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
   truth <- truth1
   truth <- truth[rownames(truth) %in% rownames(fcast$mean),]
-  test <- truth[-grep('DSNY',rownames(truth)),]
+  #test <- truth[-grep('DSNY',rownames(truth)),]
   
   
   for(k in 1:length(fcast)){
@@ -62,8 +62,8 @@ for (i in 2:16) {
   ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
-  bac_name <- colnames(fcast$mean)[i]
-  obs.mu   <- truth[,c(bac_name)][order(match(names(truth[,c(bac_name)]),names(mu)))]
+  phylum_name <- colnames(fcast$mean)[i]
+  obs.mu   <- truth[,c(phylum_name)][order(match(names(truth[,c(phylum_name)]),names(mu)))]
   #obs.lo95 <- fglo95[,i][order(match(names(fglo95[,i]),names(mu)))]
   #obs.hi95 <- fghi95[,i][order(match(names(fghi95[,i]),names(mu)))]
   
@@ -74,7 +74,7 @@ for (i in 2:16) {
   limy <- as.numeric(obs_limit)*1.05
   if(limy > 0.95){limy <- 1}
   
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', bac_name))
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', phylum_name))
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, cex = 0.7, line = -2.7, adj = 0.03)
   #1-to-1 line.
@@ -89,12 +89,12 @@ for (i in 2:16) {
   in_it <- round(sum(as.numeric(obs.mu) < pi_0.975 & as.numeric(obs.mu) > pi_0.025, na.rm = TRUE) / length(obs.mu),2) * 100
   state <- paste0(in_it,'% of observations within 95% prediction interval.')
   mtext(state,side = 3, cex = 0.7, line = -1.3, adj = 0.05)
-  
+#}
   
   
   # plot.level
   fcast <- output$plot.fit	
-  truth <- readRDS(NEON_plot.level_genera_obs_16S.path)	
+  truth <- readRDS(NEON_plot.level_phyla_obs_16S.path)	
   
   for(k in 1:length(truth)){	
     rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)	
@@ -108,12 +108,12 @@ for (i in 2:16) {
   ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]	
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]	
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]	
-  bac_name <- colnames(fcast$mean)[i]	
-  obs.mu   <- truth$mean[,bac_name][order(match(names(truth$mean[,bac_name]),names(mu)))]	
-  obs.lo95 <- truth$lo95[,bac_name][order(match(names(truth$lo95[,bac_name]),names(mu)))]	
-  obs.hi95 <- truth$hi95[,bac_name][order(match(names(truth$hi95[,bac_name]),names(mu)))]	
+  phylum_name <- colnames(fcast$mean)[i]	
+  obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]	
+  obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]	
+  obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]	
   #plot	
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', bac_name))	
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', phylum_name))	
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)	
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)	
   mtext(paste0('R2=',rsq), side = 3, cex = .7, line = -2.7, adj = 0.03)	
@@ -139,16 +139,16 @@ for (i in 2:16) {
   
   #organize data.
   fcast <- output$site.fit
-  truth <- readRDS(NEON_site.level_genera_obs_16S.path)
+  truth <- readRDS(NEON_site.level_phyla_obs_16S.path)
   
   for(k in 1:length(truth)){
     rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
     truth[[k]] <- truth[[k]][rownames(truth[[k]]) %in% rownames(fcast$mean),]
   }
   #drop DSNY
-  for(k in 1:length(truth)){
-    truth[[k]] <- truth[[k]][-(grep('DSNY',rownames(truth[[k]]))),]
-  }
+  # for(k in 1:length(truth)){
+  #   truth[[k]] <- truth[[k]][-(grep('DSNY',rownames(truth[[k]]))),]
+  # }
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth$mean),]
   }
@@ -160,11 +160,11 @@ for (i in 2:16) {
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
   bac_name <- colnames(fcast$mean)[i]
-  obs.mu   <- truth$mean[,bac_name][order(match(names(truth$mean[,bac_name]),names(mu)))]
-  obs.lo95 <- truth$lo95[,bac_name][order(match(names(truth$lo95[,bac_name]),names(mu)))]
-  obs.hi95 <- truth$hi95[,bac_name][order(match(names(truth$hi95[,bac_name]),names(mu)))]
+  obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]
+  obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]
+  obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]
   #plot
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', bac_name))
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', phylum_name))
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
   mtext(paste0('R2=',rsq), cex = .7, side = 3, line = -2.7, adj = 0.03)
@@ -182,7 +182,7 @@ for (i in 2:16) {
   mtext(state,side = 3,  cex = .7, line = -1.3, adj = 0.05)
   #}
   mtext(paste0("Rsq for prior fit:", prior_rsq[i]), cex = .7, side = 3, line = 1, outer = TRUE)
-  mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
+  #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
   
 }
 dev.off()

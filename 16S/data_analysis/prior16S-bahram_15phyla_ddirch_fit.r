@@ -18,12 +18,14 @@ registerDoParallel(cores=n.cores)
 #set output path.----
 output.path <- bahram_16S.prior_15phyla_JAGSfit
 
-#load tedersoo data.----
+#load bahram data.----
 d <- data.table(readRDS(bahram_metadata.path))
-y <- readRDS(phyla_output_16S.path)
-y <- y$abundances
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
 #d <- d[complete.cases(d),] #optional. This works with missing data.
+
+y <- readRDS(phyla_output_16S.path)
+y <- y$abundances
+
 y <- y[rownames(y) %in% d$Run,]
 #order abundance table to match the metadata file
 y <- y[match(d$Run, rownames(y)),]

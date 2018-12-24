@@ -1,4 +1,4 @@
-# Get plot- and site-level hierarchical means of cosmopolitan genera from rel abundances at NEON cores
+# Get plot- and site-level hierarchical means of cosmopolitan phyla from rel abundances at NEON cores
 # top 15 phyla
 # clear workspace, load libraries
 rm(list=ls())

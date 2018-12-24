@@ -26,7 +26,7 @@ output.path <- bahram_16S_prior_phylo.group_JAGSfits
 #load bahram data.----
 d <- data.table(readRDS(bahram_metadata.path))
 d <- d[,.(Run,moisture,pC,cn,PH,NPP,map,mat,forest,conifer,relEM)]
-d <- d[complete.cases(d),] #optional. This works with missing data.
+#d <- d[complete.cases(d),] #optional. This works with missing data.
 
 y <- readRDS(bahram_16S_common_phylo_groups_list.path)
 
