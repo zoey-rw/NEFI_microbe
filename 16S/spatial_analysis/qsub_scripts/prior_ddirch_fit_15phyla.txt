@@ -41,7 +41,7 @@ module load qiime/1.9.0
 cd /usr3/graduate/zrwerbin/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/data_analysis/prior16S-bahram_15phyla_ddirch_fit.r
+Rscript 16S/spatial_analysis/prior_ddirch_fit_15phyla.r
 #
 #
 #End of commands.

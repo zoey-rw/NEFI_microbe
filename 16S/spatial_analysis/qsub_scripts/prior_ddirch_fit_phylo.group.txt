@@ -39,7 +39,7 @@ module load jags
 cd /usr3/graduate/zrwerbin/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/data_analysis/prior16S-bahram_phylo.group_ddirch_fit.r
+Rscript 16S/spatial_analysis/prior_ddirch_fit_phylo.group.r
 #
 #
 #End of commands.
