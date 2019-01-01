@@ -1,4 +1,4 @@
-# Validation plots of forecasts to NEON core/plot/sites, 
+# Validation plots of phylum-level forecasts to NEON core/plot/sites, 
 # plotted by genera, each with c/p/s.
 
 rm(list=ls())
@@ -12,10 +12,11 @@ output <- readRDS(NEON_cps_fcast_phyla_16S.path)
 # read in obs table that links deprecatedVialID and geneticSampleID
 map <- readRDS(obs.table_16S.path)
 
-# get rsq from priors
 # read in prior fit.
 fit <- readRDS(bahram_16S.prior_15phyla_JAGSfit)
 fit <- fit$all.preds
+
+# get rsq from priors
 prior_rsq <- list()
 for(i in 1:ncol(fit$predicted)){
   mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
@@ -24,8 +25,6 @@ for(i in 1:ncol(fit$predicted)){
 }
 prior_rsq <- as.numeric(prior_rsq)
 names(prior_rsq) <- colnames(fit$predicted)
-
-truth <- readRDS(NEON_phyla_abundances_16S.path) 
 
 #validate against observed data by plotting.----
 trans <- 0.3
@@ -42,16 +41,15 @@ for (i in 2:16) {
   #core.level.----
   #organize data.
   fcast <- output$core.fit
-  truth <- readRDS(NEON_phyla_abundances_16S.path) 
-  truth <- truth$rel.abundances
+  # read in observed data
+  truth <- readRDS(NEON_phyla_abundances_16S.path)
+  truth <- truth$rel.abundances[truth$seq_total>1000,]
   truth$deprecatedVialID <- rownames(truth)
   truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID", "siteID")], by = "deprecatedVialID")
   truth1 <- truth1[!duplicated(truth1$geneticSampleID),]
   rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
   truth <- truth1
   truth <- truth[rownames(truth) %in% rownames(fcast$mean),]
-  #test <- truth[-grep('DSNY',rownames(truth)),]
-  
   
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth),]
@@ -64,8 +62,6 @@ for (i in 2:16) {
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
   phylum_name <- colnames(fcast$mean)[i]
   obs.mu   <- truth[,c(phylum_name)][order(match(names(truth[,c(phylum_name)]),names(mu)))]
-  #obs.lo95 <- fglo95[,i][order(match(names(fglo95[,i]),names(mu)))]
-  #obs.hi95 <- fghi95[,i][order(match(names(fghi95[,i]),names(mu)))]
   
   # plot
   # get ylim
@@ -92,8 +88,11 @@ for (i in 2:16) {
 #}
   
   
+  
+  
   # plot.level
   fcast <- output$plot.fit	
+  # read in observed data 
   truth <- readRDS(NEON_plot.level_phyla_obs_16S.path)	
   
   for(k in 1:length(truth)){	
@@ -112,7 +111,15 @@ for (i in 2:16) {
   obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]	
   obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]	
   obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]	
-  #plot	
+  
+  #plot
+  
+  # get ylim
+  obs_limit <- max(obs.mu, na.rm = T)
+  if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
+  limy <- as.numeric(obs_limit)*1.05
+  if(limy > 0.95){limy <- 1}
+  
   plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', phylum_name))	
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)	
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)	
@@ -139,21 +146,17 @@ for (i in 2:16) {
   
   #organize data.
   fcast <- output$site.fit
-  truth <- readRDS(NEON_site.level_phyla_obs_16S.path)
   
+  # read in observed data
+  truth <- readRDS(NEON_site.level_phyla_obs_16S.path)
   for(k in 1:length(truth)){
     rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
     truth[[k]] <- truth[[k]][rownames(truth[[k]]) %in% rownames(fcast$mean),]
   }
-  #drop DSNY
-  # for(k in 1:length(truth)){
-  #   truth[[k]] <- truth[[k]][-(grep('DSNY',rownames(truth[[k]]))),]
-  # }
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth$mean),]
   }
   
-  #for(i in 2:21) {
   mu <- fcast$mean[,i][order(fcast$mean[,i])]
   ci_0.975 <- fcast$ci_0.975[,i][order(match(names(fcast$ci_0.975[,i]),names(mu)))]
   ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
@@ -163,7 +166,15 @@ for (i in 2:16) {
   obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]
   obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]
   obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]
+  
   #plot
+
+  # get ylim
+  obs_limit <- max(obs.mu, na.rm = T)
+  if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
+  limy <- as.numeric(obs_limit)*1.05
+  if(limy > 0.95){limy <- 1}
+  
   plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', phylum_name))
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
