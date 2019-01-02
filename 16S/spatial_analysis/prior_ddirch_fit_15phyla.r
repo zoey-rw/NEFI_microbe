@@ -16,12 +16,13 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- bahram_16S.prior_15phyla_JAGSfit
+#output.path <- bahram_16S.prior_15phyla_JAGSfit
+output.path <- "/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_15phyla_JAGSfit_compl_case.rds"
 
 #load bahram data.----
 d <- data.table(readRDS(bahram_metadata.path))
 d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)]
-#d <- d[complete.cases(d),] #optional. This works with missing data.
+d <- d[complete.cases(d),] #optional. This works with missing data.
 
 y <- readRDS(phyla_output_16S.path)
 y <- y$abundances

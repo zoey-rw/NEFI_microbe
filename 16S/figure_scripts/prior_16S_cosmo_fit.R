@@ -13,10 +13,10 @@ source('NEFI_functions/crib_fun.r')
 #fit <- fit$all.preds
 
 # Check by phylogenetic group.
-# view phylogenetic fit with complete cases.
+# view phylogenetic fit with only complete cases.
 fit <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
 # view phylogenetic fit with incomplete cases.
-# fit <- readRDS( "/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_JAGSfit_incompl_case.rds")
+fit <- readRDS( "/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_JAGSfit_incompl_case.rds")
 # view phylogenetic fit with complete cases, and no moisture.
 # fit <- readRDS( "/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_no_mois_JAGSfit.rds")
 fit <- fit$phylum
@@ -30,6 +30,7 @@ summary(fit$jags_model)
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phyla_16S.pdf")
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phylo.group_phyla_no_mois_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_phylo.group.pdf")
 
 #check the plots.
 par(mfrow = c(3,3))
