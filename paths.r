@@ -260,6 +260,7 @@ phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") 
 prior_cop_olig_16S.path <- paste0(dir,"prior_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - Bahram
 NEON_cop_olig_16S.path <- paste0(dir,"NEON_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - NEON
 bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
+prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
