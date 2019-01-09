@@ -28,24 +28,24 @@ registerDoParallel(cores=n.cores)
 output.path <- bahram_16S_prior_N_cycle_JAGSfits 
 
 #load tedersoo data.----
-d <- data.table(readRDS(bahram_metadata.path))
-y <- readRDS(prior_N_cyclers_abundances.path)
+m <- data.table(readRDS(bahram_metadata.path))
+a <- readRDS(prior_N_cyclers_abundances.path)
 
 pathway_names <- list()
 for (i in 1:11) {
-  pathway_names[[i]] <- colnames(y[[i]]$abundances)[2]
+  pathway_names[[i]] <- colnames(a[[i]]$abundances)[2]
   }
 
 all_N_cycler_models <- vector("list", 11)
-for (i in 1:length(y)) {
-y <- y[[i]]
+for (i in 1:length(a)) {
+y <- a[[i]]
 y <- y$abundances
 
 # d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)] # original set
 # d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients
 # d <- d[,.(Run,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all (ok, most) variables
 
-d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
+d <- m[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$Run,]
 #order abundance table to match the metadata file
