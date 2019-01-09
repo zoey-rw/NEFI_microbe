@@ -240,6 +240,8 @@ bahram_16S.prior_cop_olig_all_nutr_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_o
 bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_var_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_JAGSfit.rds')
 bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGSfit.rds')
+bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfit.rds')
+
 
 #### 16S/scc_gen: raw data for prior metadata ####
 dir <-  scc_gen_16S_dir

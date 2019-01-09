@@ -227,7 +227,5 @@ for(i in 1:length(pathway_names)){
   names(pathways) <- c('abundances','seq_total')
   pathways$rel.abundances <- pathways$abundances / pathways$seq_total
   allpathways[[i]] <- pathways
-  names(allpathways[i]) <- pathway_names[i]
-  
 }
 saveRDS(allpathways, prior_N_cyclers_abundances.path)
