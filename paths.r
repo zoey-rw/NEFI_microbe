@@ -241,7 +241,7 @@ bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit <- paste0(dir,'bahram_16S.pr
 bahram_16S.prior_cop_olig_all_var_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_JAGSfit.rds')
 bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGSfit.rds')
 bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfit.rds')
-
+bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
 
 #### 16S/scc_gen: raw data for prior metadata ####
 dir <-  scc_gen_16S_dir
@@ -263,6 +263,7 @@ prior_cop_olig_16S.path <- paste0(dir,"prior_cop_olig_16S.rds") # copiotrophic/o
 NEON_cop_olig_16S.path <- paste0(dir,"NEON_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - NEON
 bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
+prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes

@@ -1,8 +1,9 @@
 # Fit dirlichet models to N-cycling groups of bacteria/archaea from Bahram et al. 
-# Model fits separately for each of 11 N-cycling groups, since they are not mutually-exclusive.
+# Model fits separately for each of 7 N-cycling groups, since they are not mutually-exclusive.
 # Pathways were identified at the species level, with variation within a genus; 
 # since most taxa are only identified to the genus level,
 # a genus was placed in a category if more than 50% of species had a pathway.
+# plus categorization from a lit review.
 # No hierarchy required, as everything is observed at the site level. Each observation is a unique site.
 
 #clear environment
@@ -32,11 +33,11 @@ m <- data.table(readRDS(bahram_metadata.path))
 a <- readRDS(prior_N_cyclers_abundances.path)
 
 pathway_names <- list()
-for (i in 1:11) {
+for (i in 1:7) {
   pathway_names[[i]] <- colnames(a[[i]]$abundances)[2]
   }
 
-all_N_cycler_models <- vector("list", 11)
+all_N_cycler_models <- vector("list", 7)
 for (i in 1:length(a)) {
 y <- a[[i]]
 y <- y$abundances
@@ -80,7 +81,7 @@ x.site <- x[,.(intercept,pC,cn,PH,forest,conifer,relEM)]
 #x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients
 #x.all  <- x[,.(intercept,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all variables
 
-x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
+x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.

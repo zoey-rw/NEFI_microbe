@@ -9,7 +9,7 @@ source('NEFI_functions/crib_fun.r')
 #fit <- fit$all.preds
 
 # Check top 15 cosmo phyla.
-#fit <- readRDS(bahram_16S.prior_15phyla_JAGSfit)
+#fit <- readRDS(bahram_16S.prior_15phyla_JAGSfit) # only complete cases
 #fit <- fit$all.preds
 
 # Check by phylogenetic group.
@@ -27,9 +27,9 @@ summary(fit$jags_model)
 #plot(fit$jags_model)
 
 # save plots.
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cosmo_16S.pdf")
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phyla_16S.pdf")
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_phylo.group_phyla_no_mois_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_cosmo_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_15phyla_16S.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_phylo.group_phyla_no_mois_16S.pdf")
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_phylo.group.pdf")
 
 #check the plots.
