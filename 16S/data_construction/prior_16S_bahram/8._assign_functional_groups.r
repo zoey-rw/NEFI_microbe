@@ -207,8 +207,8 @@ for (i in 1:length(pathway_names)) {
                 tax$species %in% word(has_pathway,2)),][p] <- 1
   }
   # Classifications from Albright et al. 2018 dataset (Genus-level only; reduced from species-level)
-  #has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus
-  has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus
+  has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus
+  #has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus
   if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0){
     tax[which(tax$genus %in% has_pathway),][p] <- 1
   }
@@ -246,7 +246,8 @@ for(i in 1:length(pathway_names)){
   pathways$rel.abundances <- pathways$abundances / pathways$seq_total
   allpathways[[i]] <- pathways
 }
-saveRDS(allpathways, prior_N_cyclers_abundances.path)
+#saveRDS(allpathways, prior_N_cyclers_abundances.path)
+saveRDS(allpathways, prior_N_cyclers_abundances_.5cutoff.path)
 
 
 
