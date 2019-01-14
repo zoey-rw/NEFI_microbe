@@ -203,8 +203,9 @@ for (i in 1:length(pathway_names)) {
                 tax$species %in% word(has_pathway,2)),][p] <- 1
   }
   # Classifications from Albright et al. 2018 dataset (Genus-level only; reduced from species-level)
-  has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus
-  if (nrow(tax[which(tax$genus %in% has_pathway),]) != 0){
+  #has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus
+  has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus
+  if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0){
     tax[which(tax$genus %in% has_pathway),][p] <- 1
   }
 }
@@ -214,9 +215,11 @@ tax_classified <- tax[,8:14]
 no_pathways <- tax_classified[apply(tax_classified, 1, function(x) !any(x == 1)),]
 nrow(no_pathways)
 # [1] 134199
+# 133599 # when all genera are included, not .5 cutoff
 some_pathway <- tax_classified[apply(tax_classified, 1, function(x) any(x == 1)),]
 nrow(some_pathway)
 # [1] 22043
+# 22643 # not .5 cutoff
 
 
 #Get seq abundances of each pathway
