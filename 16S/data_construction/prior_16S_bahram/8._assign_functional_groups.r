@@ -53,6 +53,10 @@ tax_save <- tax # just so we have this taxonomic table for later.
 
 
 
+
+
+
+
 ########## 2. assign copiotroph/oligotroph groups. ############
 
 # read in groups from csv
