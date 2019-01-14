@@ -1,5 +1,5 @@
 #!/bin/bash -l
-#
+# qsun for covariate selection models.
 ########################################
 ####      commands for scc qsub     ####
 ########################################
@@ -7,14 +7,14 @@
 #$ -l h_rt=80:00:00
 #
 #Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 36
+#$ -pe omp 18
 #
 #Give the job a name
 #$ -N cov_16S_linear_fg
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
-#$ −o $JOB_NAME.log
+#$ -o $JOB_NAME.log
 #
 #
 # Have the system send mail when the job begins and when the job is aborted or ended
@@ -34,9 +34,11 @@
 # load necessary modules 
 module load R/3.4.0
 module load jags
+module load python/2.7.7
+module load qiime/1.9.0 
 #
 # cd into directory, for safety purposes
-cd /usr3/graduate/zrwerbin/NEFI_microbe/
+cd /usr3/graduate/zrwerbin/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
 Rscript 16S/spatial_analysis/covariate_selection/cov_selection_bahram_16S_prior_fg.r
