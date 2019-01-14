@@ -251,9 +251,11 @@ SRA.path <- paste0(dir, "SraRunTable.csv")
 metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
 
 #### 16S/pecan_gen: Bahram 2018 prior data. ####
-dir <- pecan_gen_16S_dir
+dir <- paste0(pecan_gen_16S_dir, '/prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+
+bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
 
 # group abundances
 bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan genera
@@ -261,9 +263,8 @@ cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan g
 cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds") # 20 cosmopolitan genera incl southern lats
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
 phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
-prior_cop_olig_16S.path <- paste0(dir,"prior_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - Bahram
-NEON_cop_olig_16S.path <- paste0(dir,"NEON_cop_olig_16S.rds") # copiotrophic/oligotrophic relative abundances - NEON
-bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
+prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - Bahram
+NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - NEON
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_N_cyclers_abundances_.5cutoff.path <- paste0(dir, "prior_N_cyclers_abundances_.5cutoff.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
@@ -291,13 +292,14 @@ NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.
 #### 16S/pecan_gen ####
 
 # paths to NEON cosmo forecasts and variable importance data
-dir <- pecan_gen_16S_dir
+dir <- paste0(pecan_gen_16S_dir, 'NEON_forecast_data')
 NEON_cosmo_abundances_16S.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
 NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
 hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
 NEON_genera_variable_importance_data_16S.path <- paste0(dir, "NEON_genera_variable_importance_data_16S.rds")
 NEON_cps_fcast_all_phylo_16S.path <- paste0(dir, "NEON_cps_fcast_all_phylo_16S.rds")
 NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
+NEON_cps_fcast_N.cycler_16S.path  <- paste0(dir, "NEON_cps_fcast_N.cycler_16S.rds")
 
 #### 16S/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')

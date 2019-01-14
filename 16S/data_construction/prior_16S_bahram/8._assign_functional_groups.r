@@ -85,7 +85,7 @@ tax[which(tax$family %in% oligotrophs),]$group <- "oligotroph"
 tax[which(tax$genus %in% copiotrophs),]$group <- "copiotroph"
 tax[which(tax$genus %in% oligotrophs),]$group <- "oligotroph"
 
-#Get seq abundances of copiotrophs vs oligotrophs.----
+#Get seq abundances of copiotrophs vs oligotrophs, in one dataframe.----
 classification <- c("copiotroph", "oligotroph")
 cop_olig <- list()
 k <- data.table(cbind(tax,t(otu)))
@@ -95,6 +95,7 @@ for(i in 1:length(classification)){
   out <- colSums(z[,start:ncol(z)])
   cop_olig[[i]] <- out
 }
+cop_olig_save <- cop_olig
 cop_olig <- data.frame(t(do.call('rbind',cop_olig)))
 colnames(cop_olig) <- classification
 seq_total <- colSums(k[,start:ncol(k)])
@@ -105,6 +106,29 @@ names(cop_olig) <- c('abundances','seq_total')
 cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
 saveRDS(cop_olig, prior_cop_olig_16S.path)
 
+
+#Get seq abundances of copiotrophs vs oligotrophs, individually.----
+cop_olig <- cop_olig_save
+seq_total <- colSums(k[,start:ncol(k)])
+
+cop <- data.frame(cop_olig[[1]])
+cop_other <- seq_total - rowSums(cop)
+cop <- cbind(cop_other,cop)
+colnames(cop) <- c("copiotrophic","other")
+cop <- list(cop,seq_total)
+names(cop) <- c('abundances','seq_total')
+cop$rel.abundances <- cop$abundances / cop$seq_total
+
+olig <- data.frame(cop_olig[[2]])
+olig_other <- seq_total - rowSums(olig)
+olig <- cbind(olig_other,olig)
+colnames(olig) <- c("oligotrophic","other")
+olig <- list(olig,seq_total)
+names(olig) <- c('abundances','seq_total')
+olig$rel.abundances <- olig$abundances / olig$seq_total
+
+cop_olig_indiv <- list(cop, olig)
+saveRDS(cop_olig_indiv, prior_cop_olig_abundances_indiv.path)
 
 
 

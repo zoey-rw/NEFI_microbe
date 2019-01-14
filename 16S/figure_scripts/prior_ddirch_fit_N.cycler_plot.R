@@ -8,7 +8,7 @@ library(coda)
 source('NEFI_functions/crib_fun.r')
 
 #Load JAGS model.
-allfits <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
+allfits <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 
 #fit.mcmc <- as.mcmc(fit$jags_model) 
 
@@ -18,7 +18,7 @@ allfits <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
 #plot(fit$jags_model)
 
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_fit_cop_olig_16S.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_C_cycler.pdf")
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_N_cycler.pdf")
 
 #check the plots.
 par(mfrow = c(1,3))
