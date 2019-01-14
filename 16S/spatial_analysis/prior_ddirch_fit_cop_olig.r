@@ -20,31 +20,46 @@ source('NEFI_functions/crib_fun.r')
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
+# model these groups individually?
+indiv <- T
+
 #set output path.----
 #output.path <- bahram_16S.prior_cop_olig_JAGSfit # original set
 #output.path <- bahram_16S.prior_cop_olig_all_nutr_JAGSfit # all nutrients
-output.path <- bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit # all nutrients, no moisture
-#output.path <- bahram_16S.prior_cop_olig_all_var_JAGSfit # all variables (isn't working)
-
+#output.path <- bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit # all nutrients, no moisture
+output.path <- bahram_16S.prior_cop_olig_indiv_JAGSfit
+  
 #load tedersoo data.----
 d <- data.table(readRDS(bahram_metadata.path))
-y <- readRDS(cop_olig_16S.path)
+# d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)] # original set
+d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients
+#d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
+d <- d[complete.cases(d),] #optional. This works with missing data.
+
+if (indiv == T) {
+  a <- readRDS(prior_cop_olig_abundances_indiv.path) 
+  group_names <- c("copiotroph","oligotroph")
+  all_cop_olig_models <- vector("list", 2)
+  
+   } else {
+     y <- readRDS(prior_cop_olig_abundances.path)
+       a <- list()
+       a[[1]] <- y
+       group_names <- c("cop_olig")
+       all_cop_olig_models <- vector("list", 1)
+     }
+
+for (i in 1:length(a)) {
+  y <- a[[i]]
+
 y <- y$abundances
 
-# d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)] # original set
-# d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients
-# d <- d[,.(Run,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all (ok, most) variables
-
-d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
-d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$Run,]
 #order abundance table to match the metadata file
 y <- y[match(d$Run, rownames(y)),]
 if(!sum(rownames(y) == d$Run) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
 }
-
-
 
 #Get relative counts by adding 1 to all observations (can't handle zeros).----
 y <- y + 1
@@ -70,7 +85,7 @@ x.site <- x[,.(intercept,pC,cn,PH,forest,conifer,relEM)]
 #x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients
 #x.all  <- x[,.(intercept,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all variables
 
-x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
+x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,NPP,moisture,mat,map,forest,conifer,relEM)] # all nutrients, and moisture
 x.list <- list(x.clim,x.site,x.all)
 
 #fit model using function.
@@ -90,6 +105,11 @@ output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=
 #name the items in the list
 names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
 
+all_cop_olig_models[[i]] <- output.list
+cat(paste0('Cop-olig fit completed for ', group_names[[i]]))
+}
+
+
 cat('Saving fit...\n')
-saveRDS(output.list, output.path)
+saveRDS(all_cop_olig_models, output.path)
 cat('Script complete. \n')
