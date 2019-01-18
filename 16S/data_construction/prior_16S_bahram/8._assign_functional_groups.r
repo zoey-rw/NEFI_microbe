@@ -11,6 +11,8 @@ library(tidyr)
 library(stringr)
 source('paths.r')
 
+# only include genus in category if 50% of species have pathway?
+cutoff.5 <- T
 
 ########## 1. prep data. ############
 
@@ -19,6 +21,8 @@ fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
 
 # read in csv from Albright with N-cycle pathway presence/absence.
 N_cyclers <- read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
+
+cell <- read.csv(paste0(pecan_gen_16S_dir, "cellulolytic_Berlemont.csv"))
 
 # load Bahram SV table as otu file
 otu <- readRDS(bahram_dada2_SV_table.path)
@@ -135,47 +139,43 @@ saveRDS(cop_olig_indiv, prior_cop_olig_abundances_indiv.path)
 
 ########## 3. assign nitrogen-cycling groups. ############
 
-tax <- tax_save
+# Set up N-cycle dataset from Albright 2008
 
-# set up N-cycle dataset from Albright 2008
+tax <- tax_save 
 
-N_cyclers <- N_cyclers[,-c(1:2,4,11:14,16:17)] # remove all columns except for taxonomy, environment, and pathways
+# Remove all columns except for taxonomy, environment, and pathways
+N_cyclers <- N_cyclers[,-c(1:2,4,11:14,16:17)] 
 
-# rename pathways
+# Rename some pathways
 setnames(N_cyclers, 
          c("Nitrogen Fixation", "Assimilatory Nitrite to ammonia", "Dissimilatory Nitrite to Ammonia", "Assimilatory Nitrate to Nitrite","Dissimilatory Nitrate to Nitrite"), 
          c("N_fixation", "Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate_reduction","Dissim_nitrate_reduction"))
 
-# we're ignoring the "incomplete" pathways. 
+# Treat "incomplete" pathways as if they are absent. 
 N_cyclers[N_cyclers=="complete"] <- 1
 N_cyclers[N_cyclers=="incomplete" | N_cyclers=="None"] <- 0
 
-# grouping partial nitrification pathways with nitrification, and partial denitrification with denitrification.
+# Grouping partial nitrification pathway with nitrification, and partial denitrification with denitrification.
 N_cyclers[N_cyclers$Partial_Nitrification==1,]$Nitrification <- 1
 N_cyclers[N_cyclers$Partial_NO==1 | N_cyclers$Partial_N2O ==1 | N_cyclers$Partial_N2==1,]$Denitrification <- 1
 
 # Now we can remove the "partial" columns.
 N_cyclers[,c("Partial_Nitrification", "Partial_NO", "Partial_N2O", "Partial_N2")] <- NULL
 
-# # get all possible combinations of the core seven pathways.
+# # Get all possible combinations of the core seven pathways - just curious.
 # possible_combos <- expand(N_cyclers, Assim_nitrite_reduction, Dissim_nitrite_reduction, Assim_nitrate_reduction, Dissim_nitrate_reduction, N_fixation, Nitrification, Denitrification)
 # # nrow(possible_combos)
 # # [1] 128
 # actual_combos <- expand(N_cyclers, nesting(Assim_nitrite_reduction, Dissim_nitrite_reduction, Assim_nitrate_reduction, Dissim_nitrate_reduction, N_fixation, Nitrification, Denitrification))
 # # nrow(actual_combos)
 # # [1] 50
-# # add column with pathway vector
-# #N_cyclers <- unite(N_cyclers, pathways, 9:15, sep = ", ", remove = FALSE)
-# #unique(N_cyclers$pathways) # 50 unique vectors - checks out
 
-##### ASSIGN TAXA TO FUNCTIONAL GROUPS ##### 
-pathway_names <- colnames(N_cyclers[9:15])
-tax[,pathway_names] <- 0
 
+# For Albright dataset:
 # get value by genus; if pathway is present in more than half of species, it is present for that genus
+pathway_names <- colnames(N_cyclers[9:15])
 N_cycle_genera <- data.frame(matrix(ncol=0,nrow=0))
 for (g in 1:length(unique(N_cyclers$Genus))) {
-  print(g)
   i <- unique(N_cyclers$Genus)[g]
   species <- N_cyclers[N_cyclers$Genus==i,]
   nspecies <- nrow(species)
@@ -186,11 +186,7 @@ for (g in 1:length(unique(N_cyclers$Genus))) {
                     nrow(species[species$N_fixation == 1,])/nspecies,
                     nrow(species[species$Dissim_nitrate_reduction == 1,])/nspecies,
                     nrow(species[species$Nitrification == 1,])/nspecies,
-                    # nrow(species[species$Partial_Nitrification == 1,])/nspecies,
                     nrow(species[species$Denitrification == 1,])/nspecies
-                    # nrow(species[species$Partial_NO == 1,])/nspecies,
-                    # nrow(species[species$Partial_N2O == 1,])/nspecies,
-                    # nrow(species[species$Partial_N2 == 1,])/nspecies
   )
   colnames(out) <- c("Genus", pathway_names)
   out$Genus <- as.character(i)
@@ -200,12 +196,15 @@ for (g in 1:length(unique(N_cyclers$Genus))) {
   N_cycle_genera <- rbind(N_cycle_genera, out)
 }
 
+##### Assign taxa to functional groups ##### 
+
+# create pathway columns
+tax[,pathway_names] <- 0
+
 # check if sample genus is in classification data, and that a classified pathway is present; 
 # assign those genera a present pathway
 for (i in 1:length(pathway_names)) {
-  print(i)
   p <- pathway_names[i]
-  
   # Classifications from literature search (multiple taxon levels)
   has_pathway <- fg[fg$Classification==p,]$Taxon
   
@@ -224,16 +223,17 @@ for (i in 1:length(pathway_names)) {
   if (nrow(tax[tax$genus %in% has_pathway,]) != 0){
     tax[tax$genus %in% has_pathway,][p] <- 1
   }
-  # genus must match the first word of scientific name, species must match second
-  if (nrow(tax[which(tax$genus %in% word(has_pathway,1) && 
-                     tax$species %in% word(has_pathway,2)),]) != 0) {
-    tax[which(tax$genus %in% word(has_pathway,1) && 
-                tax$species %in% word(has_pathway,2)),][p] <- 1
+  # genus + species must match any full species name
+  if (nrow(tax[which(paste(tax$genus, tax$species) %in% has_pathway),]) != 0){
+    tax[which(paste(tax$genus, tax$species) %in% has_pathway),][p] <- 1
   }
   # Classifications from Albright et al. 2018 dataset (Genus-level only; reduced from species-level)
-  has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus
-  #has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus
-  if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0){
+  if(cutoff.5 == T){
+    has_pathway <- N_cycle_genera[N_cycle_genera[p] == 1,]$Genus # using .5 cutoff
+  } else {
+    has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus # not using .5 cutoff - one species with pathway is enough to classify genus
+  }
+ if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0){
     tax[which(tax$genus %in% has_pathway),][p] <- 1
   }
 }
@@ -242,11 +242,11 @@ for (i in 1:length(pathway_names)) {
 tax_classified <- tax[,8:14]
 no_pathways <- tax_classified[apply(tax_classified, 1, function(x) !any(x == 1)),]
 nrow(no_pathways)
-# [1] 134199
+# [1] 134199 # with .5 cutoff
 # 133599 # when all genera are included, not .5 cutoff
 some_pathway <- tax_classified[apply(tax_classified, 1, function(x) any(x == 1)),]
 nrow(some_pathway)
-# [1] 22043
+# [1] 22043 # with .5 cutoff
 # 22643 # not .5 cutoff
 
 
@@ -276,6 +276,36 @@ saveRDS(allpathways, prior_N_cyclers_abundances_.5cutoff.path)
 
 
 
+# format dataset of cellulolytic taxa from Berlemont et al.
+rownames(cell) <- cell$Strain
+
+# these have enzymes for beta-glucosidase, to use products from cellulysis - opportunists
+bg <- cell[,c(3,4)]
+bg <- bg[apply(bg, 1, function(x) any(x == 1)),]
+
+# taxa with any enzymes for cellulolysis 
+cellulolytic <- cell[,c(5:7,9:13)]
+cellulolytic$is.cell <- 0
+cellulolytic[apply(cellulolytic, 1, function(x) any(x == 1)),]$is.cell <- 1
+cellulolytic$genus <- word(rownames(cellulolytic), 1)
+cellulolytic[cellulolytic$genus == "Candidatus",]$genus <- 
+  word(rownames(cellulolytic[cellulolytic$genus == "Candidatus",]), 1, 2)
+
+cellulolytic_genera <- data.frame(matrix(ncol=0,nrow=0))
+for (g in 1:length(unique(cellulolytic$genus))) {
+  i <- unique(cellulolytic$genus)[g]
+  species <- cellulolytic[cellulolytic$genus==i,]
+  nspecies <- nrow(species)
+  out <- data.frame(Genus = i,
+                    nrow(species[species$is.cell == 1,])/nspecies
+  )
+  colnames(out) <- c("Genus", "is.cell")
+  out$Genus <- as.character(i)
+  out[out >= .5] <- 1
+  out[out < .5] <- 0
+  out$Genus <- as.character(i)
+  cellulolytic_genera <- rbind(cellulolytic_genera, out)
+}
 
 
 ########## 4. assign carbon-cycling groups. ############
@@ -310,12 +340,22 @@ for (i in 1:length(pathway_names)) {
   if (nrow(tax[tax$genus %in% has_pathway,]) != 0){
     tax[tax$genus %in% has_pathway,][p] <- 1
   } 
-  # genus must match the first word of scientific name, species must match second
-  if (nrow(tax[which(tax$genus %in% word(has_pathway,1) && 
-              tax$species %in% word(has_pathway,2)),]) != 0) {
-    tax[which(tax$genus %in% word(has_pathway,1) && 
-                tax$species %in% word(has_pathway,2)),][p] <- 1
+  # genus + species must match any full species name
+  if (nrow(tax[which(paste(tax$genus, tax$species) %in% has_pathway),]) != 0){
+    tax[which(paste(tax$genus, tax$species) %in% has_pathway),][p] <- 1
   }
+  # Classifications from Berlemont et al. 2018 dataset (Genus-level only; reduced from species-level)
+  if (p == "Cellulolytic") {
+  if(cutoff.5 == T){
+    has_pathway <- cellulolytic_genera[cellulolytic_genera$is.cell == 1,]$Genus # using .5 cutoff
+  } else {
+    has_pathway <- cellulolytic[cellulolytic$is.cell == 1,]$genus # not using .5 cutoff - one species with pathway is enough to classify genus
+  }
+  if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0){
+    tax[which(tax$genus %in% has_pathway),][p] <- 1
+  }
+  } # close cellulolytic section
+  
 }
 
 # # check how many ended up with classifications.
