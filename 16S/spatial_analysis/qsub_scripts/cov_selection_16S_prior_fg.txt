@@ -41,7 +41,7 @@ module load qiime/1.9.0
 cd /usr3/graduate/zrwerbin/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/spatial_analysis/covariate_selection/cov_selection_bahram_16S_prior_fg.r
+Rscript 16S/spatial_analysis/cov_selection_bahram_16S_prior_fg.r
 #
 #
 #End of commands.
