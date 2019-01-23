@@ -77,7 +77,7 @@ x$map <- log(x$map)
 
 # define multiple subsets
 # get covariates from model selection output
-covariates <- rownames(covs[[1]][[i]]) # N_cyclers are first item; each of 7 pathways has different covariates
+covariates <- c("intercept",rownames(covs[[1]][[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
 cols <- which(colnames(x) %in% covariates)
 x.cov_select <- x[,cols, with=FALSE]
 x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture

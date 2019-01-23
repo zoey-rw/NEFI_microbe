@@ -73,7 +73,7 @@ for (i in 1:length(a)) {
   
   # define multiple subsets
   # get covariates from model selection output
-  covariates <- rownames(covs[[2]][[i]]) # C_cyclers are second item; each of 4 pathways has different covariates
+  covariates <- c("intercept",rownames(covs[[2]][[i]])) # C_cyclers are second item; each of 4 pathways has different covariates
   cols <- which(colnames(x) %in% covariates)
   x.cov_select <- x[,cols, with=FALSE]
   x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture

@@ -77,8 +77,8 @@ x <- cbind(intercept, x)
 x$map <- log(x$map)
 
 # define multiple subsets
-# get covariates from model selection output
-covariates <- rownames(covs[[3]][[i]]) # Cop_olig model is third item; one set of covariates
+# get covariates from model selection output, + intercept column
+covariates <- c("intercept", rownames(covs[[3]][[i]])) # Cop_olig model is third item; one set of covariates
 cols <- which(colnames(x) %in% covariates)
 x.cov_select <- x[,cols, with=FALSE]
 x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)]
