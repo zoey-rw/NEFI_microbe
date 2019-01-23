@@ -131,22 +131,23 @@ nutr_df <- nutr_df[nutr_df$bulkDensBottomDepth <= 30,]
 # get means of log-transformed nutrient values, weighted by bulk density.
 nutr_tbl <- sapply(split(nutr_df, nutr_df$plotID.x), function(x) apply(x[, 21:24], 2, weighted.mean, 
                                           x$bd)) 
+# check results dataframe
+head(nutr_tbl) 
 
-# nutrients are in centimolesPerKilogram, other than phosphorus, which is milligramsPerKilogram
+# alright, negative values, that's not good. our units must be different from Tedersoo's, but they don't state units in their methods.
+# NEON nutrients are in centimolesPerKilogram, other than phosphorus, which is milligramsPerKilogram
 
 # check against bahram data - these values are already log-transformed
-bahram <- readRDS(bahram_metadata.path)
-
-
+# bahram <- readRDS(bahram_metadata.path)
 
 # other method: calculating per-horizon stocks, summing them, dividing by total volume
 # this won't work because we're missing so many volume measurements
 
 # multiply concentration by bulk density
-# nutr_df$Ca_by_bd <- nutr_df$LogCa * nutr_df$bulkDensOvenDry
-# nutr_df$K_by_bd <- nutr_df$LogK * nutr_df$bulkDensOvenDry
-# nutr_df$Mg_by_bd <- nutr_df$LogMg * nutr_df$bulkDensOvenDry
-# nutr_df$P_by_bd <- nutr_df$LogP * nutr_df$bulkDensOvenDry
+# nutr_df$Ca_by_bd <- nutr_df$LogCa * nutr_df$bd
+# nutr_df$K_by_bd <- nutr_df$LogK * nutr_df$bd
+# nutr_df$Mg_by_bd <- nutr_df$LogMg * nutr_df$bd
+# nutr_df$P_by_bd <- nutr_df$LogP * nutr_df$bd
 
 #sum the nutrient stocks from the top horizons, then divide by the sum of the volumes.
 # nutr_tbl <- aggregate(cbind(nutr_df$Ca_by_bd, nutr_df$K_by_bd, nutr_df$Mg_by_bd, nutr_df$P_by_bd), 
