@@ -12,7 +12,7 @@ library(stringr)
 source('paths.r')
 
 # only include genus in category if 50% of species have pathway?
-cutoff.5 <- T
+cutoff.5 <- F
 
 ########## 1. prep data. ############
 
@@ -276,6 +276,9 @@ saveRDS(allpathways, prior_N_cyclers_abundances_.5cutoff.path)
 
 
 
+
+########## 4. assign C-cycling groups. ###########
+
 # format dataset of cellulolytic taxa from Berlemont et al.
 rownames(cell) <- cell$Strain
 
@@ -308,7 +311,7 @@ for (g in 1:length(unique(cellulolytic$genus))) {
 }
 
 
-########## 4. assign carbon-cycling groups. ############
+########## assign carbon-cycling taxa ############
 
 tax <- tax_save
 #pathway_names <- unique(fg[fg$Classification.system=="C cycling",]$Classification) # don't want all right now
@@ -362,10 +365,12 @@ for (i in 1:length(pathway_names)) {
 tax_classified <- tax[,8:11]
 no_pathways <- tax_classified[apply(tax_classified, 1, function(x) !any(x == 1)),]
 nrow(no_pathways)
-# [1] 134881
+# [1] 151302 #.5 cutoff
+# [1] 151048 #no cutoff
 some_pathway <- tax_classified[apply(tax_classified, 1, function(x) any(x == 1)),]
 nrow(some_pathway)
-# [1] 21361
+# [1] 4940 #.5 cutoff
+# [1] 5194 #no cutoff
 
 
 #Get seq abundances of each pathway
@@ -388,5 +393,8 @@ for(i in 1:length(pathway_names)){
   pathways$rel.abundances <- pathways$abundances / pathways$seq_total
   allpathways[[i]] <- pathways
 }
-saveRDS(allpathways, prior_C_cyclers_abundances.path)
+if (cutoff.5 == T) {
+  saveRDS(allpathways, prior_C_cyclers_abundances_.5cutoff.path)
+} else saveRDS(allpathways, prior_C_cyclers_abundances.path)
+
 

@@ -270,6 +270,7 @@ NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # co
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_N_cyclers_abundances_.5cutoff.path <- paste0(dir, "prior_N_cyclers_abundances_.5cutoff.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
+prior_C_cyclers_abundances_.5cutoff.path <- paste0(dir, "prior_C_cyclers_abundances_.5cutoff.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes

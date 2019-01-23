@@ -5,9 +5,6 @@ source('paths.r')
 library(biomformat)
 library(nneo)
 
-dp1.10108.00_output.path.16S <- "/fs/data3/caverill/NEFI_data/I6S/pecan_gen/NEON_data_aggregation/dp1.10108.00_output.16S.rds"
-site_dates_16S.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_data_aggregation/16S_site_dates.rds"
-
 #Grab all sites that have 16S sequence data.
 #Get core-level sequence meta data from NEON API
 req <- httr::GET("http://data.neonscience.org/api/v0/products/DP1.10108.001")
@@ -79,8 +76,8 @@ for(i in 1:nrow(site_date)){
 #save DP1.10108.00 output.
 # getting an error when i try to save to file path?? only works manually
 # saveRDS(output, dp1.10108.00_output.path.16S)
-setwd("/fs/data3/caverill/NEFI_data/I6S/pecan_gen/NEON_data_aggregation/")
-saveRDS(output, "dp1.10108.00_output.16S.rds")
+#setwd("/fs/data3/caverill/NEFI_data/I6S/pecan_gen/NEON_data_aggregation/")
+saveRDS(output, dp1.10108.00_output_16S.path)
 
 
 #get nested lsited of sites and dates sampled.
