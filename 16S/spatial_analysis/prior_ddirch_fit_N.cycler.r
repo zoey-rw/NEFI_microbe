@@ -20,7 +20,6 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 source('NEFI_functions/ddirch_site.level_JAGS_int.only.r')
 source('NEFI_functions/crib_fun.r')
 
-
 #detect and register cores.
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
@@ -29,35 +28,36 @@ registerDoParallel(cores=n.cores)
 #output.path <- bahram_16S_prior_N_cycle_JAGSfits 
 output.path <-bahram_16S_prior_N_cycle_.5cutoff_JAGSfits
 
-#load tedersoo data.----
+#load bahram data.----
 m <- data.table(readRDS(bahram_metadata.path))
 #a <- readRDS(prior_N_cyclers_abundances.path)
 a <- readRDS(prior_N_cyclers_abundances_.5cutoff.path)
 
+# load covariate selection data.
+covs <- readRDS(bahram_16S_prior_fg_cov.selection_JAGS)
+
+# set pathway names
 pathway_names <- list()
 for (i in 1:7) {
   pathway_names[[i]] <- colnames(a[[i]]$abundances)[2]
   }
-
 all_N_cycler_models <- vector("list", 7)
+
+# loop through each N_cycle pathway
 for (i in 1:length(a)) {
 y <- a[[i]]
 y <- y$abundances
 
-# d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)] # original set
-# d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients
-# d <- d[,.(Run,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all (ok, most) variables
-
+# subset covariate dataset
 d <- m[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$Run,]
+
 #order abundance table to match the metadata file
 y <- y[match(d$Run, rownames(y)),]
 if(!sum(rownames(y) == d$Run) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
 }
-
-
 
 #Get relative counts by adding 1 to all observations (can't handle zeros).----
 y <- y + 1
@@ -75,16 +75,13 @@ x <- cbind(intercept, x)
 #log transform map, magnitudes in 100s-1000s break JAGS code.
 x$map <- log(x$map)
 
-#define multiple subsets
-x.clim <- x[,.(intercept,NPP,mat,map)]
-x.site <- x[,.(intercept,pC,cn,PH,forest,conifer,relEM)]
-
-#x.all  <- x[,.(intercept,moisture,pC,cn,PH,NPP,mat,map,forest,conifer,relEM)] # original set
-#x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients
-#x.all  <- x[,.(intercept,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all variables
-
-x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
-x.list <- list(x.clim,x.site,x.all)
+# define multiple subsets
+# get covariates from model selection output
+covariates <- rownames(covs[[1]][[i]]) # N_cyclers are first item; each of 7 pathways has different covariates
+cols <- which(colnames(x) %in% covariates)
+x.cov_select <- x[,cols, with=FALSE]
+x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
+x.list <- list(x.cov_select,x.all)
 
 #fit model using function.
 #This take a long time to run, probably because there is so much going on.
@@ -101,7 +98,7 @@ output.list<-
 output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
 
 #name the items in the list
-names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
+names(output.list) <- c('cov_select','all.preds','int.only')
 all_N_cycler_models[[i]] <- output.list
 cat(paste0('N-cycler fit completed for ', pathway_names[[i]]))
 }

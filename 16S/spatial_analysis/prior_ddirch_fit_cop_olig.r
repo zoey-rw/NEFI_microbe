@@ -21,20 +21,19 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 # model these groups individually?
-indiv <- T
+indiv <- F
 
 #set output path.----
-#output.path <- bahram_16S.prior_cop_olig_JAGSfit # original set
-#output.path <- bahram_16S.prior_cop_olig_all_nutr_JAGSfit # all nutrients
-#output.path <- bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit # all nutrients, no moisture
-output.path <- bahram_16S.prior_cop_olig_indiv_JAGSfit
+output.path <- bahram_16S.prior_cop_olig_JAGSfit 
+#output.path <- bahram_16S.prior_cop_olig_indiv_JAGSfit
   
 #load tedersoo data.----
 d <- data.table(readRDS(bahram_metadata.path))
-# d <- d[,.(Run,pC,cn,PH,moisture,NPP,map,mat,forest,conifer,relEM)] # original set
 d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients
-#d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
 d <- d[complete.cases(d),] #optional. This works with missing data.
+
+# load covariate selection data.
+covs <- readRDS(bahram_16S_prior_fg_cov.selection_JAGS)
 
 if (indiv == T) {
   a <- readRDS(prior_cop_olig_abundances_indiv.path) 
@@ -77,16 +76,13 @@ x <- cbind(intercept, x)
 #log transform map, magnitudes in 100s-1000s break JAGS code.
 x$map <- log(x$map)
 
-#define multiple subsets
-x.clim <- x[,.(intercept,NPP,mat,map)]
-x.site <- x[,.(intercept,pC,cn,PH,forest,conifer,relEM)]
-
-#x.all  <- x[,.(intercept,moisture,pC,cn,PH,NPP,mat,map,forest,conifer,relEM)] # original set
-#x.all  <- x[,.(intercept,moisture,pC,cn,PH,Ca,Mg,P,K,pN,NPP,mat,map,forest,conifer,relEM)] # all nutrients
-#x.all  <- x[,.(intercept,Lat,Alt,Fire,aridity,d15N, d13C,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all variables
-
-x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,NPP,moisture,mat,map,forest,conifer,relEM)] # all nutrients, and moisture
-x.list <- list(x.clim,x.site,x.all)
+# define multiple subsets
+# get covariates from model selection output
+covariates <- rownames(covs[[3]][[i]]) # Cop_olig model is third item; one set of covariates
+cols <- which(colnames(x) %in% covariates)
+x.cov_select <- x[,cols, with=FALSE]
+x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.list <- list(x.cov_select,x.all)
 
 #fit model using function.
 #This take a long time to run, probably because there is so much going on.
@@ -103,7 +99,7 @@ future_map(function(i){
 output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
 
 #name the items in the list
-names(output.list) <- c('climate.preds','site.preds','all.preds','int.only')
+names(output.list) <- c('cov_select','all.preds','int.only')
 
 all_cop_olig_models[[i]] <- output.list
 cat(paste0('Cop-olig fit completed for ', group_names[[i]]))
