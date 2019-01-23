@@ -336,11 +336,12 @@ core.table_16S.path <- paste0(dir,'core.table_16S.rds')
 plot.table_16S.path <- paste0(dir,'plot.table_16S.rds') 
 site.table_16S.path <- paste0(dir,'site.table_16S.rds') 
 
-# path to NEON 16S top 20 genera
+# path to NEON group abundances
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
-# path to NEON 16S all genera
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
 NEON_phyla_abundances_16S.path  <- paste0(dir, "NEON_phyla_abundances.rds")
+NEON_N_cyclers_abundances.path <- paste0(dir, "NEON_N_cyclers_abundances.rds")
+NEON_C_cyclers_abundances.path <- paste0(dir, "NEON_C_cyclers_abundances.rds")
 
 #### 16S/pecan_gen: paths to NEON covariates ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')
