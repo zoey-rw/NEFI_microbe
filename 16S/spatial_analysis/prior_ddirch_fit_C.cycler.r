@@ -23,11 +23,13 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- bahram_16S_prior_C_cycle_JAGSfits 
+#output.path <- bahram_16S_prior_C_cycle_JAGSfits 
+output.path <- bahram_16S_prior_C_cycle_.5cutoff_JAGSfits 
 
 #load tedersoo data.----
 m <- data.table(readRDS(bahram_metadata.path))
-a <- readRDS(prior_C_cyclers_abundances.path)
+#a <- readRDS(prior_C_cyclers_abundances.path)
+a <- readRDS(prior_C_cyclers_abundances_.5cutoff.path)
 
 pathway_names <- list()
 for (i in 1:4) {

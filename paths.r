@@ -244,6 +244,7 @@ bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGS
 bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfit.rds')
 bahram_16S_prior_N_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_.5cutoff_JAGSfit.rds')
 bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
+bahram_16S_prior_C_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_.5cutoff_JAGSfit.rds')
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
 
 #### 16S/scc_gen: raw data for prior metadata ####
@@ -295,7 +296,9 @@ NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.
 #### 16S/pecan_gen ####
 
 # paths to NEON cosmo forecasts and variable importance data
-dir <- paste0(pecan_gen_16S_dir, 'NEON_forecast_data')
+dir <- paste0(pecan_gen_16S_dir, 'NEON_forecast_data/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
 NEON_cosmo_abundances_16S.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
 NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
 hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")

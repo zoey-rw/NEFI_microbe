@@ -64,5 +64,13 @@ all_fg_output[[f]] <- fg_output
 
 } # end functional group loop
 
-#save the output.
-saveRDS(all_fg_output, bahram_16S_prior_fg_cov.selection_JAGS)
+# add names to each item
+covs <- all_fg_output
+names(covs) <- c("N_cycling","C_cycling","Cop_olig")
+names(covs[[1]]) <- c("Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate_reduction", 
+                       "N_fixation", "Dissim_nitrate_reduction", "Nitrification", "Denitrification")
+names(covs[[2]]) <- c("Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph")
+names(covs[[3]]) <- "Cop_olig"
+
+# save the output
+saveRDS(covs, bahram_16S_prior_fg_cov.selection_JAGS)
