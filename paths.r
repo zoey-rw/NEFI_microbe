@@ -253,7 +253,7 @@ SRA.path <- paste0(dir, "SraRunTable.csv")
 metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
 
 #### 16S/pecan_gen: Bahram 2018 prior data. ####
-dir <- paste0(pecan_gen_16S_dir, '/prior_data/')
+dir <- paste0(pecan_gen_16S_dir, 'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 
@@ -318,6 +318,7 @@ system(cmd)
     dp1.10086.00_output_16S.path <- paste0(dir,'dp1.10086.00_output_16S.rds')
     dp1.10078.00_output_16S.path <- paste0(dir,'dp1.10078.00_output_16S.rds')
     dp1.10098.00_output_16S.path <- paste0(dir,'dp1.10098.00_output_16S.rds')
+    dp1.10008_dp.10047_output_16S.path <- paste0(dir,'dp1.10008_dp1.10047_output_16S.rds')
     dp1.10098.00_plot.level_16S.path <- paste0(dir,'dp1.10098.00_plot.level_16S.rds')
     core_obs_16S.path <- paste0(dir, "core_obs_16S.rds")
     core_core_16S.path <- paste0(dir, "core_core_16S.rds")

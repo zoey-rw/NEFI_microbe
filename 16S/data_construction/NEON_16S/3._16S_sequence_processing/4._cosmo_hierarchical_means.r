@@ -14,10 +14,6 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
-
-dir <- paste0(scc_gen_16S_dir,'NEON_processed/')
-NEON_plot.level_genera_obs_16S.path <- paste0(dir,'NEON_plot.level_genera_obs_16S.rds')
-NEON_site.level_genera_obs_16S.path <- paste0(dir,'NEON_site.level_genera_obs_16S.rds')
 #set output.path----
 plot.output.path <- NEON_plot.level_genera_obs_16S.path
 site.output.path <- NEON_site.level_genera_obs_16S.path
