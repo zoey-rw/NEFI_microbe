@@ -38,26 +38,26 @@ nutr_df$bd <- ifelse(!is.na(nutr_df$bulkDensOvenDry),
 
 #### Convert phosphorus ####
 
-# model relationship between MehlichIII P and Ammonium lactate (AL) P
-# these match the models from Erikkson 2009
+# recreating the models from Erikkson 2009
+# model relationship between MehlichIII (M3) P and Ammonium lactate (AL) P
 fitM3 <- lm(P.AL_color ~ P.M3colorom., data=p_methods)  # linear regression model on full data
 coefM3 <- summary(fitM3)[[4]][2,1]
 intM3 <- summary(fitM3)[[4]][1,1]
 seM3 <- summary(fitM3)[[6]]
 
-# function for converting values (there is probably a simpler way to do this)
+# function for converting values from M3 P to AL P 
 P_M3.to.P_AL <- function(P_M3) {
   P_AL <- coefM3 * P_M3 + intM3
   return(P_AL)
 }
 
-# model relationship between Olsen P and Ammonium lactate (AL) P
+# model relationship between Olsen P and AL P
 fitO <- lm(P.ALICP ~ Olsen.PICP, data=p_methods)  # linear regression model on full data
-coefO <- summary(fitO)[[4]][2,1]
-intO <- summary(fitO)[[4]][1,1]
-seO <- summary(fitO)[[6]]
+coefO <- summary(fitO)[[4]][2,1] # get coefficient
+intO <- summary(fitO)[[4]][1,1] # get intercept
+seO <- summary(fitO)[[6]] # get residual standard error
 
-# function for converting values
+# function for converting values from Olsen P to AL P
 P_O.to.P_AL <- function(P_O) {
   P_AL <- 3.2778 * P_O + 27.88
   return(P_AL)
@@ -75,12 +75,12 @@ nutr_df[!is.na(nutr_df$p),]$p_method <- "MehlichIII"
 nutr_df[is.na(nutr_df$p),]$p <- nutr_df[is.na(nutr_df$p),]$OlsenPExtractable
 nutr_df[is.na(nutr_df$p_method),]$p_method <- "OlsenP"
 
-# convert P values
+# convert P values to AL values
 nutr_df$new_p <- NA
 nutr_df[nutr_df$p_method == "OlsenP",]$new_p <- P_O.to.P_AL(nutr_df[nutr_df$p_method == "OlsenP",]$p)
 nutr_df[nutr_df$p_method == "MehlichIII",]$new_p <- P_M3.to.P_AL(nutr_df[nutr_df$p_method == "MehlichIII",]$p)
 
-# add P standard error
+# add P standard error from each model
 nutr_df$P_se <- NA
 nutr_df[nutr_df$p_method == "OlsenP",]$P_se <- seO
 nutr_df[nutr_df$p_method == "MehlichIII",]$P_se <- seM3
