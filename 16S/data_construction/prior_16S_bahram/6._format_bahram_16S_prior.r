@@ -15,14 +15,8 @@ source('paths.r')
 source('NEFI_functions/worldclim2_grab.r')
 source('NEFI_functions/arid_extract.r')
 
-incl_southern_lat <- F
-
 # set output path
-if (incl_southern_lat == T) {
-  output.path <- bahram_metadata_south_lat.path 
-} else { 
-  output.path <- bahram_metadata.path 
-}
+output.path <- bahram_metadata.path 
 
 
 ##### load files ####
@@ -50,11 +44,7 @@ metadata <- merge(sample_names, metadata_raw, by.x = "Sample_Name", by.y = "X")
 metadata <- data.table(metadata)
 
 # subset to temperate latitudes
-if (incl_southern_lat == T) {
-  metadata <- metadata[(Lat < 66.5 & Lat > 23.5) | (Lat > -66.5 & Lat < -23.5),]
-} else {
-  metadata <- metadata[Lat < 66.5 & Lat > 23.5,]
-}
+metadata <- metadata[Lat < 66.5 & Lat > 23.5,]
 
 # merge in site, moisture, and relEM from Tedersoo file
 metadata <- metadata[,-c("Moisture")]

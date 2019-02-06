@@ -40,7 +40,7 @@ y <- cbind(other,y)
 
 #get core_plot, core_site, plot_site
 deprecatedVialID <- rownames(fg.c)
-#deprecatedVialID <- str_replace_all(deprecatedVialID, c("."= "_"))
+#deprecatedVialID <- str_replace(deprecatedVialID, ".", "_")
 core_plot <- substr(deprecatedVialID,1,8)
 core_site <- substr(deprecatedVialID,1,4)
 plot_site <- unique(core_plot)
