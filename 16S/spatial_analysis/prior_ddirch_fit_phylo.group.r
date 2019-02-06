@@ -1,4 +1,4 @@
-#Fit dirlichet models to functional groups of bacteria/archaea from Bahram et al. Temperate Latitude.
+#Fit dirlichet models to phylogenetic groups of bacteria/archaea from Bahram et al. Temperate Latitude.
 #No hierarchy required, as everything is observed at the site level. Each observation is a unique site.
 #Missing data are allowed.
 #clear environment
@@ -6,7 +6,7 @@ rm(list = ls())
 library(data.table)
 library(doParallel)
 source('paths.r')
-source('NEFI_functions/ddirch_site.level_JAGS.r')
+#source('NEFI_functions/ddirch_site.level_JAGS.r')
 library(RCurl)
 # source function from colins github
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
@@ -21,14 +21,17 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- bahram_16S_prior_phylo.group_JAGSfits
+#output.path <- bahram_16S_prior_phylo.group_JAGSfits
+output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_JAGSfit_phylumtest.rds"
 
 #load bahram data.----
 d <- data.table(readRDS(bahram_metadata.path))
-d <- d[,.(Run,moisture,pC,cn,PH,NPP,map,mat,forest,conifer,relEM)]
-#d <- d[complete.cases(d),] #optional. This works with missing data.
+d <- d[,.(Run,moisture,pC,cn,PH,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)]
+d <- d[complete.cases(d),] #optional. This works with missing data.
 
+#load data and format.----
 y <- readRDS(bahram_16S_common_phylo_groups_list.path)
+y <- y[i] # JUST FOR TESTING
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -48,7 +51,8 @@ tic()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
     y.group <- y[[i]]
-    y.group <- y.group$abundances
+    # drop anything with under 1000 sequences.
+    y.group <- y.group$abundance[y.group$seq_total>1000,]
     y.group <- y.group[rownames(y.group) %in% d$Run,]
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
