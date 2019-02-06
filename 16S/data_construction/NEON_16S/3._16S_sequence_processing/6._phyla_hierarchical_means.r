@@ -3,6 +3,8 @@
 # clear workspace, load libraries
 rm(list=ls())
 library(runjags)
+library(foreach)
+library(doParallel)
 source('paths.r')
 #source('NEFI_functions/hierarch_ddirch_means.r')
 
