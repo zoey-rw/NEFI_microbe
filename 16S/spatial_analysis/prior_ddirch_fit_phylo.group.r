@@ -31,7 +31,8 @@ d <- d[complete.cases(d),] #optional. This works with missing data.
 
 #load data and format.----
 y <- readRDS(bahram_16S_common_phylo_groups_list.path)
-y <- y[i] # JUST FOR TESTING
+y <- y[1] # JUST FOR TESTING PHYLUM
+
 
 #Drop in intercept, setup predictor matrix.
 x <- d
