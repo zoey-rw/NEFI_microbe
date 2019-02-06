@@ -25,13 +25,13 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-#output.path <- bahram_16S_prior_N_cycle_JAGSfits 
-output.path <-bahram_16S_prior_N_cycle_.5cutoff_JAGSfits
+output.path <- bahram_16S_prior_N_cycle_JAGSfits 
+#output.path <-bahram_16S_prior_N_cycle_.5cutoff_JAGSfits
 
 #load bahram data.----
 m <- data.table(readRDS(bahram_metadata.path))
-#a <- readRDS(prior_N_cyclers_abundances.path)
-a <- readRDS(prior_N_cyclers_abundances_.5cutoff.path)
+a <- readRDS(prior_N_cyclers_abundances.path)
+#a <- readRDS(prior_N_cyclers_abundances_.5cutoff.path)
 
 # load covariate selection data.
 covs <- readRDS(bahram_16S_prior_fg_cov.selection_JAGS)
