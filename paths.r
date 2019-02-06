@@ -293,6 +293,7 @@ NEON_site.level_genera_obs_16S.path <- paste0(dir, 'NEON_site.level_genera_obs_1
 NEON_plot.level_phyla_obs_16S.path <- paste0(dir,'NEON_plot.level_phyla_obs_16S.rds')
 NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.rds')
 NEON_all.fg_plot.site_obs_16S.path <- paste0(dir,'NEON_all.fg_plot.site_obs_16S.rds')
+NEON_all.phylo.levels_plot.site_obs_16S.path <- paste0(dir, 'NEON_all.phylo.levels_plot.site_obs_16S.rds')
 
 #### 16S/pecan_gen ####
 
@@ -344,6 +345,7 @@ NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
 NEON_phyla_abundances_16S.path  <- paste0(dir, "NEON_phyla_abundances.rds")
 NEON_N_cyclers_abundances.path <- paste0(dir, "NEON_N_cyclers_abundances.rds")
 NEON_C_cyclers_abundances.path <- paste0(dir, "NEON_C_cyclers_abundances.rds")
+NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
 
 #### 16S/pecan_gen: paths to NEON covariates ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')

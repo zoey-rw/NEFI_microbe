@@ -33,14 +33,6 @@ n.cores <- detectCores()
 registerDoParallel(n.cores)
 
 # loop over models
-
-fg.c <- d$abundances
-fg.c$other <- NULL
-# drop anything with under 1000 sequences.
-seq_total <- d$seq_total[d$seq_total>1000]
-fg.c <- fg.c[d$seq_total>1000,]
-
-
 output <- list()
 output <-
   foreach(i = 1:length(d)) %dopar% { # loop through each set of functional groups
@@ -53,7 +45,7 @@ output <-
     #Get y multivariate matrix.
     abundances <- y[[p]]$abundances
     seq.depth  <- y[[p]]$seq_total
-    abundances <- abundances[seq.depth>1000] # drop samples with less than 1k reads
+    abundances <- abundances[seq.depth>1000,] # drop samples with less than 1k reads
     y <- as.matrix((abundances + 1) / rowSums(abundances + 1))
     
     #get core_plot and plot_site indexing.
