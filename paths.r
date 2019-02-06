@@ -292,6 +292,7 @@ NEON_plot.level_genera_obs_16S.path <- paste0(dir, 'NEON_plot.level_genera_obs_1
 NEON_site.level_genera_obs_16S.path <- paste0(dir, 'NEON_site.level_genera_obs_16S.rds')
 NEON_plot.level_phyla_obs_16S.path <- paste0(dir,'NEON_plot.level_phyla_obs_16S.rds')
 NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.rds')
+NEON_all.fg_plot.site_obs_16S.path <- paste0(dir,'NEON_all.fg_plot.site_obs_16S.rds')
 
 #### 16S/pecan_gen ####
 
