@@ -6,6 +6,7 @@ library(runjags)
 library(foreach)
 library(doParallel)
 source('paths.r')
+source('NEFI_functions/tic_toc.r')
 #source('NEFI_functions/hierarch_ddirch_means.r')
 
 # source hierarch means function

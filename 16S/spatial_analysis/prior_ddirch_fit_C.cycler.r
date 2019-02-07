@@ -25,8 +25,11 @@ registerDoParallel(cores=n.cores)
 #set output path.----
 output.path <- bahram_16S_prior_C_cycle_JAGSfits 
 
-#load tedersoo data.----
+# load Bahram metadata.----
 m <- data.table(readRDS(bahram_metadata.path))
+setnames(m, "PH", "pH")
+
+# load Bahram abundance data
 a <- readRDS(prior_C_cyclers_abundances.path)
 
 # load covariate selection data.
@@ -45,7 +48,7 @@ for (i in 1:length(a)) {
   y <- a[[i]]
   y <- y$abundances
   
-  d <- m[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] 
+  d <- m[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] 
   d <- d[complete.cases(d),] #optional. This works with missing data.
   y <- y[rownames(y) %in% d$Run,]
   
@@ -76,7 +79,7 @@ for (i in 1:length(a)) {
   covariates <- c("intercept",rownames(covs[[2]][[i]])) # C_cyclers are second item; each of 4 pathways has different covariates
   cols <- which(colnames(x) %in% covariates)
   x.cov_select <- x[,cols, with=FALSE]
-  x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
+  x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients, no moisture
   x.list <- list(x.cov_select,x.all)
   
   #fit model using function.

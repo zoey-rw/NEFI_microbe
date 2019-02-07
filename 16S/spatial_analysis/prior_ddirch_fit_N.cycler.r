@@ -28,8 +28,11 @@ registerDoParallel(cores=n.cores)
 output.path <- bahram_16S_prior_N_cycle_JAGSfits 
 #output.path <-bahram_16S_prior_N_cycle_.5cutoff_JAGSfits
 
-#load bahram data.----
+#load Bahram metadata.----
 m <- data.table(readRDS(bahram_metadata.path))
+setnames(m, "PH", "pH")
+
+# load Bahram N_cycler abundances
 a <- readRDS(prior_N_cyclers_abundances.path)
 #a <- readRDS(prior_N_cyclers_abundances_.5cutoff.path)
 
@@ -49,7 +52,7 @@ y <- a[[i]]
 y <- y$abundances
 
 # subset covariate dataset
-d <- m[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
+d <- m[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
 d <- d[complete.cases(d),] #optional. This works with missing data.
 y <- y[rownames(y) %in% d$Run,]
 
@@ -80,7 +83,7 @@ x$map <- log(x$map)
 covariates <- c("intercept",rownames(covs[[1]][[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
 cols <- which(colnames(x) %in% covariates)
 x.cov_select <- x[,cols, with=FALSE]
-x.all  <- x[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
+x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
 x.list <- list(x.cov_select,x.all)
 
 #fit model using function.

@@ -28,6 +28,7 @@ output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/pri
 d <- data.table(readRDS(bahram_metadata.path))
 d <- d[,.(Run,moisture,pC,cn,PH,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
+setnames(d, "PH", "pH")
 
 #load data and format.----
 y <- readRDS(bahram_16S_common_phylo_groups_list.path)
@@ -62,7 +63,7 @@ output.list<-
       cat('Warning. x and y covariates not in the same order!')
     }
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x,
-                                     adapt = 200, burnin = 2000, sample = 1000, 
+                                     adapt = 200, burnin = 6000, sample = 1000, 
                                      parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                  #allows nested loop to work.
   }
