@@ -17,89 +17,50 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 
+tic()
+
 #set output.path----
-plot.output.path <- NEON_plot.level_phyla_obs_16S.path
-site.output.path <- NEON_site.level_phyla_obs_16S.path
+output.path <- NEON_all.phylo.levels_plot.site_obs_16S.path
 
 #load data and format.----
-d <- readRDS(NEON_phyla_abundances_16S.path)
-fg.c <- d$abundances
-fg.c$other <- NULL
-# drop anything with under 1000 sequences.
-seq_total <- d$seq_total[d$seq_total>1000]
-fg.c <- fg.c[d$seq_total>1000,]
+d <- readRDS(NEON_16S_phylo_groups_abundances.path)
 
-#get y dependent matrix.----
-y <- fg.c
-rownames(y) <- NULL
-y <- as.matrix(y)
-y <- y+1 #dirichlet doesn't like hard zeros because log-link.
-seq_total <- seq_total + 15
-y <- y/seq_total
-other <- 1- rowSums(y)
-y <- cbind(other,y)
+#register parallel environment.----
+n.cores <- detectCores()
+registerDoParallel(n.cores)
 
-
-#get core_plot, core_site, plot_site
-deprecatedVialID <- rownames(fg.c)
-#deprecatedVialID <- str_replace_all(deprecatedVialID, c("."= "_"))
-core_plot <- substr(deprecatedVialID,1,8)
-core_site <- substr(deprecatedVialID,1,4)
-plot_site <- unique(core_plot)
-plot_site <- substr(plot_site,1,4)
-
-
-#--------Get means using hierarch_ddirch_means function.-------#
-# takes ~1hr on geo.
-
-fit <- hierarch_ddirch_means(y = y, core_plot = core_plot, plot_site = plot_site)
-plot.fit <- fit$plot.fit
-site.fit <- fit$site.fit
-
-#add row and column names - plot level.
-for(i in 1:length(plot.fit)){
-  rownames(plot.fit[[i]]) <- unique(core_plot)
-  colnames(plot.fit[[i]]) <- colnames(y)
-}
-
-#add row and column names - site level.
-for(i in 1:length(site.fit)){
-  rownames(site.fit[[i]]) <- unique(plot_site)
-  colnames(site.fit[[i]]) <- colnames(y)
-}
+#loop over levels.----
+output <- list()
+output <-
+  foreach(i = 1:length(d)) %dopar% {
+    #Get y multivariate matrix.
+    abundances <- d[[i]]$abundances
+    seq.depth  <- d[[i]]$seq_total
+    abundances <- abundances[seq.depth>1000,] # drop samples with less than 1k reads
+    y <- as.matrix((abundances + 1) / rowSums(abundances + 1))
+    
+    #get core_plot and plot_site indexing.
+    core_plot <- substr(rownames(y), 1, 8)
+    core_site <- substr(rownames(y), 1, 4)
+    plot_site <- unique(core_plot)
+    plot_site <- substr(plot_site, 1, 4)
+    
+    #fit the hierarchical means.
+    fit <- hierarch_ddirch_means(y=y, core_plot = core_plot, plot_site = plot_site, jags.method = 'parallel')
+    
+    #add row and column names - plot level (you should put this in the function).
+    for(j in 1:length(fit$plot.fit)){
+      rownames(fit$plot.fit[[j]]) <- unique(core_plot)
+      rownames(fit$site.fit[[j]]) <- unique(plot_site)
+      colnames(fit$plot.fit[[j]]) <- colnames(y)
+      colnames(fit$site.fit[[j]]) <- colnames(y)
+    }
+    fit$core.fit <- y #add in the core-level data!
+    return(fit)
+  }
+names(output) <- names(d)
 
 #save matrix lists.----
-saveRDS(site.fit, site.output.path)
-saveRDS(plot.fit, plot.output.path)
-
-
-#--------- visual check --------#
-
-plot_check <- T
-if(plot_check == T){
-  
-  site.fit <- readRDS(site.output.path)
-  plot.fit <- readRDS(plot.output.path)
-  
-  #DO THESE MODELS BALL-PARK FIT STRAIGHTFORWARD MEANS?
-  #Fit doesn't need to be perfect and can be biased, just need to be ~linear.
-  #check if this is similar to just aggregating by site.
-  par(mfrow = c(1,2))
-  test.mu <- data.frame(core_plot,core_site, y)
-  setnames(test.mu, old = "WPS.2", new = "WPS-2")
-  
-  #site level.
-  k <- aggregate(. ~ core_site, FUN=mean, data = test.mu[,colnames(test.mu) %in% colnames(y)])
-  to_plot <- as.vector(as.matrix(k[,2:ncol(k)]))
-  plot(to_plot ~ as.vector(site.fit$mean));abline(0,1, lwd =2)
-  mtext('Site Level', side = 3)
-  #plot level.
-  k <- aggregate(. ~ core_plot, FUN=mean, data = test.mu[,colnames(test.mu) %in% colnames(y)])
-  to_plot <- as.vector(as.matrix(k[,2:ncol(k)]))
-  plot(to_plot ~ as.vector(plot.fit$mean));abline(0,1, lwd =2)
-  mtext('Plot Level', side = 3)
-}
-
-
-
+saveRDS(output, output.path)
+cat('Script complete. ');toc()
 
