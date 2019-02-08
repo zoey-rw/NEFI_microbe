@@ -93,7 +93,7 @@ x.list <- list(x.cov_select,x.all)
 output.list<-
   (1:length(x.list)) %>%	
   future_map(function(i){
-    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 1000, sample = 1000, parallel = T)
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 5000, sample = 1000, parallel = T)
     return(fit)
   })
 
