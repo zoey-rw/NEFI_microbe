@@ -63,7 +63,7 @@ output.list<-
       cat('Warning. x and y covariates not in the same order!')
     }
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x,
-                                     adapt = 200, burnin = 24000, sample = 1000, 
+                                     adapt = 200, burnin = 18000, sample = 1000, 
                                      parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                  #allows nested loop to work.
   }
