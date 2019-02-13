@@ -40,6 +40,9 @@ time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.name
 # combine SRA sample names with Bahram sample names.
 sample_names <- SRA[,c(7,9,11)]
 names(sample_names)[names(sample_names) == 'environment_biome'] <- 'Biome'
+has_F <- grep('_[A-Za-z]$', levels(sample_names$Sample_Name))
+levels(sample_names$Sample_Name)[has_F] <- substr(levels(sample_names$Sample_Name)[has_F],1,
+                                                         nchar(levels(sample_names$Sample_Name)[has_F])-2)
 metadata <- merge(sample_names, metadata_raw, by.x = "Sample_Name", by.y = "X")
 metadata <- data.table(metadata)
 
@@ -86,13 +89,14 @@ climate <- worldclim2_grab(latitude = metadata$Lat,longitude=metadata$Lon)
 climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)
 metadata <- cbind(metadata, climate)
 
-# grab columns from map actually of interest.
-metadata_subset <- metadata[,.(Sample_Name,Run,Lon,Lat,PH,Moisture,N,C,C.N,human.date,doy,epoch.date,NPP,forest,conifer)]
-
 # rename columns
-setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N',
-                       'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'),
-         c('Mapping.ID','moisture','pN','pC','cn','relEM'))
+setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N', 'PH',
+                    'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'),
+         c('Mapping.ID','moisture','pN','pC','cn','pH', 'relEM'))
+
+# grab columns from map actually of interest.
+metadata <- metadata[,.(Mapping.ID,Run,Lon,Lat,pH,moisture,pN,pC,cn,relEM,map,mat,
+                               human.date,doy,epoch.date,NPP,forest,conifer,Ca,Mg,P,K)]
 
 # save output.----
 saveRDS(metadata, output.path)

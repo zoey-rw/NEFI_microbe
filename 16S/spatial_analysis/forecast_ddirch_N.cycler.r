@@ -29,7 +29,7 @@ mod <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 all_pathways <- list()
 for (p in 1:length(mod)) {
 mod <- mod[[p]]
-mod <- mod[[3]] #just the all predictor case.
+mod <- mod$cov_select #just the all predictor case.
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_16S.path)
@@ -94,14 +94,6 @@ site_sd <- dat$site.site.sd
 site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
-
-# change predictor from 'pH' to 'PH' to match prior - fix upstream if prior model is re-run
-setnames(core.preds, "pH", "PH")
-setnames(core.sd, "pH", "PH")
-setnames(plot.preds, "pH", "PH")
-setnames(plot.sd, "pH", "PH")
-setnames(site.preds, "pH", "PH")
-setnames(site.sd, "pH", "PH")
 
 #Get forecasts from ddirch_forecast.----
 tic()
