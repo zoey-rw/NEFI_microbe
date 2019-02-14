@@ -4,6 +4,7 @@ rm(list=ls())
 library(runjags)
 library(foreach)
 library(doParallel)
+library(parallel)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 #source('NEFI_functions/hierarch_ddirch_means.r')
@@ -66,6 +67,7 @@ output <-
     }
     fit$core.fit <- y #add in the core-level data!
     out[[p]] <- fit
+    cat(paste0("Models fit for set ",i,"/3. \n"))
     }
     return(out)
   }

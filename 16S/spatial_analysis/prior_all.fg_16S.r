@@ -47,19 +47,19 @@ a3 <- list(readRDS(prior_cop_olig_abundances.path))
 a <- do.call(c, list(a1, a2, a3))
 a <- sapply(a, "[[", 1)
 
-# combine list of covariates
-covs <- do.call(c, covs)
-names(covs) <- group_names
-
 # set pathway names
 group_names <- list()
-for (i in 1:11) {
+for (i in 1:12) {
   group_names[[i]] <- colnames(a[[i]])[2]
 }
 group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
+# combine list of covariates
+covs <- do.call(c, covs)
+names(covs) <- group_names
+
 # subset covariate dataset
-d <- m[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)] # all nutrients, no moisture
+d <- m[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM,Ca,Mg,P,K)] 
 d <- d[complete.cases(d),] #optional. This works with missing data.
 
 # create vector for model output

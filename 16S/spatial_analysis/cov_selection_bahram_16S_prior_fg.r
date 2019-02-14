@@ -8,34 +8,31 @@ source('paths.r')
 
 #load data.
 d <- data.table::data.table(readRDS(bahram_metadata.path))
-d <- d[,.(Run,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 
-fg_all <- c("N_cyclers", "C_cyclers", "Cop_olig")
 all_fg_output <- list()
 
-for (f in 1:length(fg_all)) {
+# load Bahram functional group abundances
+a1 <- readRDS(prior_N_cyclers_abundances.path)
+a2 <- readRDS(prior_C_cyclers_abundances.path)
+a3 <- list(readRDS(prior_cop_olig_abundances.path))
+
+# combine these three lists of lists - just get abundances
+a <- do.call(c, list(a1, a2, a3))
+a <- sapply(a, "[[", 1)
+
+for (p in 1:length(a)) {
+
+# for both with- and without-nutrient covariates
 fg_output <- list()
-fg <- fg_all[f]
-abundances <- switch(fg,
-                     "N_cyclers" = readRDS(prior_N_cyclers_abundances.path),
-                     "C_cyclers" = readRDS(prior_C_cyclers_abundances.path),
-                     "Cop_olig" = readRDS(prior_cop_olig_abundances.path)
-)
-
-if (fg == "Cop_olig") {
-abun <- list()
-abun[[1]] <- abundances
-abundances <- abun
-}
-
-for (p in 1:length(abundances)) {
-
+  
 #organize y data
-y <- abundances[[p]]
-y <- y[[1]]
+y <- a[[p]]
 y <- y[rownames(y) %in% d$Run,]
-#order abundance table to match the metadata file
+
+#order abundance table to match the metadata file and vice versa
+d <- d[d$Run %in% rownames(y),]
 y <- y[match(d$Run, rownames(y)),]
 if(!sum(rownames(y) == d$Run) == nrow(y)){
   cat('Warning. x and y covariates not in the same order!')
@@ -48,29 +45,22 @@ y <- as.data.frame(y)
 
 #Drop in intercept, setup predictor matrix.
 d$intercept <- rep(1,nrow(d))
-x <- d[,.(intercept,pC,cn,PH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
-x$map <- log(x$map)
-#y <- as.data.frame(y)
-x <- as.data.frame(x)
+d$map <- log(d$map)
+
+x <- as.data.frame(d[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)])
+x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,pN,moisture,NPP,map,mat,forest,conifer,relEM)])
 
 #run the algorithm.
-send_it <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
 
-fg_output[p] <- send_it
-
-} # end pathway loop
-
-all_fg_output[[f]] <- fg_output
+all_fg_output[[p]] <- c(covs, covs.no.nutr)
+names(all_fg_output[[p]]) <- colnames(y)[2]
 
 } # end functional group loop
 
-# add names to each item
-covs <- all_fg_output
-names(covs) <- c("N_cycling","C_cycling","Cop_olig")
-names(covs[[1]]) <- c("Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate_reduction", 
-                       "N_fixation", "Dissim_nitrate_reduction", "Nitrification", "Denitrification")
-names(covs[[2]]) <- c("Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph")
-names(covs[[3]]) <- "Cop_olig"
+# add name to last item 
+names(all_fg_output)[[12]] <- "Cop_olig"
 
 # save the output
-saveRDS(covs, bahram_16S_prior_fg_cov.selection_JAGS)
+saveRDS(all_fg_output, bahram_16S_prior_fg_cov.selection_JAGS)
