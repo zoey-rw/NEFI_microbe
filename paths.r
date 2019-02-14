@@ -246,6 +246,7 @@ bahram_16S_prior_N_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cyc
 bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
 bahram_16S_prior_C_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_.5cutoff_JAGSfit.rds')
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
+prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits')
 
 #### 16S/scc_gen: raw data for prior metadata ####
 dir <-  scc_gen_16S_dir
@@ -266,7 +267,6 @@ cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds")
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
 phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
 prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - Bahram
-prior_cop_olig_abundances_indiv.path <- paste0(dir,"prior_cop_olig_abundances_indiv.rds") # copiotrophic/oligotrophic relative abundances - Bahram
 NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - NEON
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_N_cyclers_abundances_.5cutoff.path <- paste0(dir, "prior_N_cyclers_abundances_.5cutoff.rds")
