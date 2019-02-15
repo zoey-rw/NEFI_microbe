@@ -54,10 +54,6 @@ for (i in 1:12) {
 }
 group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
-# combine list of covariates
-covs <- do.call(c, covs)
-names(covs) <- group_names
-
 # subset covariate dataset
 d <- m[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM,Ca,Mg,P,K)] 
 d <- d[complete.cases(d),] #optional. This works with missing data.
@@ -95,11 +91,20 @@ for (i in 1:length(a)) {
   
   # define multiple subsets
   # get covariates from model selection output
+  #  covs <- do.call(c, covs)
+  #names(covs) <- group_names
+  covs <- sapply(covs, "[[", 1)
   covariates <- c("intercept",rownames(covs[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
   cols <- which(colnames(x) %in% covariates)
   x.cov_select <- x[,cols, with=FALSE]
+  
+  covs.no.nutr <- sapply(covs, "[[", 2)
+  covariates <- c("intercept",rownames(covs.no.nutr[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
+  cols <- which(colnames(x) %in% covariates)
+  x.cov_select.no.nutr <- x[,cols, with=FALSE]
+  
   x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
-  x.list <- list(x.cov_select,x.all)
+  x.list <- list(x.cov_select,x.cov_select.no.nutr,x.all)
   
   #fit model using function.
   #This take a long time to run, probably because there is so much going on.
@@ -116,7 +121,7 @@ for (i in 1:length(a)) {
   output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
   
   #name the items in the list
-  names(output.list) <- c('cov_select','all.preds','int.only')
+  names(output.list) <- c('cov_select','cov_select_no.nutr','all.preds','int.only')
   all_fg_models[[i]] <- output.list
   cat(paste0('Prior fit completed for ', pathway_names[[i]]))
 }

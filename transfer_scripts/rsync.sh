@@ -1,5 +1,8 @@
 # script for rsync between pecan2 and scc data directories.
 
+# set permissions to read/write/execute for everyone.
+chmod 777 -R /projectnb/talbot-lab-data/NEFI_data/
+
 # sending ITS data from SCC to pecan
 rsync -av -O -e ssh /projectnb/talbot-lab-data/NEFI_data/ITS/scc_gen/ zrwerbin@pecan2.bu.edu:/fs/data3/caverill/NEFI_data/ITS/scc_gen/
 
