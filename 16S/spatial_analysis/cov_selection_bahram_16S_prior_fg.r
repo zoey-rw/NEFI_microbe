@@ -2,6 +2,7 @@
 #linear combination of as many predictors as we can think of, no interactions.
 #clear environment, load paths and functions.
 rm(list=ls())
+library(runjags)
 source('NEFI_functions/covariate_selection_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('paths.r')
@@ -11,6 +12,7 @@ d <- data.table::data.table(readRDS(bahram_metadata.path))
 d <- d[,.(Run,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 
+output.path <- bahram_16S_prior_fg_cov.selection_JAGS
 all_fg_output <- list()
 
 # load Bahram functional group abundances
@@ -52,15 +54,17 @@ x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,pN,moisture,NPP,map,mat,fores
 
 #run the algorithm.
 covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+cat(paste0("First covariate selection complete for group: ", colnames(y)[2]))
 covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+cat(paste0("Second (no.nutr) covariate selection complete for group: ", colnames(y)[2]))
 
 all_fg_output[[p]] <- c(covs, covs.no.nutr)
 names(all_fg_output[[p]]) <- colnames(y)[2]
-
+cat(paste0("All covariate selection complete for group: ", colnames(y)[2]))
 } # end functional group loop
 
 # add name to last item 
 names(all_fg_output)[[12]] <- "Cop_olig"
 
 # save the output
-saveRDS(all_fg_output, bahram_16S_prior_fg_cov.selection_JAGS)
+saveRDS(all_fg_output, output.path)
