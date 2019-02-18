@@ -48,10 +48,10 @@ for (i in 1:12) {
 group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
 #subset to predictors of interest, complete case the thing.
-d <- d[,.(Run,pC,cn,pH,pN,moisture,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)] #with micronutrients.
-#d <- d[,.(Run,pC,cn,pH,pN,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Run,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)] #with micronutrients.
+#d <- d[,.(Run,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[d$Run %in% rownames(y[[1]]$abundances),]
+d <- d[d$Run %in% rownames(y[[1]]),]
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -92,7 +92,6 @@ tic()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
     y.group <- y[[i]]
-    y.group <- y.group$abundances
     y.group <- y.group[rownames(y.group) %in% d$Run,]
     y.group <- y.group[match(d$Run, rownames(y.group)),] #order abundance table to match the metadata file
     y.group <- y.group + 1
