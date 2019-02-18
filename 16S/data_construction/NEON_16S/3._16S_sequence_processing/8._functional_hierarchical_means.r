@@ -42,10 +42,7 @@ output <-
   foreach(i = 1:length(d)) %dopar% { # loop through each functional group
     
     y <- d[[i]]
-    # out <- list()
-    # 
-    # for (p in 1:length(y)) { # loop through each functional group
-    # 
+
     #Get y multivariate matrix.
     abundances <- y$abundances
     seq.depth  <- y$seq_total

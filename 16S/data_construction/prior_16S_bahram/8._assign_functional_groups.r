@@ -105,6 +105,7 @@ other <- seq_total - rowSums(cop_olig)
 cop_olig <- cbind(other,cop_olig)
 cop_olig <- list(cop_olig,seq_total)
 names(cop_olig) <- c('abundances','seq_total')
+cop_olig$abundances <- as.matrix(cop_olig$abundances)
 cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
 saveRDS(cop_olig, prior_cop_olig_abundances.path)
 

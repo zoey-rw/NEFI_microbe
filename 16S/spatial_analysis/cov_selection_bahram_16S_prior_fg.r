@@ -5,6 +5,7 @@ rm(list=ls())
 library(runjags)
 source('NEFI_functions/covariate_selection_JAGS.r')
 source('NEFI_functions/crib_fun.r')
+source('NEFI_functions/tic_toc.r')
 source('paths.r')
 
 #load data.
@@ -24,10 +25,12 @@ a3 <- list(readRDS(prior_cop_olig_abundances.path))
 a <- do.call(c, list(a1, a2, a3))
 a <- sapply(a, "[[", 1)
 
-for (p in 1:length(a)) {
-
-# for both with- and without-nutrient covariates
-fg_output <- list()
+tic()
+#for (p in 1:length(a)) {
+  # loop over models
+  output <- list()
+  output <-
+    foreach(p = 1:length(a)) %dopar% { # loop through each functional group
   
 #organize y data
 y <- a[[p]]
@@ -58,13 +61,14 @@ cat(paste0("First covariate selection complete for group: ", colnames(y)[2]))
 covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
 cat(paste0("Second (no.nutr) covariate selection complete for group: ", colnames(y)[2]))
 
-all_fg_output[[p]] <- c(covs, covs.no.nutr)
-names(all_fg_output[[p]]) <- colnames(y)[2]
+cov_output <- list(covs, covs.no.nutr)
+names(cov_output) <- c(paste0("Cov_select ", colnames(y)[2]), paste0("No.nutr cov_select ", colnames(y)[2]))
 cat(paste0("All covariate selection complete for group: ", colnames(y)[2]))
+return(cov_output)
 } # end functional group loop
-
-# add name to last item 
-names(all_fg_output)[[12]] <- "Cop_olig"
+toc()
+# change name of last item 
+names(output)[[12]] <- "Cop_olig"
 
 # save the output
-saveRDS(all_fg_output, output.path)
+saveRDS(output, output.path)

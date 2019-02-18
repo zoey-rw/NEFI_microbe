@@ -110,6 +110,7 @@ for (i in 1:length(a)) {
   #This take a long time to run, probably because there is so much going on.
   #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
   #for running production fit on remote.
+  output <- list()
   output.list<-
     (1:length(x.list)) %>%	
     future_map(function(i){
