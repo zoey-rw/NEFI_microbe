@@ -1,5 +1,5 @@
 #Making a spatial forecast based on the prior data to NEON sites at core, plot and site levels.
-#forecasting top 15 phyla.
+#forecasting functional groups.
 #downstream this will log transform map, which prevents this from generalizing beyond the dirichlet example.
 #This script depends on the following packages: DirichletReg.
 #clear environment, source paths, packages and functions.
@@ -32,7 +32,7 @@ mod <- mod[[p]]
 mod <- mod$cov_select #just the all predictor case.
 
 #get core-level covariate means and sd.----
-dat <- readRDS(hierarch_filled_16S.path)
+dat <- readRDS(hierarch_filled.path)
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu

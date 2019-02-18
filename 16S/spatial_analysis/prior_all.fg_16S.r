@@ -104,7 +104,9 @@ output.list<-
     output <-
       (1:length(x.list)) %>%	
       future_map(function(i){
-        fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[i],adapt = 200, burnin = 5000, sample = 1000, parallel = T)
+        fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[i],
+                                         adapt = 200, burnin = 5000, sample = 1000, 
+                                         parallel = T, parallel_method="parallel")
         return(fit)
       })
     names(output) <- c("no.nutr.preds","all.preds")
