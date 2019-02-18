@@ -91,21 +91,23 @@ for (i in 1:length(a)) {
   
   # define multiple subsets
   # get covariates from model selection output
-  #  covs <- do.call(c, covs)
+  #covs <- do.call(c, covs)
   #names(covs) <- group_names
-  covs <- sapply(covs, "[[", 1)
-  covariates <- c("intercept",rownames(covs[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
-  cols <- which(colnames(x) %in% covariates)
-  x.cov_select <- x[,cols, with=FALSE]
-  
-  covs.no.nutr <- sapply(covs, "[[", 2)
-  covariates <- c("intercept",rownames(covs.no.nutr[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
-  cols <- which(colnames(x) %in% covariates)
-  x.cov_select.no.nutr <- x[,cols, with=FALSE]
-  
+  # covs <- sapply(covs, "[[", 1)
+  # covariates <- c("intercept",rownames(covs[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
+  # cols <- which(colnames(x) %in% covariates)
+  # x.cov_select <- x[,cols, with=FALSE]
+  # 
+  # covs.no.nutr <- sapply(covs, "[[", 2)
+  # covariates <- c("intercept",rownames(covs.no.nutr[[i]])) # N_cyclers are first item; each of 7 pathways has different covariates
+  # cols <- which(colnames(x) %in% covariates)
+  # x.cov_select.no.nutr <- x[,cols, with=FALSE]
+  # 
   x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
-  x.list <- list(x.cov_select,x.cov_select.no.nutr,x.all)
-  
+  x.list <- list(
+    #x.cov_select,x.cov_select.no.nutr,
+    x.all)
+  # 
   #fit model using function.
   #This take a long time to run, probably because there is so much going on.
   #fit <- site.level_dirlichet_jags(y=y,x_mu=x,adapt = 50, burnin = 50, sample = 100)
@@ -117,9 +119,6 @@ for (i in 1:length(a)) {
       fit <- site.level_dirlichet_jags(y=y,x_mu=x.list[i],adapt = 200, burnin = 5000, sample = 1000, parallel = T)
       return(fit)
     })
-  
-  #get intercept only fit.
-  output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
   
   #name the items in the list
   names(output.list) <- c('cov_select','cov_select_no.nutr','all.preds','int.only')
