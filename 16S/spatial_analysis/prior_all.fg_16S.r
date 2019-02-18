@@ -78,8 +78,8 @@ x$map <- log(x$map)
 # x.cov_select.no.nutr <- x[,cols, with=FALSE]
 
 #define multiple subsets
-x.no.nutr <- x[,.(intercept,pC,cn,pH,pN,moisture,NPP,mat,map,forest,conifer,relEM)]
-x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
+x.no.nutr <- x[,.(intercept,pC,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
 x.list <- list(
   #x.cov_select,x.cov_select.no.nutr,
   x.no.nutr,
