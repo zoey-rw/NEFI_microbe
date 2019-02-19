@@ -3,10 +3,19 @@
 #clear environment, load paths and functions.
 rm(list=ls())
 library(runjags)
+library(doParallel)
+library(future)
+library(furrr) 
+library(magrittr)
+plan(multiprocess)
 source('NEFI_functions/covariate_selection_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 source('paths.r')
+
+#detect and register cores.
+n.cores <- detectCores()
+registerDoParallel(cores=n.cores)
 
 #load data.
 d <- data.table::data.table(readRDS(bahram_metadata.path))
@@ -52,13 +61,15 @@ y <- as.data.frame(y)
 d$intercept <- rep(1,nrow(d))
 d$map <- log(d$map)
 
-x <- as.data.frame(d[,.(intercept,pC,cn,pH,Ca,Mg,P,K,pN,moisture,NPP,map,mat,forest,conifer,relEM)])
-x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,pN,moisture,NPP,map,mat,forest,conifer,relEM)])
+x <- as.data.frame(d[,.(intercept,pC,cn,pH,Ca,Mg,P,K,moisture,NPP,map,mat,forest,conifer,relEM)])
+x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)])
 
 #run the algorithm.
-covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, 
+                                 n.sample = 1000,parallel = F)
 cat(paste0("First covariate selection complete for group: ", colnames(y)[2]))
-covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, n.sample = 1000, parallel = F)
+covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, 
+                                         n.sample = 1000, parallel = F)
 cat(paste0("Second (no.nutr) covariate selection complete for group: ", colnames(y)[2]))
 
 cov_output <- list(covs, covs.no.nutr)

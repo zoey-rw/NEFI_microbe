@@ -29,13 +29,16 @@ mod <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 all_pathways <- list()
 for (p in 1:length(mod)) {
 mod <- mod[[p]]
-mod <- mod$cov_select #just the all predictor case.
+mod <- mod$cov_select #just the selected covariates
 
 #get core-level covariate means and sd.----
-dat <- readRDS(hierarch_filled.path)
+dat <- readRDS(hierarch_filled.path) # using ITS data right now.
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
+# grab moisture from other file, until it's incorporated into new hier_filled
+site_mois <- readRDS(site_site_16S.path)
+site_mu$moisture <- site_mois$moisture
 #merge together.
 plot_mu$siteID <- NULL
 core.preds <- merge(core_mu   , plot_mu)
@@ -59,6 +62,8 @@ names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
 core_mu <- dat$core.plot.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
+site_mu$moisture <- site_mois$moisture
+
 #merge together, .
 plot_mu$siteID <- NULL
 plot.preds <- merge(core_mu,plot_mu)
@@ -81,6 +86,8 @@ names(plot.sd)[names(plot.sd)=='b.relEM'] <- "relEM"
 core_mu <- dat$core.site.mu
 plot_mu <- dat$plot.site.mu
 site_mu <- dat$site.site.mu
+site_mu$moisture <- site_mois$moisture
+
 #merge together
 site.preds <- merge(core_mu, plot_mu)
 site.preds <- merge(site.preds,site_mu)
