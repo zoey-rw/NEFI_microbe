@@ -43,7 +43,7 @@ y <- sapply(a, "[[", 1)
 # set pathway names
 group_names <- list()
 for (i in 1:12) {
-  group_names[[i]] <- colnames(a[[i]])[2]
+  group_names[[i]] <- colnames(y[[i]])[2]
 }
 group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
@@ -101,16 +101,15 @@ output.list<-
       cat('Warning. x and y covariates not in the same order!')
     }
     
-    output <-
-      (1:length(x.list)) %>%	
-      future_map(function(i){
-        fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[i],
-                                         adapt = 200, burnin = 5000, sample = 1000, 
-                                         parallel = T, parallel_method="parallel")
-        return(fit)
-      })
+    output <- list()
+    for(k in 1:length(x.list)){
+      fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[i],
+                                       adapt = 200, burnin = 5000, sample = 1000, 
+                                       parallel = T, parallel_method="parallel")
+      output[[k]] <- fit
+    }
     names(output) <- c("no.nutr.preds","all.preds")
-    return(output)                                                  #allows nested loop to work.
+    return(output)                                          
   }
 cat('Model fitting loop complete! ')
 toc()
