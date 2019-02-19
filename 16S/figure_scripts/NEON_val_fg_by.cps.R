@@ -66,8 +66,8 @@ raw.truth <- raw.truth$core.fit
   ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
-  phylum_name <- colnames(fcast$mean)[i]
-  obs.mu   <- truth[,c(phylum_name)][order(match(names(truth[,c(phylum_name)]),names(mu)))]
+  group_name <- colnames(fcast$mean)[i]
+  obs.mu   <- truth[,c(group_name)][order(match(names(truth[,c(group_name)]),names(mu)))]
   
   # plot
   # get ylim
@@ -76,7 +76,7 @@ raw.truth <- raw.truth$core.fit
   limy <- as.numeric(obs_limit)*1.05
   if(limy > 0.95){limy <- 1}
   
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', phylum_name))
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', group_name))
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
   mtext(paste0('R2=',rsq), side = 3, cex = 0.7, line = -2.7, adj = 0.03)
   #1-to-1 line.
@@ -115,19 +115,19 @@ raw.truth <- raw.truth$core.fit
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]	
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]	
   group_name <- colnames(fcast$mean)[i]	
-  obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]	
-  obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]	
-  obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]	
+  obs.mu   <- truth$mean[,group_name][order(match(names(truth$mean[,group_name]),names(mu)))]	
+  obs.lo95 <- truth$lo95[,group_name][order(match(names(truth$lo95[,group_name]),names(mu)))]	
+  obs.hi95 <- truth$hi95[,group_name][order(match(names(truth$hi95[,group_name]),names(mu)))]	
   
   #plot
   
   # get ylim
-  obs_limit <- max(obs.mu, na.rm = T)
-  if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
-  limy <- as.numeric(obs_limit)*1.05
-  if(limy > 0.95){limy <- 1}
+  # obs_limit <- max(obs.mu, na.rm = T)
+  # if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
+  # limy <- as.numeric(obs_limit)*1.05
+  # if(limy > 0.95){limy <- 1}
   
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', phylum_name))	
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', group_name))	
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)	
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)	
   mtext(paste0('R2=',rsq), side = 3, cex = .7, line = -2.7, adj = 0.03)	
@@ -173,19 +173,19 @@ raw.truth <- raw.truth$core.fit
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
   group_name <- colnames(fcast$mean)[i]
-  obs.mu   <- truth$mean[,phylum_name][order(match(names(truth$mean[,phylum_name]),names(mu)))]
-  obs.lo95 <- truth$lo95[,phylum_name][order(match(names(truth$lo95[,phylum_name]),names(mu)))]
-  obs.hi95 <- truth$hi95[,phylum_name][order(match(names(truth$hi95[,phylum_name]),names(mu)))]
+  obs.mu   <- truth$mean[,group_name][order(match(names(truth$mean[,group_name]),names(mu)))]
+  obs.lo95 <- truth$lo95[,group_name][order(match(names(truth$lo95[,group_name]),names(mu)))]
+  obs.hi95 <- truth$hi95[,group_name][order(match(names(truth$hi95[,group_name]),names(mu)))]
   
   #plot
   
   # get ylim
-  obs_limit <- max(obs.mu, na.rm = T)
-  if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
-  limy <- as.numeric(obs_limit)*1.05
-  if(limy > 0.95){limy <- 1}
+  # obs_limit <- max(obs.mu, na.rm = T)
+  # if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
+  # limy <- as.numeric(obs_limit)*1.05
+  # if(limy > 0.95){limy <- 1}
   
-  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', phylum_name))
+  plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', group_name))
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
   rsq <- round(summary(lm(obs.mu ~mu))$r.squared,2)
   mtext(paste0('R2=',rsq), cex = .7, side = 3, line = -2.7, adj = 0.03)

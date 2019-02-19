@@ -29,7 +29,7 @@ all_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 all_pathways <- list()
 for (p in 1:length(all_mods)) {
 mod <- all_mods[[p]]
-mod <- mod$all #just the selected covariates
+mod <- mod$all.preds #just the selected covariates
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path) # using ITS data right now.
