@@ -25,11 +25,11 @@ output.path <- NEON_cps_fcast_N.cycler_16S.path
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-mod <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
+all_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 all_pathways <- list()
-for (p in 1:length(mod)) {
-mod <- mod[[p]]
-mod <- mod$cov_select #just the selected covariates
+for (p in 1:length(all_mods)) {
+mod <- all_mods[[p]]
+mod <- mod$all #just the selected covariates
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path) # using ITS data right now.

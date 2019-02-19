@@ -152,33 +152,33 @@ N_cyclers[,c("Partial_Nitrification", "Partial_NO", "Partial_N2O", "Partial_N2")
 # For Albright dataset:
 # get value by genus; if pathway is present in more than half of species, it is present for that genus
 pathway_names <- colnames(N_cyclers[9:15])
-N_cycle_genera <- data.frame(matrix(ncol=0,nrow=0))
-for (g in 1:length(unique(N_cyclers$Genus))) {
-  i <- unique(N_cyclers$Genus)[g]
-  species <- N_cyclers[N_cyclers$Genus==i,]
-  nspecies <- nrow(species)
-  out <- data.frame(Genus = i,
-                    nrow(species[species$Assim_nitrite_reduction == 1,])/nspecies,
-                    nrow(species[species$Dissim_nitrite_reduction == 1,])/nspecies,
-                    nrow(species[species$Assim_nitrate_reduction == 1,])/nspecies,
-                    nrow(species[species$N_fixation == 1,])/nspecies,
-                    nrow(species[species$Dissim_nitrate_reduction == 1,])/nspecies,
-                    nrow(species[species$Nitrification == 1,])/nspecies,
-                    nrow(species[species$Denitrification == 1,])/nspecies
-  )
-  colnames(out) <- c("Genus", pathway_names)
-  out$Genus <- as.character(i)
-  out[out >= .5] <- 1
-  out[out < .5] <- 0
-  out$Genus <- as.character(i)
-  N_cycle_genera <- rbind(N_cycle_genera, out)
-}
+# N_cycle_genera <- data.frame(matrix(ncol=0,nrow=0))
+# for (g in 1:length(unique(N_cyclers$Genus))) {
+#   i <- unique(N_cyclers$Genus)[g]
+#   species <- N_cyclers[N_cyclers$Genus==i,]
+#   nspecies <- nrow(species)
+#   out <- data.frame(Genus = i,
+#                     nrow(species[species$Assim_nitrite_reduction == 1,])/nspecies,
+#                     nrow(species[species$Dissim_nitrite_reduction == 1,])/nspecies,
+#                     nrow(species[species$Assim_nitrate_reduction == 1,])/nspecies,
+#                     nrow(species[species$N_fixation == 1,])/nspecies,
+#                     nrow(species[species$Dissim_nitrate_reduction == 1,])/nspecies,
+#                     nrow(species[species$Nitrification == 1,])/nspecies,
+#                     nrow(species[species$Denitrification == 1,])/nspecies
+#   )
+#   colnames(out) <- c("Genus", pathway_names)
+#   out$Genus <- as.character(i)
+#   out[out >= .5] <- 1
+#   out[out < .5] <- 0
+#   out$Genus <- as.character(i)
+#   N_cycle_genera <- rbind(N_cycle_genera, out)
+# }
 
 
 ##### Assign taxa to functional groups ##### 
 
 # create pathway columns
-tax[,pathway_names] <- 0
+tax[,pathway_names] <- NA
 
 # check if sample genus is in classification data, and that a classified pathway is present; 
 # assign those genera a present pathway

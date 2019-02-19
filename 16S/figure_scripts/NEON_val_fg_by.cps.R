@@ -8,27 +8,14 @@ library(data.table)
 
 
 # load forecast 
-output <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
-output <- output[[1]]
+all_output <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
+
 # read in obs table that links deprecatedVialID and geneticSampleID
-map <- readRDS(obs.table_16S.path)
+#map <- readRDS(obs.table_16S.path)
+map <- readRDS(core_obs_16S.path)
 
 # read in prior fit.
-fit <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
-
-fit <- fit[[2]]
-fit <- fit$cov_select
-
-
-# get rsq from priors
-prior_rsq <- list()
-for(i in 1:ncol(fit$predicted)){
-  mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
-  rsq <-round(summary(mod)$pseudo.r.squared, 2)
-  prior_rsq[i] <- as.character(rsq)
-}
-prior_rsq <- as.numeric(prior_rsq)
-names(prior_rsq) <- colnames(fit$predicted)
+all_fits <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
 
 #validate against observed data by plotting.----
 trans <- 0.3
@@ -40,12 +27,22 @@ par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 
-#for (i in 2:16) {
-  
-raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-raw.truth <- raw.truth[[1]]
-raw.truth <- raw.truth$core.fit
+for (p in 1:length(all_output)) {
+ # p <- 1
+output <- all_output[[p]]  
+fit <- all_fits[[p]]
+fit <- fit$all.preds
+i <- 2 
 
+# get prior rsq.
+##### CHANGE WHEN INCORPORATING COP_OLIG
+mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
+prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
+
+raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
+raw.truth <- raw.truth[[p]]
+raw.truth <- raw.truth$core.fit
+# only second column 
   #core.level.----
   #organize data.
   fcast <- output$core.fit
@@ -98,12 +95,11 @@ raw.truth <- raw.truth$core.fit
   
   
   
-  i <- 2
   # plot.level
   fcast <- output$plot.fit	
   # read in observed data 
   raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-  truth <- raw.truth[[1]]
+  truth <- raw.truth[[p]]
   truth <- truth$plot.fit
   
   for(k in 1:length(truth)){	
@@ -160,7 +156,7 @@ raw.truth <- raw.truth$core.fit
   
   # read in observed data
   raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-  truth <- raw.truth[[1]]
+  truth <- raw.truth[[p]]
   truth <- truth$site.fit
   
   for(k in 1:length(truth)){
@@ -206,8 +202,8 @@ raw.truth <- raw.truth$core.fit
   state <- paste0(in_it,'% of observations within 95% prediction interval.')
   mtext(state,side = 3,  cex = .7, line = -1.3, adj = 0.05)
   #}
-  mtext(paste0("Rsq for prior fit:", prior_rsq[i]), cex = .7, side = 3, line = 1, outer = TRUE)
+  mtext(paste0("Rsq for prior fit:", prior_rsq), cex = .7, side = 3, line = 1, outer = TRUE)
   #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
   
 }
-dev.off()
+#dev.off()
