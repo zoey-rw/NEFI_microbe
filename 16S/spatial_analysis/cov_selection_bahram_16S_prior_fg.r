@@ -6,10 +6,14 @@ source('NEFI_functions/covariate_selection_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 source('paths.r')
+library(RCurl)
+# source function from colins github
+script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
+eval(parse(text = script))
 
 #load data.
 d <- data.table::data.table(readRDS(bahram_metadata.path))
-d <- d[,.(Run,pC,cn,pH,Ca,Mg,P,K,moisture,NPP,map,mat,forest,conifer,relEM)]
+d <- d[,.(Run,pC,cn,pH,Ca,Mg,P,K,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 
 output.path <- bahram_16S_prior_fg_cov.selection_JAGS
@@ -25,23 +29,22 @@ fg_all <- sapply(a, "[[", 1)
 
 
 #Drop in intercept, setup predictor matrix.
+d <- d[d$Run %in% rownames(a[[1]][[1]])]
 d$intercept <- rep(1,nrow(d))
 d$map <- log(d$map)
-x <- as.data.frame(d[,.(intercept,pC,cn,pH,Ca,Mg,P,K,moisture,NPP,map,mat,forest,conifer,relEM)])
-x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)])
+x <- as.data.frame(d[,.(intercept,pC,cn,pH,Ca,Mg,P,K,NPP,map,mat,forest,conifer,relEM)])
+x.no.nutr <- as.data.frame(d[,.(intercept,pC,cn,pH,NPP,map,mat,forest,conifer,relEM)])
 
 #fg_all <- c("N_cyclers", "C_cyclers", "Cop_olig")
 all_fg_output <- list()
 
 for (f in 1:length(fg_all)) {
   fg_output <- list()
-  fg <- fg_all[f]
   
   #organize y data
-  y <- fg
+  y <- fg_all[f]
   y <- y[[1]]
   y <- y[rownames(y) %in% d$Run,]
-  d <- d[d$Run %in% rownames(y)]
   #order abundance table to match the metadata file
   y <- y[match(d$Run, rownames(y)),]
   if(!sum(rownames(y) == d$Run) == nrow(y)){
@@ -53,17 +56,18 @@ for (f in 1:length(fg_all)) {
   y <- y/rowSums(y)
   y <- as.data.frame(y)
   
-  # covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, 
-  #                                  n.sample = 1000,parallel = F)
-  # cat(paste0("First covariate selection complete for group: ", colnames(y)[2]))
-  covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000, 
-                                           n.sample = 1000, parallel = F)
+  covs <- covariate_selection_JAGS(y=y,x_mu=x, n.adapt = 300, n.burnin = 1000, 
+                                   n.sample = 1000,parallel = F)
+  cat(paste0("First covariate selection complete for group: ", colnames(y)[2]))
+  covs.no.nutr <- covariate_selection_JAGS(y=y,x_mu=x.no.nutr, n.adapt = 300, n.burnin = 1000,
+                                          n.sample = 1000, parallel = F)
   cat(paste0("Second (no.nutr) covariate selection complete for group: ", colnames(y)[2]))
-  
-  fg_output <- list(#covs, 
+
+  fg_output <- list(covs, 
                     covs.no.nutr)
-  names(fg_output) <- c(#paste0("Cov_select ", colnames(y)[2]), 
-                        paste0("No.nutr cov_select ", colnames(y)[2]))
+  names(fg_output) <- c(paste0("Cov_select ", colnames(y)[2]), 
+                        paste0("No.nutr cov_select ", colnames(y)[2])
+                        )
   cat(paste0("All covariate selection complete for group: ", colnames(y)[2]))
   all_fg_output[[f]] <- fg_output
   #return(fg_output)

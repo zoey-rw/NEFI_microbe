@@ -25,11 +25,21 @@ output.path <- NEON_cps_fcast_N.cycler_16S.path
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-all_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
-all_pathways <- list()
+N_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
+C_mods <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
+Cop_olig <- list(readRDS(prior_cop_olig_abundances.path))
+phylo <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+
+# combine two lists of models 
+all_mods <- do.call(c, list(phylo, N_mods, C_mods, Cop_olig))
+
+all_fcasts <- list()
 for (p in 1:length(all_mods)) {
 mod <- all_mods[[p]]
-mod <- mod$all.preds #just the selected covariates
+if (p > 5) {
+  mod <- mod$all.preds
+}
+#mod <- mod$all.preds #just the selected covariates
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled.path) # using ITS data right now.
@@ -108,12 +118,13 @@ core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=co
 plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID)
 site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID)
 toc()
+cat(paste("Forecast created for model "))
 
 #store output as a list and save.----
 output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
 names(output) <- c('core.fit','plot.fit','site.fit',
                    'core.preds','plot.preds','site.preds',
                    'core.sd','plot.sd','site.sd')
-all_pathways[[p]] <- output
+all_fcasts[[p]] <- output
 }
-saveRDS(all_pathways, output.path)
+saveRDS(all_fcasts, output.path)
