@@ -8,47 +8,43 @@ library(data.table)
 
 
 # load forecast 
-all_fcasts <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
-all_fcasts <- all_fcasts[6:12]
+all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
+all_fcasts <- all_fcasts[6:17]
 # read in obs table that links deprecatedVialID and geneticSampleID
-#map <- readRDS(obs.table_16S.path)
 map <- readRDS(core_obs_16S.path)
 
 # read in prior fit.
-all_fits <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
+all_fits <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 
 #validate against observed data by plotting.----
 trans <- 0.3
 limy <- c(0,.1)
-#i = 2 
 
-#pdf(NEON_cps.fcast_phyla_16S.path)
+pdf(NEON_cps.fcast_fg_16S.path)
 par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 
 for (p in 1:length(all_fcasts)) {
-#p <- 1
+  
 output <- all_fcasts[[p]]  
 fit <- all_fits[[p]]
-#fit <- fit$all.preds
-fit <- fit$cov_select
-i <- 2 
+fit <- fit$all.preds
+#fit <- fit$cov_select
 
-##### CHANGE WHEN INCORPORATING COP_OLIG
-#for (i in 2:ncol(fit$observed)){
-
+# read in observed values
 raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-raw.truth <- raw.truth[1:7]
 raw.truth <- raw.truth[[p]]
-raw.truth <- raw.truth$core.fit
-# only second column 
-  #core.level.----
-  #organize data.
+
+for (i in 2:ncol(fit$observed)){
+
+
+#core.level.----
+  # read in core-level forecast
   fcast <- output$core.fit
-  # read in observed data
-  truth <- raw.truth #readRDS(NEON_phyla_abundances_16S.path)
-  #truth <- truth$rel.abundances[truth$seq_total>1000,]
+  # read in core-level observed values
+  truth <- raw.truth$core.fit
+  #organize data.
   truth <- as.data.frame(truth)
   truth$deprecatedVialID <- rownames(truth)
   truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID", "siteID")], by = "deprecatedVialID")
@@ -73,8 +69,8 @@ raw.truth <- raw.truth$core.fit
   mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
   prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
   
-  # plot
-  # get ylim
+  # create plot
+  # get ylim (used for plot/site level as well)
   obs_limit <- max(obs.mu, na.rm = T)
   if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
   limy <- as.numeric(obs_limit)*1.05
@@ -95,16 +91,14 @@ raw.truth <- raw.truth$core.fit
   in_it <- round(sum(as.numeric(obs.mu) < pi_0.975 & as.numeric(obs.mu) > pi_0.025, na.rm = TRUE) / length(obs.mu),2) * 100
   state <- paste0(in_it,'% of observations within 95% prediction interval.')
   mtext(state,side = 3, cex = 0.7, line = -1.3, adj = 0.05)
-  #}
   
   
   
-  # plot.level
+# plot.level----
+  # read in plot-level forecast 
   fcast <- output$plot.fit	
-  # read in observed data 
-  raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-  truth <- raw.truth[[p]]
-  truth <- truth$plot.fit
+  # read in plot-level observed values 
+  truth <- raw.truth$plot.fit
   
   for(k in 1:length(truth)){	
     rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)	
@@ -123,13 +117,7 @@ raw.truth <- raw.truth$core.fit
   obs.lo95 <- truth$lo95[,group_name][order(match(names(truth$lo95[,group_name]),names(mu)))]	
   obs.hi95 <- truth$hi95[,group_name][order(match(names(truth$hi95[,group_name]),names(mu)))]	
   
-  #plot
-  
-  # get ylim
-  # obs_limit <- max(obs.mu, na.rm = T)
-  # if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
-  # limy <- as.numeric(obs_limit)*1.05
-  # if(limy > 0.95){limy <- 1}
+  # create plot
   
   plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('plot-level ', group_name))	
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)	
@@ -151,18 +139,13 @@ raw.truth <- raw.truth$core.fit
   
   
   
+#site.level----
   
-  
-  #site.level----
-  
-  #organize data.
+  #read in site-level forecast
   fcast <- output$site.fit
-  
-  # read in observed data
-  raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-  truth <- raw.truth[[p]]
-  truth <- truth$site.fit
-  
+  # read in site-level observed values
+  truth <- raw.truth$site.fit
+  #organize data.
   for(k in 1:length(truth)){
     rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
     truth[[k]] <- truth[[k]][rownames(truth[[k]]) %in% rownames(fcast$mean),]
@@ -181,13 +164,7 @@ raw.truth <- raw.truth$core.fit
   obs.lo95 <- truth$lo95[,group_name][order(match(names(truth$lo95[,group_name]),names(mu)))]
   obs.hi95 <- truth$hi95[,group_name][order(match(names(truth$hi95[,group_name]),names(mu)))]
   
-  #plot
-  
-  # get ylim
-  # obs_limit <- max(obs.mu, na.rm = T)
-  # if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
-  # limy <- as.numeric(obs_limit)*1.05
-  # if(limy > 0.95){limy <- 1}
+  #create plot
   
   plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main=paste0('site-level ', group_name))
   arrows(c(mu), obs.lo95, c(mu), obs.hi95, length=0.05, angle=90, code=3)
@@ -208,6 +185,6 @@ raw.truth <- raw.truth$core.fit
   #}
   mtext(paste0("Rsq for prior fit:", prior_rsq), cex = .7, side = 3, line = 1, outer = TRUE)
   #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
-  
 }
-#dev.off()
+}
+dev.off()

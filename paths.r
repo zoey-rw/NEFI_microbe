@@ -363,6 +363,7 @@ NEON_core.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_core.fcast_cosmo_16S.pdf
 NEON_plot.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_plot.fcast_cosmo_fig_16S.pdf")
 NEON_site.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_site.fcast_cosmo_fig_16S.pdf")
 NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
+NEON_cps.fcast_fg_16S.path <- paste0(dir, "NEON_cps.fcast_fg_16S.pdf")
 # prior calibration figures 
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
 
