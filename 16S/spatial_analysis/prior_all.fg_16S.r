@@ -89,6 +89,7 @@ x.list <- list(
 #for running production fit on remote.
 cat('Begin model fitting loop...\n')
 tic()
+output.list <- list()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
     y.group <- y[[i]]
@@ -109,6 +110,7 @@ output.list<-
       output[[k]] <- fit
     }
     names(output) <- c("no.nutr.preds","all.preds")
+    cat(paste("Model fit for", group_names[p], "\n"))
     return(output)                                          
   }
 cat('Model fitting loop complete! ')
