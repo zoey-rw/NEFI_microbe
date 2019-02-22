@@ -20,7 +20,8 @@ output.path <- NEON_cps_fcast_all_phylo_16S.path
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-all.mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+#all.mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
 #mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
 #mod <- mod[[3]] #just the all predictor case.
 
@@ -87,20 +88,12 @@ site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
-# change predictor from 'pH' to 'PH' to match prior - fix upstream if prior model is re-run
-setnames(core.preds, "pH", "PH")
-setnames(core.sd, "pH", "PH")
-setnames(plot.preds, "pH", "PH")
-setnames(plot.sd, "pH", "PH")
-setnames(site.preds, "pH", "PH")
-setnames(site.sd, "pH", "PH")
-
 #Get forecasts from ddirch_forecast.----
 phylo.output <- list()
 
 cat('Making forecasts...\n')
-tic()
 for(i in 1:length(all.mod)){
+  tic()
   mod <- all.mod[[i]]
   core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)
   plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)
