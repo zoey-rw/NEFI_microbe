@@ -3,25 +3,33 @@ rm(list=ls())
 source('paths.r')
 
 #Set output path.----
-output.path <- 'test.png'
-#output.path <- ITS_prior_r2_distribution.density_figure.path
+output.path <- prior_16S_r2_distribution.density_figure.path
 
 #load data.----
-fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+fg_all <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #fg <- readRDS(ted_ITS.prior_fg_JAGSfit_micronutrient)
 #pl <- #readRDS(ted_ITS_prior_phylo.group_JAGSfits)
 pl <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 #loop over lists and get R2 values.----
 #functional groups.
-obs <- fg$all.preds$observed
-pred <- fg$all.preds$predicted
+fg.r2.all <- list()
+for (p in 1:length(fg_all)){
+  fg <- fg_all[[p]]
+# obs <- fg$all.preds$observed
+# pred <- fg$all.preds$predicted
+  obs <- fg$no.nutr.preds$observed
+  pred <- fg$no.nutr.preds$predicted
 fg.r2 <- list()
-for(i in 1:ncol(obs)){fg.r2[[i]] <- summary(lm(obs[,i] ~ pred[,i]))$r.squared}
+for(i in 1:ncol(obs)){
+  fg.r2[[i]] <- summary(lm(obs[,i] ~ pred[,i]))$r.squared
+  }
 fg.r2 <- unlist(fg.r2)
 names(fg.r2) <- colnames(obs)
 #drop 'other'.
 fg.r2 <- fg.r2[names(fg.r2) != 'other']
-
+fg.r2.all[[p]] <- fg.r2
+}
+fg.r2.all <- unlist(fg.r2.all)
 #phylogenetic groups.
 pl.r2 <- list()
 for(i in 1:length(pl)){
@@ -39,8 +47,7 @@ for(i in 1:length(pl)){
 pl.r2 <- unlist(pl.r2)
 
 #Merge all r2 values.
-#all.r2 <- c(fg.r2, pl.r2)
-all.r2 <- pl.r2
+all.r2 <- c(fg.r2.all, pl.r2)
 
 #Get truncated density so that we don't have densities less than zero.----
 h <- density(all.r2)$bw  #get dansity bandwith
@@ -57,7 +64,7 @@ if(sum(h$y * diff(h$x)[1]) > 1.1 | sum(h$y * diff(h$x)[1]) < 0.9){
 
 #Make density plot.----
 #png save settings.
-png(filename=output.path,width=6,height=5,units='in',res=300)
+#png(filename=output.path,width=6,height=5,units='in',res=300)
 
 #global plot settings.
 trans <- 0.3 #shading transparency.
@@ -65,7 +72,7 @@ o.cex <- 1.3 #outer label size.
 par(mfrow = c(1,1), mar = c(4.2,4.2,1.5,1.5))
 
 #plot.
-plot(h,xlim = c(0, 0.8), ylim = c(0, round(max(h$y), 0)), bty = 'n', xlab = NA, ylab = NA, main = NA, yaxs='i', xaxs = 'i', las = 1)
+plot(h,xlim = c(0, 1), ylim = c(0, round(max(h$y), 0)), bty = 'n', xlab = NA, ylab = NA, main = NA, yaxs='i', xaxs = 'i', las = 1)
 polygon(h, col = adjustcolor('purple',trans), border = NA)
 mtext('Density', side = 2, line = 2.2, cex = o.cex)
 mtext(expression(paste("Calibration R"^"2")), side = 1, line = 2.5, cex = o.cex)

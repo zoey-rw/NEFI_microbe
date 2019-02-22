@@ -353,12 +353,16 @@ system(cmd)
 NEON_site_covs_16S.path <- paste0(dir,'NEON_site_covs_16S.rds')
 NEON_glob_covs_16S.path <- paste0(dir,'NEON_glob_covs_16S.rds')
 
-#### 16S/pecan_gen: NEON forecast figures #### 
+#### 16S/pecan_gen: figures
 dir <- paste0(pecan_gen_16S_dir,'figures/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+# NEON forecast figures
 NEON_cps.fcast_cosmo_16S.path <- paste0(dir, "NEON_cps.fcast_cosmo_16S.pdf")
 NEON_core.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_core.fcast_cosmo_16S.pdf")
 NEON_plot.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_plot.fcast_cosmo_fig_16S.pdf")
 NEON_site.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_site.fcast_cosmo_fig_16S.pdf")
 NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
+# prior calibration figures 
+prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
+

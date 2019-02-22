@@ -11,7 +11,7 @@
 #$ -l mem_total=125G -pe omp 16
 #
 #Give the job a name
-#$ -N NEON_phyla_hier_means
+#$ -N NEON_phylo_hier_means
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -34,7 +34,7 @@ module load jags/4.0.0
 #
 #
 # invoke this function:
-Rscript 16S/data_construction/NEON_16S/3._16S_sequence_processing/6._phylo.group_hierarchical_means.r
+Rscript 16S/data_construction/NEON_16S/3._16S_sequence_processing/5b._phylo_hierarchical_means.r
 #
 #
 #End of commands.

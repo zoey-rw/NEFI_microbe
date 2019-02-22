@@ -15,10 +15,10 @@ eval(parse(text = script))
 output.path <- NEON_16S_phylo_groups_abundances.path
 
 #load data.----
-sv <- readRDS(bahram_dada2_SV_table.path)
+sv <- readRDS(NEON_dada2_SV_table.path)
 map <- readRDS(hierarch_filled_16S.path)
 map <- map$core.obs
-tax <- readRDS(bahram_dada2_tax_table.path)
+tax <- readRDS(NEON_dada2_tax_table.path)
 
 #get reference common phyla from prior.----
 ref <- readRDS(bahram_16S_common_phylo_groups_list.path)

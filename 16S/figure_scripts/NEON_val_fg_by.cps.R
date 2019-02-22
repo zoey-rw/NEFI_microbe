@@ -8,8 +8,8 @@ library(data.table)
 
 
 # load forecast 
-all_output <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
-
+all_fcasts <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
+all_fcasts <- all_fcasts[6:12]
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
 map <- readRDS(core_obs_16S.path)
@@ -27,19 +27,19 @@ par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 
-for (p in 1:length(all_output)) {
- # p <- 1
-output <- all_output[[p]]  
+for (p in 1:length(all_fcasts)) {
+#p <- 1
+output <- all_fcasts[[p]]  
 fit <- all_fits[[p]]
-fit <- fit$all.preds
+#fit <- fit$all.preds
+fit <- fit$cov_select
 i <- 2 
 
-# get prior rsq.
 ##### CHANGE WHEN INCORPORATING COP_OLIG
-mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
-prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
+#for (i in 2:ncol(fit$observed)){
 
 raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
+raw.truth <- raw.truth[1:7]
 raw.truth <- raw.truth[[p]]
 raw.truth <- raw.truth$core.fit
 # only second column 
@@ -60,14 +60,18 @@ raw.truth <- raw.truth$core.fit
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth),]
   }
-  truth <- as.matrix(truth)
+  #truth <- as.matrix(truth)
   mu <- fcast$mean[,i][order(fcast$mean[,i])]
   ci_0.975 <- fcast$ci_0.975[,i][order(match(names(fcast$ci_0.975[,i]),names(mu)))]
   ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
   pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
   pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
   group_name <- colnames(fcast$mean)[i]
-  obs.mu   <- truth[,c(group_name)][order(match(names(truth[,c(group_name)]),names(mu)))]
+  obs.mu   <- truth[,c(group_name),drop=FALSE][order(match(names(truth[,c(group_name),drop=FALSE]),names(mu)))]
+  obs.mu <- obs.mu[,c(group_name)]
+  # get prior rsq.
+  mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
+  prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
   
   # plot
   # get ylim
