@@ -16,8 +16,8 @@ source('NEFI_functions/worldclim2_grab.r')
 source('NEFI_functions/arid_extract.r')
 
 # set output path
-output.path <- bahram_metadata.path 
-
+metadata.output.path <- bahram_metadata.path 
+otu.output.path <- bahram_dada2_SV_table_rare.path
 
 ##### load files ####
 
@@ -33,7 +33,7 @@ map <- data.table(map)
 
 # load times - sent to Colin separately by Leho Tedersoo
 time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
-
+otu <- readRDS(bahram_dada2_SV_table.path)
 
 ##### Format metadata file #####
 
@@ -49,10 +49,10 @@ metadata <- data.table(metadata)
 # subset to temperate latitudes
 metadata <- metadata[Lat < 66.5 & Lat > 23.5,]
 
-# merge in site, moisture, and relEM from Tedersoo file
+# merge in site and relEM from Tedersoo file (dropping moisture)
 metadata <- metadata[,-c("Moisture")]
 metadata <- merge(x = metadata, 
-                  y = map[ , c("tedersoo.code", "Site", "Moisture", 
+                  y = map[ , c("tedersoo.code", "Site", #"Moisture", 
                                "Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.")], 
                   by.x = "Sample_Name", by.y="tedersoo.code", all.x=TRUE)
 
@@ -90,13 +90,24 @@ climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)
 metadata <- cbind(metadata, climate)
 
 # rename columns
-setnames(metadata,c('Sample_Name','Moisture','N' ,'C' ,'C.N', 'PH',
+setnames(metadata,c('Sample_Name','N' ,'C' ,'C.N', 'PH',
                     'Relative.basal.area.of.EcM.trees.....of.total.basal.area.of.all.AM.and.EcM.tees.taken.together.'),
-         c('Mapping.ID','moisture','pN','pC','cn','pH', 'relEM'))
+         c('Mapping.ID','pN','pC','cn','pH', 'relEM'))
 
 # grab columns from map actually of interest.
-metadata <- metadata[,.(Mapping.ID,Run,Lon,Lat,pH,moisture,pN,pC,cn,relEM,map,mat,
+metadata <- metadata[,.(Mapping.ID,Run,Lon,Lat,pH,pN,pC,cn,relEM,map,mat,
                                human.date,doy,epoch.date,NPP,forest,conifer,Ca,Mg,P,K)]
+#Rarefy OTU table.----
+set.seed(5) # so that rarefaction is repeatable.
+otu <- otu[rowSums(otu) >= 1000,]
+otu <- vegan::rrarefy(otu, 1000)
 
-# save output.----
-saveRDS(metadata, output.path)
+#subset map so that it does not include observations not in otu table.----
+metadata <- metadata[metadata$Run %in% rownames(otu),]
+otu <- otu[rownames(otu) %in% metadata$Run,]
+otu <- otu[order(rownames(otu), metadata$Run),]
+
+#save output.----
+saveRDS(metadata, metadata.output.path)
+saveRDS(otu, otu.output.path)
+

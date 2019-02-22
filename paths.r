@@ -224,6 +224,7 @@ dir <- paste0(scc_gen_16S_dir,'bahram_processed/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
+bahram_dada2_SV_table_rare.path <- paste0(dir,'bahram_dada2_SV_table_rare.rds')
 bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
 bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
 

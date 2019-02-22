@@ -15,19 +15,14 @@ source('paths.r')
 
 # load csv with literature-review classifications. 
 fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
-
 # load csv from Albright with N-cycle pathway presence/absence.
-N_cyclers <- read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
-
+N_cyclers_raw <- read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
 # load csv from Berlemont and Martiny with cellulolytic pathway presence/absence
 cell <- read.csv(paste0(pecan_gen_16S_dir, "cellulolytic_Berlemont.csv"))
-
 # load Bahram SV table as otu file
-otu <- readRDS(bahram_dada2_SV_table.path)
-
+otu <- readRDS(bahram_dada2_SV_table_rare.path)
 # load Bahram taxonomy
 tax <- readRDS(bahram_dada2_tax_table.path)
-
 # load metadata
 metadata <- readRDS(bahram_metadata.path)
 
@@ -35,13 +30,6 @@ metadata <- readRDS(bahram_metadata.path)
 for(i in 1:ncol(tax)){
   tax[,i] <- substring(tax[,i],4)
 }
-
-# subset otu table and tax table to only include observations in map file
-metadata$Run <- as.character(metadata$Run)
-otu <- otu[rownames(otu) %in% metadata$Run,]
-metadata <- metadata[metadata$Run %in% rownames(otu),]
-# order OTU table to match the mapping file
-otu <- otu[order(rownames(otu), metadata$Run),]
 
 # for column names to be lower case.
 tax <- as.data.frame(tax)
@@ -55,37 +43,23 @@ tax_save <- tax # just so we have this taxonomic table for later.
 
 
 
-
-
-
-
 ########## 2. assign copiotroph/oligotroph groups. ############
 
 # read in groups from csv
 c_o_groups <- fg[fg$Classification.system=="Copiotroph_oligotroph",]
 copiotrophs <- c_o_groups[c_o_groups$Classification=="Copiotroph",]$Taxon
 oligotrophs <- c_o_groups[c_o_groups$Classification=="Oligotroph",]$Taxon
+
+# assign taxa to groups
+tax <- tax_save
 tax$group <- NA
 
-# first assign at phylum level
-tax[which(tax$phylum %in% copiotrophs),]$group <- "copiotroph"
-tax[which(tax$phylum %in% oligotrophs),]$group <- "oligotroph"
-
-# then class level
-tax[which(tax$class %in% copiotrophs),]$group <- "copiotroph"
-tax[which(tax$class %in% oligotrophs),]$group <- "oligotroph"
-
-# then order level
-tax[which(tax$order %in% copiotrophs),]$group <- "copiotroph"
-tax[which(tax$order %in% oligotrophs),]$group <- "oligotroph"
-
-# then family level
-tax[which(tax$family %in% copiotrophs),]$group <- "copiotroph"
-tax[which(tax$family %in% oligotrophs),]$group <- "oligotroph"
-
-# then genus level
-tax[which(tax$genus %in% copiotrophs),]$group <- "copiotroph"
-tax[which(tax$genus %in% oligotrophs),]$group <- "oligotroph"
+levels <- c("phylum", "class", "order", "family", "genus")
+for (i in 1:length(levels)){
+  p <- levels[i]
+tax[which(tax[[p]] %in% copiotrophs),]$group <- "copiotroph"
+tax[which(tax[[p]] %in% oligotrophs),]$group <- "oligotroph"
+}
 
 #Get seq abundances of copiotrophs vs oligotrophs, in one dataframe.----
 classification <- c("copiotroph", "oligotroph")
@@ -107,7 +81,7 @@ cop_olig <- list(cop_olig,seq_total)
 names(cop_olig) <- c('abundances','seq_total')
 cop_olig$abundances <- as.matrix(cop_olig$abundances)
 cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
-saveRDS(cop_olig, prior_cop_olig_abundances.path)
+#saveRDS(cop_olig, prior_cop_olig_abundances.path)
 
 
 ########## 3. assign nitrogen-cycling groups. ############
@@ -117,7 +91,7 @@ saveRDS(cop_olig, prior_cop_olig_abundances.path)
 tax <- tax_save 
 
 # Remove all columns except for taxonomy, environment, and pathways
-N_cyclers <- N_cyclers[,-c(1:2,4,11:14,16:17)] 
+N_cyclers <- N_cyclers_raw[,-c(1:2,4,11:14,16:17)] 
 
 # Rename some pathways
 setnames(N_cyclers, 
@@ -135,43 +109,11 @@ N_cyclers[N_cyclers$Partial_NO==1 | N_cyclers$Partial_N2O ==1 | N_cyclers$Partia
 # Now we can remove the "partial" columns.
 N_cyclers[,c("Partial_Nitrification", "Partial_NO", "Partial_N2O", "Partial_N2")] <- NULL
 
-# # Get all possible combinations of the core seven pathways - just curious.
-# possible_combos <- expand(N_cyclers, Assim_nitrite_reduction, Dissim_nitrite_reduction, Assim_nitrate_reduction, Dissim_nitrate_reduction, N_fixation, Nitrification, Denitrification)
-# # nrow(possible_combos)
-# # [1] 128
-# actual_combos <- expand(N_cyclers, nesting(Assim_nitrite_reduction, Dissim_nitrite_reduction, Assim_nitrate_reduction, Dissim_nitrate_reduction, N_fixation, Nitrification, Denitrification))
-# # nrow(actual_combos)
-# # [1] 50
-
-
-# For Albright dataset:
-# get value by genus; if pathway is present in more than half of species, it is present for that genus
-pathway_names <- colnames(N_cyclers[9:15])
-# N_cycle_genera <- data.frame(matrix(ncol=0,nrow=0))
-# for (g in 1:length(unique(N_cyclers$Genus))) {
-#   i <- unique(N_cyclers$Genus)[g]
-#   species <- N_cyclers[N_cyclers$Genus==i,]
-#   nspecies <- nrow(species)
-#   out <- data.frame(Genus = i,
-#                     nrow(species[species$Assim_nitrite_reduction == 1,])/nspecies,
-#                     nrow(species[species$Dissim_nitrite_reduction == 1,])/nspecies,
-#                     nrow(species[species$Assim_nitrate_reduction == 1,])/nspecies,
-#                     nrow(species[species$N_fixation == 1,])/nspecies,
-#                     nrow(species[species$Dissim_nitrate_reduction == 1,])/nspecies,
-#                     nrow(species[species$Nitrification == 1,])/nspecies,
-#                     nrow(species[species$Denitrification == 1,])/nspecies
-#   )
-#   colnames(out) <- c("Genus", pathway_names)
-#   out$Genus <- as.character(i)
-#   out[out >= .5] <- 1
-#   out[out < .5] <- 0
-#   out$Genus <- as.character(i)
-#   N_cycle_genera <- rbind(N_cycle_genera, out)
-# }
 
 ##### Assign taxa to functional groups ##### 
 
 # create pathway columns
+pathway_names <- colnames(N_cyclers[9:15])
 tax[,pathway_names] <- NA
 
 # check if sample genus is in classification data, and that a classified pathway is present; 
