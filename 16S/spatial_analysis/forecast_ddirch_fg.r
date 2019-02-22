@@ -19,26 +19,27 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 #set output path.----
-output.path <- NEON_cps_fcast_N.cycler_16S.path
+output.path <- NEON_cps_fcast_fg_16S.path
 
 #load model results.----
 #mod 1 is data from maps.
 #mod 2 is site-specific data, no maps.
 #mod 3 is all covariates.
-N_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
-C_mods <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
-Cop_olig <- list(readRDS(prior_cop_olig_abundances.path))
-phylo <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+# N_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
+# C_mods <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
+# Cop_olig <- list(readRDS(prior_cop_olig_abundances.path))
+fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+#phylo <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
 # combine two lists of models 
-all_mods <- do.call(c, list(phylo, N_mods, C_mods, Cop_olig))
+#all_mods <- do.call(c, list(phylo,fg))
 
 all_fcasts <- list()
-for (p in 1:length(all_mods)) {
-mod <- all_mods[[p]]
-if (p > 5) {
-  mod <- mod$all.preds
-}
+for (p in 1:length(fg)) {
+     #6:length(all_mods)) {
+mod <- fg[[p]]
+
+mod <- mod$all.preds
 #mod <- mod$all.preds #just the selected covariates
 
 #get core-level covariate means and sd.----
@@ -46,9 +47,7 @@ dat <- readRDS(hierarch_filled.path) # using ITS data right now.
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
-# grab moisture from other file, until it's incorporated into new hier_filled
-site_mois <- readRDS(site_site_16S.path)
-site_mu$moisture <- site_mois$moisture
+
 #merge together.
 plot_mu$siteID <- NULL
 core.preds <- merge(core_mu   , plot_mu)
@@ -72,7 +71,6 @@ names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
 core_mu <- dat$core.plot.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
-site_mu$moisture <- site_mois$moisture
 
 #merge together, .
 plot_mu$siteID <- NULL
@@ -96,7 +94,6 @@ names(plot.sd)[names(plot.sd)=='b.relEM'] <- "relEM"
 core_mu <- dat$core.site.mu
 plot_mu <- dat$plot.site.mu
 site_mu <- dat$site.site.mu
-site_mu$moisture <- site_mois$moisture
 
 #merge together
 site.preds <- merge(core_mu, plot_mu)
@@ -118,7 +115,7 @@ core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=co
 plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID)
 site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID)
 toc()
-cat(paste("Forecast created for model "))
+cat(paste("Forecast created for model",p,"\n"))
 
 #store output as a list and save.----
 output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
@@ -127,4 +124,5 @@ names(output) <- c('core.fit','plot.fit','site.fit',
                    'core.sd','plot.sd','site.sd')
 all_fcasts[[p]] <- output
 }
+
 saveRDS(all_fcasts, output.path)

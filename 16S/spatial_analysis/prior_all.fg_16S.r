@@ -48,7 +48,7 @@ for (i in 1:12) {
 group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
 #subset to predictors of interest, complete case the thing.
-d <- d[,.(Run,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)] #with micronutrients.
+d <- d[,.(Run,pC,cn,pH,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)] #with micronutrients.
 #d <- d[,.(Run,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 d <- d[d$Run %in% rownames(y[[1]]),]
@@ -78,8 +78,8 @@ x$map <- log(x$map)
 # x.cov_select.no.nutr <- x[,cols, with=FALSE]
 
 #define multiple subsets
-x.no.nutr <- x[,.(intercept,pC,cn,pH,moisture,NPP,mat,map,forest,conifer,relEM)]
-x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,moisture,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
+x.no.nutr <- x[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
+x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
 x.list <- list(
   #x.cov_select,x.cov_select.no.nutr,
   x.no.nutr,
