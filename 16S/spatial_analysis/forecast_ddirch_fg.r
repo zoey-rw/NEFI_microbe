@@ -18,20 +18,21 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
-#set output path.----
-output.path <- NEON_cps_fcast_fg_16S.path
+# include micronutrients (K, Mg, P, C)?
+#nutr <- TRUE
+nutr <- FALSE
 
-#load model results.----
-#mod 1 is data from maps.
-#mod 2 is site-specific data, no maps.
-#mod 3 is all covariates.
-# N_mods <- readRDS(bahram_16S_prior_N_cycle_JAGSfits)
-# C_mods <- readRDS(bahram_16S_prior_C_cycle_JAGSfits)
-# Cop_olig <- list(readRDS(prior_cop_olig_abundances.path))
+#set output path.----
+if (nutr == TRUE) {
+output.path <- NEON_cps_fcast_fg_16S.path
+} else {
+  output.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_fg_16S_no.nutr.rds"
+}
+
+#load prior model fits----
 fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #phylo <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
-
-# combine two lists of models 
+## combine two lists of models 
 #all_mods <- do.call(c, list(phylo,fg))
 
 all_fcasts <- list()
@@ -39,7 +40,9 @@ for (p in 1:length(fg)) {
      #6:length(all_mods)) {
 mod <- fg[[p]]
 
+if (nutr == TRUE) {
 mod <- mod$all.preds
+} else mod <- mod$no.nutr.preds
 #mod <- mod$all.preds #just the selected covariates
 
 #get core-level covariate means and sd.----
@@ -108,6 +111,15 @@ site_sd <- dat$site.site.sd
 site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
+
+# remove micronutrients if specified.
+if (nutr == FALSE) {
+lst <- list(core.preds, core.sd, plot.preds, plot.sd, site.preds, site.sd)
+names(lst) <- c("core.preds", "core.sd", "plot.preds", "plot.sd", "site.preds", "site.sd")
+list2env(
+  lapply(lst, function(x) x[!(names(x) %in% c("P", "K", "Mg", "Ca"))]), 
+         envir=.GlobalEnv)
+}
 
 #Get forecasts from ddirch_forecast.----
 tic()

@@ -6,10 +6,18 @@ source('paths.r')
 source('NEFI_functions/crib_fun.r')
 library(data.table)
 
+# include micronutrients (K, Mg, P, C)?
+nutr <- TRUE
+#nutr <- FALSE
 
 # load forecast 
-all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
-all_fcasts <- all_fcasts[6:17]
+if (nutr==TRUE) {
+  all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
+} else {
+  all_fcasts <- readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_fg_16S_no.nutr.rds")
+  }
+
+
 # read in obs table that links deprecatedVialID and geneticSampleID
 map <- readRDS(core_obs_16S.path)
 
@@ -20,7 +28,13 @@ all_fits <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 trans <- 0.3
 limy <- c(0,.1)
 
-pdf(NEON_cps.fcast_fg_16S.path)
+#pdf(NEON_cps.fcast_fg_16S.path)
+if (nutr==TRUE) {
+  pdf(NEON_cps.fcast_fg_16S.path)
+} else {
+  pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_fg_16S_no.nutr.pdf")
+}
+
 par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
@@ -29,8 +43,12 @@ for (p in 1:length(all_fcasts)) {
   
 output <- all_fcasts[[p]]  
 fit <- all_fits[[p]]
-fit <- fit$all.preds
-#fit <- fit$cov_select
+
+if (nutr==TRUE) {
+  fit <- fit$all.preds
+} else {
+  fit <- fit$no.nutr.preds
+}
 
 # read in observed values
 raw.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
