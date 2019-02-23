@@ -110,7 +110,7 @@ output.list<-
       output[[k]] <- fit
     }
     names(output) <- c("no.nutr.preds","all.preds")
-    cat(paste("Model fit for", group_names[p], "\n"))
+    cat(paste("Model fit for", group_names[i], "\n"))
     return(output)                                          
   }
 cat('Model fitting loop complete! ')
