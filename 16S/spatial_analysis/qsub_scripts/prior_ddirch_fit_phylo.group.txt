@@ -7,10 +7,10 @@
 #$ -l h_rt=80:00:00
 #
 #Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 18
+#$ -pe omp 28
 #
 #Give the job a name
-#$ -N bahram_phyloJAGS
+#$ -N bahram_phyloJAGS_2-22
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
