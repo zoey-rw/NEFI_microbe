@@ -105,7 +105,7 @@ output.list<-
     output <- list()
     for(k in 1:length(x.list)){
       fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[k],
-                                       adapt = 200, burnin = 5000, sample = 1000, 
+                                       adapt = 200, burnin = 10000, sample = 1000, 
                                        parallel = T, parallel_method="parallel")
       output[[k]] <- fit
     }

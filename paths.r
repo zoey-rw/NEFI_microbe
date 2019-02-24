@@ -280,7 +280,7 @@ bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")
 
 #### ------------ NEON paths ------------- ####
 
-### 16S/scc_gen:  NEON processed data ###
+### 16S/scc_gen:  NEON processed abundance data ###
 dir <- paste0(scc_gen_16S_dir,'NEON_processed/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
@@ -308,7 +308,10 @@ NEON_cps_fcast_all_phylo_16S.path <- paste0(dir, "NEON_cps_fcast_all_phylo_16S.r
 NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
 NEON_cps_fcast_N.cycler_16S.path  <- paste0(dir, "NEON_cps_fcast_N.cycler_16S.rds")
 NEON_cps_fcast_fg_16S.path <- paste0(dir, "NEON_cps_fcast_fg_16S.rds")
-#### 16S/pecan_gen: NEON data aggregation paths. ####
+NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
+
+
+#### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
