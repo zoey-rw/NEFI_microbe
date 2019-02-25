@@ -12,7 +12,7 @@ nutr <- TRUE
 
 # load forecast 
 if (nutr==TRUE) {
-  all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
+  all_fcasts <- readRDS(NEON_cps_fcast_fg_fig_16S.path)
 } else {
   all_fcasts <- readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_fg_16S_no.nutr.rds")
   }

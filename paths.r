@@ -309,7 +309,7 @@ NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
 NEON_cps_fcast_N.cycler_16S.path  <- paste0(dir, "NEON_cps_fcast_N.cycler_16S.rds")
 NEON_cps_fcast_fg_16S.path <- paste0(dir, "NEON_cps_fcast_fg_16S.rds")
 NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
-
+NEON_fg_variable_importance_data_16S.path <- paste0(dir, "NEON_fg_variable_importance_data_16S.rds")
 
 #### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
@@ -367,7 +367,7 @@ NEON_core.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_core.fcast_cosmo_16S.pdf
 NEON_plot.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_plot.fcast_cosmo_fig_16S.pdf")
 NEON_site.fcast_cosmo_fig_16S.path <- paste0(dir, "NEON_site.fcast_cosmo_fig_16S.pdf")
 NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
-NEON_cps.fcast_fg_16S.path <- paste0(dir, "NEON_cps.fcast_fg_16S.pdf")
+NEON_cps.fcast_fg_fig_16S.path <- paste0(dir, "NEON_cps.fcast_fg_fig_16S.pdf")
 # prior calibration figures 
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
 
