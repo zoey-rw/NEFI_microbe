@@ -4,6 +4,7 @@
 # 3. assign N-cycling groups from lit review, and then from Albright et al. 2018 dataset.
 # 4. assign C-cycling groups from lit review.
 
+# clear environment, load libraries
 rm(list = ls())
 library(data.table)
 library(readxl)
@@ -11,11 +12,11 @@ library(tidyr)
 library(stringr)
 source('paths.r')
 
-########## 1. prep data. ############
+# read in reference and taxonomic data.
 
 # load csv with literature-review classifications.
 fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
-# load csv from Albright with N-cycle pathway presence/absence.
+# load excel from Albright with N-cycle pathway presence/absence.
 N_cyclers_raw <-  read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
 # load csv from Berlemont and Martiny with cellulolytic pathway presence/absence
 cell <-  read.csv(paste0(pecan_gen_16S_dir, "cellulolytic_Berlemont.csv"))
@@ -25,6 +26,8 @@ otu <- readRDS(bahram_dada2_SV_table_rare.path)
 tax <- readRDS(bahram_dada2_tax_table.path)
 # load metadata
 metadata <- readRDS(bahram_metadata.path)
+
+########## 1. prep taxonomic data. ############
 
 # remove leading "k__" in taxonomy.
 for (i in 1:ncol(tax)) {
@@ -70,7 +73,6 @@ for (i in 1:length(classification)) {
   out <- colSums(z[, start:ncol(z)])
   cop_olig[[i]] <- out
 }
-cop_olig_save <- cop_olig
 cop_olig <- data.frame(t(do.call('rbind', cop_olig)))
 colnames(cop_olig) <- classification
 seq_total <- colSums(k[, start:ncol(k)])
@@ -83,25 +85,21 @@ cop_olig$rel.abundances <- cop_olig$abundances / cop_olig$seq_total
 #saveRDS(cop_olig, prior_cop_olig_abundances.path)
 
 
+
+
 ########## 3. assign nitrogen-cycling groups. ############
 
-# Set up N-cycle dataset from Albright 2008
+#### Set up N-cycle dataset from Albright 2008 ####
 
 # Remove all columns except for taxonomy, environment, and pathways
 N_cyclers <- N_cyclers_raw[,-c(1:2, 4, 11:14, 16:17)]
-
 # Rename some pathways
 setnames(N_cyclers,
-  c("Nitrogen Fixation",
-    "Assimilatory Nitrite to ammonia",
-    "Dissimilatory Nitrite to Ammonia",
-    "Assimilatory Nitrate to Nitrite",
+  c("Nitrogen Fixation", "Assimilatory Nitrite to ammonia",
+    "Dissimilatory Nitrite to Ammonia", "Assimilatory Nitrate to Nitrite",
     "Dissimilatory Nitrate to Nitrite"),
-  c("N_fixation",
-    "Assim_nitrite_reduction",
-    "Dissim_nitrite_reduction",
-    "Assim_nitrate_reduction",
-    "Dissim_nitrate_reduction"))
+  c("N_fixation", "Assim_nitrite_reduction", "Dissim_nitrite_reduction",
+    "Assim_nitrate_reduction", "Dissim_nitrate_reduction"))
 
 # Treat "incomplete" pathways as if they are absent.
 N_cyclers[N_cyclers == "complete"] <- 1
@@ -119,8 +117,7 @@ N_cyclers[, c("Partial_Nitrification",
               "Partial_N2O",
               "Partial_N2")] <- NULL
 
-
-##### Assign taxa to functional groups #####
+#### Assign taxa to functional groups ####
 
 # create pathway columns
 tax <- tax_save
@@ -132,7 +129,7 @@ for (i in 1:length(pathway_names)) {
   p <- pathway_names[i]
   
   # Classifications from literature search (multiple taxon levels)
-  # if genus is in classification data, assign it a present pathway
+  # if taxon is in classification data, assign it a present pathway
   has_pathway <- fg[fg$Classification == p,]$Taxon
   levels <- c("phylum", "class", "order", "family", "genus")
   for (j in 1:length(levels)) {
@@ -141,15 +138,12 @@ for (i in 1:length(pathway_names)) {
       tax[tax[[k]] %in% has_pathway,][p] <- 1
     }
   }
-
   # genus + species must match any full species name
   if (nrow(tax[which(paste(tax$genus, tax$species) %in% has_pathway),]) != 0) {
     tax[which(paste(tax$genus, tax$species) %in% has_pathway),][p] <- 1
   }
-  
   # Classifications from Albright et al. 2018 dataset (Genus-level only; reduced from species-level)
-  has_pathway <-
-    N_cyclers[N_cyclers[p] == 1,]$Genus # one species with pathway is enough to classify genus
+  has_pathway <- N_cyclers[N_cyclers[p] == 1,]$Genus # one species with pathway is enough to classify genus
   if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0) {
     tax[which(tax$genus %in% has_pathway),][p] <- 1
   }
@@ -176,120 +170,77 @@ for (i in 1:length(pathway_names)) {
     pathways$abundances / pathways$seq_total
   all_N_pathways[[i]] <- pathways
 }
-#saveRDS(allpathways, prior_N_cyclers_abundances.path)
+#saveRDS(all_N_pathways, prior_N_cyclers_abundances.path)
+
 
 
 
 ########## 4. assign C-cycling groups. ###########
+ 
+#### format dataset of cellulolytic taxa from Berlemont et al. ####
 
-# format dataset of cellulolytic taxa from Berlemont et al.
 rownames(cell) <- cell$Strain
-
-# these have enzymes for beta-glucosidase, to use products from cellulysis - opportunists
-bg <- cell[, c(3, 4)]
-bg <- bg[apply(bg, 1, function(x)
-  any(x == 1)),]
-
 # get taxa with any enzymes for cellulolysis
 cellulolytic <- cell[, c(5:7, 9:13)] #subset to names and pathways
 cellulolytic$is.cell <- 0
 cellulolytic[apply(cellulolytic, 1, function(x)
   any(x == 1)),]$is.cell <- 1
 cellulolytic$genus <- word(rownames(cellulolytic), 1) # grab first word (genus)
-cellulolytic[cellulolytic$genus == "Candidatus",]$genus <-
-  word(rownames(cellulolytic[cellulolytic$genus == "Candidatus",]), 1, 2)
+cellulolytic[cellulolytic$genus == "Candidatus",]$genus <- # if first word is candidatus, grab two words
+  word(rownames(cellulolytic[cellulolytic$genus == "Candidatus",]), 1, 2) 
 
-cellulolytic_genera <- data.frame(matrix(ncol = 0, nrow = 0))
-for (g in 1:length(unique(cellulolytic$genus))) {
-  i <- unique(cellulolytic$genus)[g]
-  species <- cellulolytic[cellulolytic$genus == i,]
-  nspecies <- nrow(species)
-  out <- data.frame(Genus = i,
-                    nrow(species[species$is.cell == 1,]) / nspecies)
-  colnames(out) <- c("Genus", "is.cell")
-  out$Genus <- as.character(i)
-  out[out >= .5] <- 1
-  out[out < .5] <- 0
-  out$Genus <- as.character(i)
-  cellulolytic_genera <- rbind(cellulolytic_genera, out)
+# taxon assignments
+levels <- c("phylum", "class", "order", "family", "genus")
+for (i in 1:length(levels)) {
+  p <- levels[i]
+  tax[which(tax[[p]] %in% copiotrophs),]$group <- "copiotroph"
+  tax[which(tax[[p]] %in% oligotrophs),]$group <- "oligotroph"
 }
 
 
-########## assign carbon-cycling taxa ############
+#### assign carbon-cycling taxa ####
 
 tax <- tax_save
 pathway_names <-
   c("Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph") 
-
 tax[, pathway_names] <- NA
 
 # check if sample genus is in classification data, and that a classified pathway is present;
 # assign those genera a present pathway
 for (i in 1:length(pathway_names)) {
   p <- pathway_names[i]
-  print(p)
-  
+
   # Classifications from literature search (multiple taxon levels)
   has_pathway <- fg[which(fg$Classification == p),]$Taxon
+  levels <- c("phylum", "class", "order", "family", "genus")
+  for (j in 1:length(levels)) {
+    k <- levels[j]
+    if (nrow(tax[tax[[k]] %in% has_pathway,]) != 0) { 
+      tax[tax[[k]] %in% has_pathway,][p] <- 1
+    }
+  }
   
-  if (nrow(tax[tax$phylum %in% has_pathway,]) != 0) {
-    tax[tax$phylum %in% has_pathway,][p] <- 1
-  }
-  if (nrow(tax[tax$class %in% has_pathway,]) != 0) {
-    tax[tax$class %in% has_pathway,][p] <- 1
-  }
-  if (nrow(tax[tax$order %in% has_pathway,]) != 0) {
-    tax[tax$order %in% has_pathway,][p] <- 1
-  }
-  if (nrow(tax[tax$family %in% has_pathway,]) != 0) {
-    tax[tax$family %in% has_pathway,][p] <- 1
-  }
-  if (nrow(tax[tax$genus %in% has_pathway,]) != 0) {
-    tax[tax$genus %in% has_pathway,][p] <- 1
-  }
   # genus + species must match any full species name
   if (nrow(tax[which(paste(tax$genus, tax$species) %in% has_pathway),]) != 0) {
     tax[which(paste(tax$genus, tax$species) %in% has_pathway),][p] <- 1
   }
   # Classifications from Berlemont et al. 2018 dataset (Genus-level only; reduced from species-level)
   if (p == "Cellulolytic") {
-    has_pathway <-
-      cellulolytic[cellulolytic$is.cell == 1,]$genus # not using .5 cutoff - one species with pathway is enough to classify genus
+    has_pathway <- cellulolytic[cellulolytic$is.cell == 1,]$genus # one species with pathway is enough to classify genus
     if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0) {
       tax[which(tax$genus %in% has_pathway),][p] <- 1
     }
   } # close cellulolytic section
-  
 }
 
-
-
-# Classifications from literature search (multiple taxon levels)
-has_pathway <- fg[which(fg$Classification == p),]$Taxon
-# levels <- c("phylum", "class", "order", "family", "genus")
-# for (j in 1:length(levels)) {
-#   k <- levels[j]
-#   if (nrow(tax[tax[[k]] %in% has_pathway,]) != 0) { 
-#     tax[tax[[k]] %in% has_pathway,][p] <- 1
-#   }
-# }
-
-# # check how many ended up with classifications.
-tax_classified <- tax[, 8:11]
-no_pathways <-
-  tax_classified[apply(tax_classified, 1, function(x)
-    ! any(x == 1)),]
-nrow(no_pathways)
-# [1] 151048 #no cutoff
-some_pathway <-
-  tax_classified[apply(tax_classified, 1, function(x)
-    any(x == 1)),]
-nrow(some_pathway)
-# [1] 5194 #no cutoff
-
+# # check how many ended up without classifications.
+# tax_classified <- tax[, 8:11]
+# no_pathways <- tax_classified[apply(tax_classified, 1, function(x) !any(x == 1)),]
+# nrow(no_pathways)
+# [1] 151048 
 
 #Get seq abundances of each pathway
-allpathways <- list()
+all_C_pathways <- list()
 k <- data.table(cbind(tax, t(otu)))
 for (i in 1:length(pathway_names)) {
   pathways <- list()
@@ -307,6 +258,17 @@ for (i in 1:length(pathway_names)) {
   names(pathways) <- c('abundances', 'seq_total')
   pathways$rel.abundances <-
     pathways$abundances / pathways$seq_total
-  allpathways[[i]] <- pathways
+  all_C_pathways[[i]] <- pathways
 }
-saveRDS(allpathways, prior_C_cyclers_abundances.path)
+#saveRDS(all_C_pathways, prior_C_cyclers_abundances.path)
+
+fg_abundances <- c(all_N_pathways, all_C_pathways, list(cop_olig))
+fg_names <- list()
+for (i in 1:12) {
+  fg_names[[i]] <- colnames(fg_abundances[[i]][[1]])[2]
+}
+fg_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
+names(fg_abundances) <- fg_names
+  
+# save all functional group abundances.
+saveRDS(fg_abundances, prior_fg_abundances_16S.path)

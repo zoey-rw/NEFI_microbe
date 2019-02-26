@@ -99,8 +99,8 @@ metadata <- metadata[,.(Mapping.ID,Run,Lon,Lat,pH,pN,pC,cn,relEM,map,mat,
                                human.date,doy,epoch.date,NPP,forest,conifer,Ca,Mg,P,K)]
 #Rarefy OTU table.----
 set.seed(5) # so that rarefaction is repeatable.
-otu <- otu[rowSums(otu) >= 1000,]
-otu <- vegan::rrarefy(otu, 1000)
+otu <- otu[rowSums(otu) >= 5000,]
+otu <- vegan::rrarefy(otu, 5000)
 
 #subset map so that it does not include observations not in otu table.----
 metadata <- metadata[metadata$Run %in% rownames(otu),]

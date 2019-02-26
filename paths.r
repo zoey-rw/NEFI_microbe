@@ -271,6 +271,7 @@ prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # 
 NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - NEON
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
+prior_fg_abundances_16S.path <- paste0(dir, "prior_fg_abundances_16S.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
@@ -285,6 +286,7 @@ dir <- paste0(scc_gen_16S_dir,'NEON_processed/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_dada2_SV_table.path <- paste0(dir,'NEON_dada2_SV_table.rds')
+NEON_dada2_SV_table_rare.path <- paste0(dir,'NEON_dada2_SV_table_rare.rds')
 NEON_dada2_tax_table.path <- paste0(dir,'NEON_dada2_tax_table.rds')
 NEON_dada2_track_table.path <- paste0(dir,'NEON_dada2_track_table.rds')
 NEON_plot.level_genera_obs_16S.path <- paste0(dir, 'NEON_plot.level_genera_obs_16S.rds')
@@ -349,6 +351,7 @@ NEON_phyla_abundances_16S.path  <- paste0(dir, "NEON_phyla_abundances.rds")
 NEON_N_cyclers_abundances.path <- paste0(dir, "NEON_N_cyclers_abundances.rds")
 NEON_C_cyclers_abundances.path <- paste0(dir, "NEON_C_cyclers_abundances.rds")
 NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
+NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
 
 #### 16S/pecan_gen: paths to NEON covariates ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')

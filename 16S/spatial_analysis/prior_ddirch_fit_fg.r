@@ -27,31 +27,15 @@ output.path <- prior_16S_all.fg.groups_JAGSfits.path
 
 #load Bahram metadata.----
 d <- data.table(readRDS(bahram_metadata.path))
-
+y <- readRDS(prior_fg_abundances_16S.path)
 # load covariate selection data.
 # covs <- readRDS(bahram_16S_prior_fg_cov.selection_JAGS)
-
-# load Bahram functional group abundances
-a1 <- readRDS(prior_N_cyclers_abundances.path)
-a2 <- readRDS(prior_C_cyclers_abundances.path)
-a3 <- list(readRDS(prior_cop_olig_abundances.path))
-
-# combine these three lists of lists - just get abundances
-a <- do.call(c, list(a1, a2, a3))
-y <- sapply(a, "[[", 1)
-
-# set pathway names
-group_names <- list()
-for (i in 1:12) {
-  group_names[[i]] <- colnames(y[[i]])[2]
-}
-group_names[[12]] <- "Cop_olig" #Cop_olig has one more column than the other 11 
 
 #subset to predictors of interest, complete case the thing.
 d <- d[,.(Run,pC,cn,pH,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)] #with micronutrients.
 #d <- d[,.(Run,pC,cn,pH,moisture,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
-d <- d[d$Run %in% rownames(y[[1]]),]
+d <- d[d$Run %in% rownames(y[[1]][[1]]),]
 
 #Drop in intercept, setup predictor matrix.
 x <- d
@@ -92,7 +76,7 @@ tic()
 output.list <- list()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
-    y.group <- y[[i]]
+    y.group <- y[[i]][[1]]
     y.group <- y.group[rownames(y.group) %in% d$Run,]
     y.group <- y.group[match(d$Run, rownames(y.group)),] #order abundance table to match the metadata file
     y.group <- y.group + 1
@@ -110,14 +94,14 @@ output.list<-
       output[[k]] <- fit
     }
     names(output) <- c("no.nutr.preds","all.preds")
-    cat(paste("Model fit for", group_names[i], "\n"))
+    cat(paste("Model fit for", names(y[i]), "\n"))
     return(output)                                          
   }
 cat('Model fitting loop complete! ')
 toc()
 
 #name the items in the list
-names(output.list) <- group_names
+names(output.list) <- names(y)
 
 cat('Saving fit...\n')
 saveRDS(output.list, output.path)

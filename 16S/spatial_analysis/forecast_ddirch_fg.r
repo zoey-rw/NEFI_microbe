@@ -36,8 +36,9 @@ fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #all_mods <- do.call(c, list(phylo,fg))
 
 all_fcasts <- list()
+all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
 for (p in 1:length(fg)) {
-     #6:length(all_mods)) {
+     #12:length(fg)) {
 mod <- fg[[p]]
 
 if (nutr == TRUE) {

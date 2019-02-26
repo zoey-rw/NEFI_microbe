@@ -7,20 +7,24 @@ rm(list=ls())
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/precision_matrix_match.r')
-source('NEFI_functions/ddirch_forecast.r')
+#source('NEFI_functions/ddirch_forecast.r')
 
 # source ddirch_forecast
+library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
 #set output path.----
 output.path <- NEON_cps_fcast_all_phylo_16S.path
+  #"/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fcast_moisture.rds"
 
 #load model results.----
-#mod 1 is data from maps.
-#mod 2 is site-specific data, no maps.
-#mod 3 is all covariates.
-all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+
+#all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
+
+#all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_JAGSfit_phylumtest.rds")
+
 #all.mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
 #mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
 #mod <- mod[[3]] #just the all predictor case.
@@ -30,6 +34,12 @@ dat <- readRDS(hierarch_filled_16S.path)
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
+
+#just add in moisture for now to see the forecasts.
+# site_mois <- readRDS(site_site_16S.path)	
+# site_mois <- site_mois[-c(8),] #remove RMNP
+# site_mu$moisture <- site_mois$moisture
+
 #merge together.
 plot_mu$siteID <- NULL
 core.preds <- merge(core_mu   , plot_mu)
