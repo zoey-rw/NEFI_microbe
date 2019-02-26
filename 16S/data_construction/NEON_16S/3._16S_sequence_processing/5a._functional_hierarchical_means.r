@@ -21,7 +21,7 @@ eval(parse(text = script))
 output.path <- NEON_all.fg_plot.site_obs_16S.path
 
 #load data and format.----
-d <- readRDS(prior_fg_abundances_16S.path)
+d <- readRDS(NEON_fg_abundances_16S.path)
 
 #register parallel environment.----
 n.cores <- detectCores()
