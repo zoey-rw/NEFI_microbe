@@ -17,7 +17,7 @@ source('paths.r')
 # load csv with classifications
 fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
 # load excel file from Albright with N-cycle pathway presence/absence
-N_cyclers <- read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
+N_cyclers_raw <- read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
 # load csv from Berlemont and Martiny with cellulolytic pathway presence/absence
 cell <- read.csv(paste0(pecan_gen_16S_dir, "cellulolytic_Berlemont.csv"))
 # load NEON SV table as otu file
@@ -167,7 +167,7 @@ for (i in 1:length(pathway_names)) {
     pathways$abundances / pathways$seq_total
   all_N_pathways[[i]] <- pathways
 }
-#saveRDS(allpathways, NEON_N_cyclers_abundances.path)
+#saveRDS(all_N_pathways, NEON_N_cyclers_abundances.path)
 
 
 ########## 4. assign C-cycling groups. ###########
