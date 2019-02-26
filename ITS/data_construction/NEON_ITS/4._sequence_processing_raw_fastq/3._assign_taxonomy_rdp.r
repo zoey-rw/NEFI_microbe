@@ -1,17 +1,24 @@
-#assign taxonomy to tedersoo sequences.
+#assign taxonomy to NEON sequences derived from original .fastq files.
 #clear environment, load packages, functions and paths.----
 rm(list=ls())
 library(doParallel)
 source('paths.r')
 source('NEFI_functions/tic_toc.r')
 
-#load ASV table, set output path.----
+#load ASV tables and merge, set output path.----
 #this needs a lot of memory.
-d <- readRDS(ted_2014_SV.table.path)
-output.path <- ted_2014_tax.path
+d1 <- readRDS(paste0(NEON_ITS_run150225_dada2_out.dir,'SV_table.rds'))
+d2 <- readRDS(paste0(NEON_ITS_run150922_dada2_out.dir,'SV_table.rds'))
+#some redundant samples. drop them.
+d2 <- d2[!(rownames(d2) %in% rownames(d1)),]
+#merge in dada2, save compiled SV table.
+d <- dada2::mergeSequenceTables(d1,d2)
+saveRDS(d, NEON_ITS_fastq_SV.table.path)
+
+output.path <- NEON_ITS_fastq_tax.path
 
 #1. download unite training set.----
-#cat('downloading UNITE database...\n')
+cat('downloading UNITE database...\n')
 unite_url <- 'https://files.plutof.ut.ee/doi/B2/07/B2079372C79891519EF815160D4467BBF4AF1288A23E135E666BABF2C5779767.zip'
 unite_path.zip <- paste0(data.dir,'unite.fa.zip')
 unite_path     <- paste0(data.dir,'sh_general_release_dynamic_01.12.2017.fasta')

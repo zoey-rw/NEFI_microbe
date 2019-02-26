@@ -6,12 +6,12 @@
 ########################################
 #Specfiy hard time limit for the job. 100 hours is plenty.
 #$ -l h_rt=100:00:00
-#run on a few processors (dada2 chimera slayer can be run in parallel)
-#$ -pe omp 16         #assign in parallel.
-#$ -l mem_per_core=8G #big memory.
+#run on a few processors (dada2 RDP classifier can be run in parallel)
+#$ -pe omp 28
+#$ -l mem_total=250G #huge memory job.
 #
 #Give the job a name
-#$ -N ted_RDP
+#$ -N NEON_fun
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -35,7 +35,7 @@ module load R/3.4.0
 cd /projectnb/talbot-lab-data/caverill/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript ITS/data_construction/priorITS_tedersoo/3._assigning_tedersoo2014_taxonomy.r
+Rscript ITS/data_construction/NEON_ITS/raw_ITS_sequences_NEON_processing/5._assign_function_FUNGuild.r
 #
 #
 #End of commands.

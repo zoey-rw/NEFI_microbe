@@ -1,17 +1,16 @@
 #!/bin/bash -l
-#This script is for Downloading all sequences associated with Bahram et al. 2018 fromt the SRA. 235 samples, 470 files.
-#
+# qsun for fitting functional group models.
 ########################################
 ####      commands for scc qsub     ####
 ########################################
-#Specfiy hard time limit for the job. 100 hours is plenty.
-#$ -l h_rt=100:00:00
-#run on a few processors (dada2 chimera slayer can be run in parallel)
-#$ -pe omp 16         #assign in parallel.
-#$ -l mem_per_core=8G #big memory.
+#Specfiy hard time limit for the job.
+#$ -l h_rt=80:00:00
+#
+#Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
+#$ -pe omp 10
 #
 #Give the job a name
-#$ -N ted_RDP
+#$ -N ted_fg_JAGS
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -20,6 +19,10 @@
 #
 # Have the system send mail when the job begins and when the job is aborted or ended
 #$ -m ae
+#
+# Inherit the current environment (load modules python/2.7.7, qiime, and find binaries)
+# Make sure th load those modules in the command line before you submit the qsub
+#$ -V 
 #
 # end of qsub arguments
 #
@@ -30,12 +33,13 @@
 #
 # load necessary modules 
 module load R/3.4.0
+module load jags
 #
-#move to directory that contains the project
-cd /projectnb/talbot-lab-data/caverill/NEFI_microbe
+# cd into project directory.
+/projectnb/talbot-lab-data/caverill/NEFI_microbe
 #
 # in the directory specified above, invoke this function:
-Rscript ITS/data_construction/priorITS_tedersoo/3._assigning_tedersoo2014_taxonomy.r
+Rscript ITS/analysis/spatial_prior_analysis/3._priorITS.tedersoo_fg_dmulti.ddirch_fit.r
 #
 #
 #End of commands.

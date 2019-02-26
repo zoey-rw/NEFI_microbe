@@ -57,10 +57,20 @@ system(cmd)
 
 #Raw NEON ITS sequence data from custom links provided by L.Stanish.
       NEON_ITS.dir <- paste0(big_data_dir,'NEON_raw_ITS_seqs/')
-NEON_ITS_link_file <- paste0(NEON_ITS.dir,'NEON_rawFilesList.csv')
-  NEON_ITS_SV.path <- paste0(NEON_ITS.dir,'NEON_ITS_sv.rds')
- NEON_ITS_tax.path <- paste0(NEON_ITS.dir,'NEON_ITS_tax.rds')
 
+#Raw NEON ITS provided in fastq format, both reads!
+NEON_ITS_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/per_sample_demux/')
+#broken out per sequencing run, fwd/rev reads.
+NEON_ITS_run150225_r1_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/r1_per_sample_demux/')
+NEON_ITS_run150225_r2_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/r2_per_sample_demux/')
+NEON_ITS_run150922_r1_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/r1_per_sample_demux/')
+NEON_ITS_run150922_r2_fastq.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/r2_per_sample_demux/')
+#dada2 output- make these.
+NEON_ITS_run150225_dada2_out.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150225/dada2_output/')
+NEON_ITS_run150922_dada2_out.dir <- paste0(big_data_dir,'NEON_raw_ITS_fastq/ITS_run150922/dada2_output/')
+system(paste0('mkdir -p ',NEON_ITS_run150225_dada2_out.dir))
+system(paste0('mkdir -p ',NEON_ITS_run150922_dada2_out.dir))
+     
 #Raw NEON sequence data from MG-rast. only works for 16S currently.
 mg_rast.key <- paste0(data.dir,'reference_data/MG-RAST_mapped_identifiers.csv')
 #setup place to save MG-RAST sequence data.
@@ -78,7 +88,14 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ted_ITS.prior_fg_JAGSfit    <- paste0(dir,'ted_ITS.prior_fg_JAGSfit.rds')
 ted_ITS.prior_20gen_JAGSfit <- paste0(dir,'ted_ITS.prior_20gen_JAGSfit.rds')
+ted_ITS.prior_phyla_JAGSfit <- paste0(dir,'ted_ITS.prior_phyla_JAGSfit.rds')
 ITS.prior_linear_fg_cov.selection_JAGS <- paste0(dir,'ITS.prior_linear_fg_cov.selection_JAGS.rds')
+ted_ITS_prior_phylo.group_JAGSfits <- paste0(dir,'ted_ITS.pror_phylo.groups_JAGSfits.rds')
+
+#dmulti-ddirch output, fit with fastq-derived data.
+ted_ITS.prior_dmulti.ddirch_fg_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_fg_JAGSfit.rds')
+ted_ITS.prior_dmulti.ddirch_cosmo_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_cosmo_JAGSfit.rds')
+ted_ITS.prior_dmulti.ddirch_yeast_JAGSfit <- paste0(dir,'ted_ITS.prior_dmulti-ddirch_yeast_JAGSfit.rds')
 
 #### ITS/scc_gen: tedersoo 2014 SV and taxonomy paths. ####
 ted_2014_SV.table.path <- paste0(ITS_scc_gen_dir,'ted_2014_SV.table.rds')
@@ -87,7 +104,31 @@ ted_2014_SV.table.path <- paste0(ITS_scc_gen_dir,'ted_2014_SV.table.rds')
 #### ITS/scc_gen: NEON to forecast SV and taxonomy paths. ####
 NEON_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_SV.table.rds')
      NEON_tax.path <- paste0(ITS_scc_gen_dir,'NEON_tax.rds') 
-     
+     NEON_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fun.rds')
+#table derived from .fastq raw files.
+     NEON_ITS_fastq_SV.table.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_SV.table.rds')
+     NEON_ITS_fastq_tax.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_tax.rds')
+     NEON_ITS_fastq_fun.path <- paste0(ITS_scc_gen_dir,'NEON_fastq_fun.rds')
+          
+#### ITS/pecan_gen: Figures.----
+dir <- paste0(ITS_pecan_gen_dir,'figures/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+
+#ddirch forecast-validation.
+NEON_cps_fg_forecast_figure.path <- paste0(dir,'NEON_CPS_fg_forecast_figure.png')
+NEON_cps_cosmo_forecast_figure.path <- paste0(dir,'NEON_CPS_cosmo_forecast_figure.png')
+NEON_cps_phyla_forecast_figure.path <- paste0(dir,'NEON_CPS_phyla_forecast_figure.png')
+NEON_ddirch_var.decomp_fg_figure.path <- paste0(dir,'NEON_ddirch_var.decomp_fg.png')
+NEON_ddirch_var.decomp_cosmo_figure.path <- paste0(dir,'NEON_ddirch_var.decomp_cosmo.png')
+NEON_ddirch_var.importance_fg_figure.path <- paste0(dir,'NEON_ddirch_var.importance_fg.png')
+NEON_ddirch_var.importance_cosmo_figure.path <- paste0(dir,'NEON_ddirch_var.importance_fg.png')
+
+#dmulti-ddirch forecast-validation.
+NEON_dmulti.ddirch_fg_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_fg_forecast_validation.png')
+NEON_dmulti.ddirch_cosmo_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_cosmo_forecast_validation.png')
+NEON_dmulti.ddirch_yeast_forecast_validation.path <- paste0(dir,'NEON_dmulti.ddirch_yeast_forecast_validation.png')
+
 #### ITS/pecan_gen: Uncertainty product paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'uncertainty_products/')
 cmd <- paste0('mkdir -p ',dir)
@@ -112,8 +153,15 @@ cn_NEON_uncertainty_model.path <- paste0(neon_uncertainty_dir,'cn_NEON_uncertain
 dir <- paste0(ITS_pecan_gen_dir,'tedersoo_2014_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
+   tedersoo_ITS.prior_for_analysis.path <- paste0(dir,'tedersoo_ITS.prior_for_analysis.rds')
 tedersoo_ITS.prior_fromSV_analysis.path <- paste0(dir,'tedersoo_ITS.prior_fromSV_analysis.rds')
+            tedersoo_ITS_clean_map.path <- paste0(dir,'tedersoo_ITS_clean_map.rds')
+              tedersoo_ITS_fg_list.path <- paste0(dir,'tedersoo_ITS_fg_list.rds')
+           tedersoo_ITS_hydro_list.path <- paste0(dir,'tedersoo_ITS_hydro_list.rds')
+           tedersoo_ITS_yeast_list.path <- paste0(dir,'tedersoo_ITS_yeast_list.rds')
+    tedersoo_ITS_cosmo_genera_list.path <- paste0(dir,'tedersoo_ITS_cosmo_genera_list.rds')
+           tedersoo_ITS_phyla_list.path <- paste0(dir,'tedersoo_ITS_phyla_list.rds')
+tedersoo_ITS_common_phylo_groups_list.path <- paste0(dir,'tedersoo_ITS_common_phylo_groups_list.rds')
 
 #### ITS/pecan_gen: NEON data aggregation paths. ####
 dir <- paste0(ITS_pecan_gen_dir,'NEON_data_aggregation/')
@@ -147,20 +195,71 @@ site_site.path <- paste0(dir,'site_site.rds')
 site_glob.path <- paste0(dir,'site_glob.rds')
 hierarch_filled.path <- paste0(dir,'hierarch_filled.path')
 
+#cleanup of NEON fun (which also has taxonomy) and SV tables.
+NEON_SV.table_clean.path <- paste0(dir,'NEON_SV.table_clean.rds')
+     NEON_fun_clean.path <- paste0(dir,'NEON_fun_clean.rds')
+     
+#cleanup of NEON fun (which also has taxonomy) and SV tables - DERIVED FROM RAW FASTQ.
+NEON_ITS_fastq_SV.table_clean.path <- paste0(dir,'NEON_ITS_fastq_SV.table_clean.rds')
+     NEON_ITS_fastq_fun_clean.path <- paste0(dir,'NEON_ITS_fastq_fun_clean.rds')
+
 #### ITS/pecan_gen: Forecast covariate paths.----
 #Aggregated NEON site level covariates and global level uncertainty for predictors
 dir <- paste0(ITS_pecan_gen_dir,'NEON_covariates/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
-NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
+        NEON_site_covs.path <- paste0(dir,'NEON_site_covs.rds')
+        NEON_glob_covs.path <- paste0(dir,'NEON_glob_covs.rds')
+          NEON_taxa_fg.path <- paste0(dir,'NEON_taxa_fg.rds')
+     NEON_cosmo_genera.path <- paste0(dir,'NEON_cosmo_genera.rds')
+NEON_site.level_fg_obs.path <- paste0(dir,'NEON_site.level_fg_obs.rds')
+NEON_plot.level_fg_obs.path <- paste0(dir,'NEON_plot.level_fg_obs.rds')
+NEON_site.level_genera_obs.path <- paste0(dir,'NEON_site.level_genera_obs.rds')
+NEON_plot.level_genera_obs.path <- paste0(dir,'NEON_plot.level_genera_obs.rds')
 
-#### ITS/pecan_gen: Forecast output paths.----
+#Aggregated fg and cosmo_genera for fastq-dervied data.
+     NEON_ITS_fastq_taxa_fg.path <- paste0(dir,'NEON_ITS_fastq_taxa_fg.rds')
+NEON_ITS_fastq_yeast_taxa.path <- paste0(dir,'NEON_ITS_fastq_yeast_taxa.rds')
+NEON_ITS_fastq_cosmo_genera.path <- paste0(dir,'NEON_ITS_fastq_cosmo_genera.rds')
+NEON_ITS_fastq_all_cosmo_phylo_groups.path <- paste0(dir,'NEON_ITS_fastq_all_cosmo_phylo_groups.rds')
+NEON_ITS_fastq_phyla.path <- paste0(dir,'NEON_ITS_fastq_phyla.rds')
+NEON_plot.level_fg_obs_fastq.path <- paste0(dir,'NEON_plot.level_fg_obs_fastq.rds')
+NEON_site.level_fg_obs_fastq.path <- paste0(dir,'NEON_site.level_fg_obs_fastq.rds')
+NEON_plot.level_genera_obs_fastq.path <- paste0(dir,'NEON_plot.level_genera_obs_fastq.rds')
+NEON_site.level_genera_obs_fastq.path <- paste0(dir,'NEON_site.level_genera_obs_fastq.rds')
+NEON_plot.level_yeast_obs_fastq.path <- paste0(dir,'NEON_plot.level_yeast_obs_fastq.rds')
+NEON_site.level_yeast_obs_fastq.path <- paste0(dir,'NEON_site.level_yeast_obs_fastq.rds')
+NEON_plot.level_phyla_obs_fastq.path <- paste0(dir,'NEON_plot.level_phyla_obs_fastq.rds')
+NEON_site.level_phyla_obs_fastq.path <- paste0(dir,'NEON_site.level_phyla_obs_fastq.rds')
+
+
+#### ITS/pecan_gen: Forecasts, variance decomposition and variable importance output paths.----
 dir <- paste0(ITS_pecan_gen_dir,'NEON_forecasts/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
+
+#ddirch forecasts and variable importance output.
 NEON_site_fcast_fg.path <- paste0(dir,'NEON_fcast_site.level_fg.rds')
-NEON_site_fcast_20gen.path <- paste0(dir,'NEON_fcast_site.level_20gen.rds')
+NEON_site_fcast_genera.path <- paste0(dir,'NEON_fcast_site.level_genera.rds')
+NEON_site_fcast_phyla.path <- paste0(dir,'NEON_fcast_phyla.rds')
+NEON_site_fcast_all_phylo_levels.path <- paste0(dir,'NEON_fcast_all_phylo_levels.rds')
+NEON_fg_variable_importance_data.path <- paste0(dir,'NEON_fg_variable_importance_data.rds')
+NEON_genera_variable_importance_data.path <- paste0(dir,'NEON_genera_variable_importance_data.rds')
+NEON_phyla_variable_importance_data.path <- paste0(dir,'NEON_phyla_variable_importance_data.rds')
+NEON_ddirch_var.decomp_fg.path <- paste0(dir,'NEON_ddirch_var.decomp_fg.rds')
+NEON_ddirch_var.decomp_cosmo.path <- paste0(dir,'NEON_ddirch_var.decomp_cosmo.rds')
+NEON_ddirch_var.decomp_phyla.path <- paste0(dir,'NEON_ddirch_var.decomp_phyla.rds')
+
+#dmulti-ddirch forecasts, variance decomposition and variable importance output.
+NEON_dmulti.ddirch_fcast_fg.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_fg.rds')
+NEON_dmulti.ddirch_fcast_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_cosmo.rds')
+NEON_dmulti.ddirch_fcast_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_fcast_yeast.rds')
+NEON_dmulti.ddirch_var.importance_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_fg.rds')
+NEON_dmulti.ddirch_var.importance_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_cosmo.rds')
+NEON_dmulti.ddirch_var.importance_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_var.importance_yeast.rds')
+NEON_dmulti.ddirch_var.decomposition_fg.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_fg.rds')
+NEON_dmulti.ddirch_var.decomposition_cosmo.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_cosmo.rds')
+NEON_dmulti.ddirch_var.decomposition_yeast.path <- paste0(dir,'NEON_dmulti.ddirch_var.decomposition_yeast.rds')
 
 #### ITS/pecan_gen: NEON map, tax and OTU table paths. ####
 #This will eventually be repalced by ASV and tax tables genereated by CA pipeline, which will pull and process raw data NEON sequence data from MG-RAST.
@@ -200,6 +299,9 @@ system(cmd)
             ted_map_raw.path <- paste0(dir,'tedersoo_2014_mapping_file.csv')
             ted_otu_raw.path <- paste0(dir,'tedersoo_2014_otu_file.txt')
      ted_sampling_dates.path <- paste0(dir,'tedersoo2014_dates.csv')
+          NEON_ITS_link_file <- paste0(dir,'NEON_rawFilesList.csv')
+            field_sites.path <- paste0(dir,'field-sites.csv')
+     
  
 #### NEON pre-release: otu tables from L. Stanish. ####
 #This is a one off, will be replaced by our own pipeline eventually.
@@ -213,7 +315,19 @@ neon_pre_release_otu.out_ITS <- paste0(NEON_pre_release.dir,'ITS_otu_clean.rds')
 neon_pre_release_map.out_ITS <- paste0(NEON_pre_release.dir,'ITS_map_clean.rds')
 neon_pre_release_tax.out_ITS <- paste0(NEON_pre_release.dir,'ITS_tax_clean.rds')
 
+#####ITS/scc_gen: seq depth analysis paths.----
+dir <- paste0(ITS_scc_gen_dir,'seq_depth_analysis/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+ted_fg_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
+ted_cosmo_ddirch_fit_seqdepth.path <- paste0(dir,'ted_fg_ddirch_fit.rds')
 
+####ITS/pecan_gen: seq depth analysis paths.----
+dir <- paste0(ITS_pecan_gen_dir,'seq_depth_analysis/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+ted_fg_seq.depth_ddirch_foreacsts.path <- paste0(dir,'ted_fg_seq.depth_ddirch_foreacsts.rds')
+ted_cosmo_seq.depth_ddirch_foreacsts.path <- paste0(dir,'ted_cosmo_seq.depth_ddirch_foreacsts.rds')
 
 ########## ---------- 16S file paths ---------- ###########
 
@@ -363,4 +477,3 @@ NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
 NEON_cps.fcast_fg_fig_16S.path <- paste0(dir, "NEON_cps.fcast_fg_fig_16S.pdf")
 # prior calibration figures 
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
-
