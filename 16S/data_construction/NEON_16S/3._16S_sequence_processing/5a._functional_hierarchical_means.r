@@ -17,19 +17,11 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
-
 #set output.path----
 output.path <- NEON_all.fg_plot.site_obs_16S.path
 
 #load data and format.----
-#load data and format.----
-d.1 <- readRDS(NEON_N_cyclers_abundances.path)
-d.2 <- readRDS(NEON_C_cyclers_abundances.path)
-d.3 <- list(readRDS(NEON_cop_olig_abundances.path)) # making cop_olig a list to fit with the N- and C-cycling lists
-
-# combine these three lists of lists - just get abundances
-d <- do.call(c, list(d.1, d.2, d.3))
-#d <- sapply(d, "[[", 1)
+d <- readRDS(prior_fg_abundances_16S.path)
 
 #register parallel environment.----
 n.cores <- detectCores()
@@ -45,8 +37,6 @@ output <-
 
     #Get y multivariate matrix.
     abundances <- y$abundances
-    seq.depth  <- y$seq_total
-    abundances <- abundances[seq.depth>1000,] # drop samples with less than 1k reads
     y <- as.matrix((abundances + 1) / rowSums(abundances + 1))
     
     #get core_plot and plot_site indexing.
@@ -66,10 +56,10 @@ output <-
       colnames(fit$site.fit[[j]]) <- colnames(y)
     }
     fit$core.fit <- y #add in the core-level data!
-    cat(paste0("Models fit for set ",i,"/3. \n"))
+    cat(paste0("Models fit for set ",i,"/12. \n"))
     return(fit)
   }
-#names(output) <- c("N_cyclers", "C_cyclers", "Cop_olig")
+names(output) <- names(d)
 
 #save matrix lists.----
 saveRDS(output, output.path)

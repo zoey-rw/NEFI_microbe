@@ -15,9 +15,7 @@ eval(parse(text = script))
 output.path <- NEON_16S_phylo_groups_abundances.path
 
 #load data.----
-sv <- readRDS(NEON_dada2_SV_table.path)
-map <- readRDS(hierarch_filled_16S.path)
-map <- map$core.obs
+sv <- readRDS(NEON_dada2_SV_table_rare.path)
 tax <- readRDS(NEON_dada2_tax_table.path)
 
 #get reference common phyla from prior.----

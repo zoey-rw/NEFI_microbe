@@ -16,7 +16,7 @@ output.path <- bahram_16S_common_phylo_groups_list.path
 
 #load data.----
 map <- readRDS(bahram_metadata.path)
-otu <- readRDS(bahram_dada2_SV_table.path)
+otu <- readRDS(bahram_dada2_SV_table_rare.path)
 tax <- readRDS(bahram_dada2_tax_table.path)
 
 #subset otu file to match mapping file.----

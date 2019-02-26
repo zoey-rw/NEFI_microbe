@@ -232,20 +232,14 @@ bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
 dir <- paste0(scc_gen_16S_dir, 'JAGS_output/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-bahram_16S.prior_12gen_JAGSfit <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit.rds')
-bahram_16S.prior_12gen_JAGSfit_moisture <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_moisture.rds')
-bahram_16S.prior_12gen_JAGSfit_south_lat <- paste0(dir,'bahram_16S.prior_12gen_JAGSfit_south_lat.rds')
 bahram_16S.prior_15phyla_JAGSfit <- paste0(dir,'bahram_16S.prior_15phyla_JAGSfit.rds')
 bahram_16S.prior_cop_olig_JAGSfit <-   paste0(dir,'bahram_16S.prior_cop_olig_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_nutr_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_nutr_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_nutr_no_moist_JAGSfit.rds')
 bahram_16S.prior_cop_olig_all_var_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_all_JAGSfit.rds')
-bahram_16S.prior_cop_olig_indiv_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_olig_indiv_JAGSfit.rds')
 bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGSfit.rds')
 bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfit.rds')
-bahram_16S_prior_N_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_.5cutoff_JAGSfit.rds')
 bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
-bahram_16S_prior_C_cycle_.5cutoff_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_.5cutoff_JAGSfit.rds')
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
 prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits')
 
@@ -258,17 +252,10 @@ metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
 dir <- paste0(pecan_gen_16S_dir, 'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
-
-bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds")
-
 # group abundances
-bahram_prior_gen.path <- paste0(dir,'bahram_prior_gen.rds') # 12 cosmopolitan genera
-cosmo_output_16S.path <- paste0(dir, "cosmo_output_16S.rds") # 20 cosmopolitan genera - use this one, it's the same approach as for ITS
-cosmo_output_16S_south_lat.path <- paste0(dir, "cosmo_output_16S_south_lat.rds") # 20 cosmopolitan genera incl southern lats
+bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds") # all cosmopolitan taxa
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
-phyla_output_16S_south_lat.path <- paste0(dir,"phyla_output_16S_south_lat.rds") # 15 cosmopolitan phyla incl southern lats
 prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - Bahram
-NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - NEON
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
 prior_fg_abundances_16S.path <- paste0(dir, "prior_fg_abundances_16S.rds")
@@ -345,13 +332,16 @@ plot.table_16S.path <- paste0(dir,'plot.table_16S.rds')
 site.table_16S.path <- paste0(dir,'site.table_16S.rds') 
 
 # path to NEON group abundances
+NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
+NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
+#to delete:
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
 NEON_phyla_abundances_16S.path  <- paste0(dir, "NEON_phyla_abundances.rds")
 NEON_N_cyclers_abundances.path <- paste0(dir, "NEON_N_cyclers_abundances.rds")
 NEON_C_cyclers_abundances.path <- paste0(dir, "NEON_C_cyclers_abundances.rds")
-NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
-NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
+NEON_cop_olig_abundances.path <- paste0(dir,"NEON_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - NEON
+
 
 #### 16S/pecan_gen: paths to NEON covariates ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates/')
