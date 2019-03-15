@@ -411,6 +411,7 @@ NEON_cps_fcast_all_phylo_16S.path <- paste0(dir, "NEON_cps_fcast_all_phylo_16S.r
 NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
 NEON_cps_fcast_N.cycler_16S.path  <- paste0(dir, "NEON_cps_fcast_N.cycler_16S.rds")
 NEON_cps_fcast_fg_16S.path <- paste0(dir, "NEON_cps_fcast_fg_16S.rds")
+NEON_cps_fcast_fg_16S_no.nutr.path <- paste0(dir, "NEON_cps_fcast_fg_16S_no.nutr.rds")
 NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
 NEON_fg_variable_importance_data_16S.path <- paste0(dir, "NEON_fg_variable_importance_data_16S.rds")
 

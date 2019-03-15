@@ -7,8 +7,8 @@ source('NEFI_functions/crib_fun.r')
 library(data.table)
 
 # include micronutrients (K, Mg, P, C)?
-nutr <- TRUE
-#nutr <- FALSE
+#nutr <- TRUE
+nutr <- FALSE
 
 # load forecast 
 if (nutr==TRUE) {

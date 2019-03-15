@@ -38,11 +38,11 @@ otu <- otu[,colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
 
 #get each level of taxonomy output.----
-phylum.out <- common_group_quantification(otu,tax,unique(tax$phylum),'phylum')
-class.out <- common_group_quantification(otu,tax,unique(tax$class),'class' )
-order.out <- common_group_quantification(otu,tax,unique(tax$order),'order' )
-family.out <- common_group_quantification(otu,tax,unique(tax$family),'family')
-genus.out <- common_group_quantification(otu,tax,unique(tax$genus),'genus' )
+phylum.out <- common_group_quantification(otu,tax,unique(tax$phylum),'phylum', samp_freq = .95)
+class.out <- common_group_quantification(otu,tax,unique(tax$class),'class', samp_freq = .95 )
+order.out <- common_group_quantification(otu,tax,unique(tax$order),'order', samp_freq = .95)
+family.out <- common_group_quantification(otu,tax,unique(tax$family),'family', samp_freq = .95)
+genus.out <- common_group_quantification(otu,tax,unique(tax$genus),'genus', samp_freq = .95)
 
 #save output.----
 all_taxa_out <- list(phylum.out,class.out,order.out,family.out,genus.out)
