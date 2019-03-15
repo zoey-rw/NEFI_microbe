@@ -28,7 +28,7 @@ registerDoParallel(cores=n.cores)
 
 #set output path.----
 #output.path <- bahram_16S_prior_phylo.group_JAGSfits
-output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_JAGSfit_phylumtest.rds"
+output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"
 
 #load bahram abundance data.----
 y <- readRDS(bahram_16S_common_phylo_groups_list.path)
@@ -66,9 +66,9 @@ output.list<-
   foreach(i = 1:length(y)) %dopar% {
     y.group <- y[[i]]$abundances
     y.group <- y.group[rownames(y.group) %in% d$Run,]
+    y.group <- y.group[match(d$Run, rownames(y.group)),] #order abundance table to match the metadata file
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
-    y.group <- y.group[order(rownames(y.group),d$Run),]
     if(!sum(rownames(y.group) == d$Run) == nrow(y.group)){
       cat('Warning. x and y covariates not in the same order!')
     }
@@ -76,7 +76,7 @@ output.list<-
     output <- list()
     for(k in 1:length(x.list)){
       fit <- site.level_dirlichet_jags(y=y.group,x_mu=x.list[[k]],
-                                       adapt = 200, burnin = 8000, sample = 1000, 
+                                       adapt = 1000, burnin = 6000, sample = 1000, 
                                        parallel = T, parallel_method="parallel")
       output[[k]] <- fit
     }
