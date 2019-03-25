@@ -357,12 +357,12 @@ bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfi
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
 prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits')
 
-#### 16S/scc_gen: raw data for prior metadata ####
+#### 16S/scc_gen: raw sequence and metadata for prior metadata ####
 dir <-  scc_gen_16S_dir
 SRA.path <- paste0(dir, "SraRunTable.csv")
 metadata_bahram_raw.path <- paste0(dir, "metadata_bahram_raw.csv")
 
-#### 16S/pecan_gen: Bahram 2018 prior data. ####
+#### 16S/pecan_gen: Bahram 2018 prior abundance data. ####
 dir <- paste0(pecan_gen_16S_dir, 'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
@@ -375,9 +375,7 @@ prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
 prior_fg_abundances_16S.path <- paste0(dir, "prior_fg_abundances_16S.rds")
 
 # metadata
-bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # prior metadata - northern temperate latitudes
-bahram_metadata_south_lat.path <-  paste0(dir, "bahram_metadata_south_lat.rds") # prior metadata - northern and souther temperate latitudes
-bahram_prior_metadata.path <-  paste0(dir, "bahram_prior_metadata.rds")
+bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # processed prior metadata
 
 
 #### ------------ NEON paths ------------- ####
@@ -478,3 +476,10 @@ NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
 NEON_cps.fcast_fg_fig_16S.path <- paste0(dir, "NEON_cps.fcast_fg_fig_16S.pdf")
 # prior calibration figures 
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
+
+#### 16S/pecan_gen: reference_data
+dir <- paste0(pecan_gen_16S_dir,'reference_data/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+pH_conversion.path <- paste0(dir, "pH_conversion_data.rds")
+  

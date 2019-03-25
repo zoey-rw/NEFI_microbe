@@ -16,29 +16,20 @@ eval(parse(text = script))
 
 #set output path.----
 output.path <- NEON_cps_fcast_all_phylo_16S.path
-  #"/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fcast_moisture.rds"
-
-#load model results.----
-
-#all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
-all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
-
-#all.mod <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_JAGSfit_phylumtest.rds")
-
+  
+#load prior model results.----
+#all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
 #all.mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
-#mod <- readRDS(ted_ITS.prior_20gen_JAGSfit)
-#mod <- mod[[3]] #just the all predictor case.
+#all.mod <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum.rds"))
+all.mod <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
+phylum.mod <- readRDS(paste0(scc_gen_16S_dir,"JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+all.mod$phylum <- phylum.mod$phylum
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_16S.path)
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
-
-#just add in moisture for now to see the forecasts.
-# site_mois <- readRDS(site_site_16S.path)	
-# site_mois <- site_mois[-c(8),] #remove RMNP
-# site_mu$moisture <- site_mois$moisture
 
 #merge together.
 plot_mu$siteID <- NULL
@@ -105,6 +96,7 @@ cat('Making forecasts...\n')
 for(i in 1:length(all.mod)){
   tic()
   mod <- all.mod[[i]]
+  mod <- mod$no.nutr.preds
   core.fit <- ddirch_forecast(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)
   plot.fit <- ddirch_forecast(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)
   site.fit <- ddirch_forecast(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)
@@ -124,3 +116,6 @@ toc()
 #Save output.----
 names(phylo.output) <- names(all.mod)
 saveRDS(phylo.output, output.path)
+
+# phylum: saveRDS(phylo.output, paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_fcast_phylum.rds"))
+

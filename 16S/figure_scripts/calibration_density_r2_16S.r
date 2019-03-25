@@ -6,14 +6,17 @@ output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_16S.png")
 #output.path <- ITS_prior_r2_distribution.density_figure.path
 
 #load data.----
-pl <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
- # readRDS(ted_ITS_prior_all.groups_JAGSfits.path) #all phylo and functional groups.
+#pl <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
+pl <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
+phyla <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+pl$phylum <- phyla$phylum
+
 #re-order list, make function group first.
 #pl <- pl[c('fg','phylum','class','order','family','genus')]
 fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #pl <- c(list(fg), pl)
-pl <- c(fg, pl)
-pl <- pl[c('fg','phylum','class','order','family','genus')]
+#pl <- c(fg, pl)
+#pl <- pl[c('fg','phylum','class','order','family','genus')]
 #pl <- pl[c('phylum','class','order','family','genus')]
 
 
@@ -21,10 +24,10 @@ pl <- pl[c('fg','phylum','class','order','family','genus')]
 pl.r2 <- list()
 lev.r2.out <- list()
 for(i in 1:length(pl)){
-  if (p==1) lev <- pl[[i]]$
+  #if (p==1) lev <- pl[[i]]$
   lev <- pl[[i]]
-  obs <- lev$observed
-  pred <- lev$predicted
+  obs <- lev$no.nutr.preds$observed
+  pred <- lev$no.nutr.preds$predicted
   lev.r2 <- list()
   for(j in 1:ncol(obs)){lev.r2[[j]] <- summary(lm(obs[,j] ~ pred[,j]))$r.squared}
   lev.r2 <- unlist(lev.r2)

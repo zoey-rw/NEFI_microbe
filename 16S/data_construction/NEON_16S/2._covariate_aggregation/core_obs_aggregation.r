@@ -7,6 +7,10 @@ source('paths.r')
 source('NEFI_functions/pC_uncertainty_neon.r')
 source('NEFI_functions/cn_uncertainty_neon.r')
 source('NEFI_functions/hierarch_core.means_JAGS.r')
+source('NEFI_functions/convert_K.r')
+
+# load pH values for conversion
+pH_conversion <- readRDS(pH_conversion.path)
 
 #load data, subset and order.----
 #samples with ITS data, along with DNA identifiers. Only take samples measured during peak greeness.
@@ -35,13 +39,22 @@ merged <- merge(merged,to_merge, by = 'sampleID', all.x=T)
 merged$year <- substring(merged$dateID,1,4)
 merged <- merged[!is.na(merged$siteID),]
 
-#Subset to Peak Greenness in 2014. 531 observations. 12 sites.----
-merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
+# Subset to 2014. we're not going to subset to peakGreenness for these covariates.
+#merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
+merged <- merged[merged$year == '2014',]
 #get rid of duped geneticSampleIDs.
 merged <- merged[!(duplicated(merged$geneticSampleID)),]
 
+# convert pH units from KCl to CaCl using the one-step converting function.
+# this takes a dataset with both KCl and CaCl measurements, and uses their linear relationship for conversion
+pH_conversion <- as.matrix(pH_conversion[,c("phca_val_1", "phkc_val_1")])
+pH_KCl <- 
+  convert_K(merged$soilInCaClpH, pH_conversion)
+merged$pH_KCl <- pH_KCl$mean
+merged$pH_sd <- pH_KCl$sd
+
 #finalize columns for core.level.----
-core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','soilInWaterpH','organicCPercent','CNratio')]
+core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','pH_sd','pH_KCl','organicCPercent','CNratio')]
 colnames(core.level)[(ncol(core.level) - 2) : ncol(core.level)] <- c('pH','pC','cn')
 core.level$pC_sd <- pC_uncertainty_neon(core.level$pC)
 core.level$cn_sd <- cn_uncertainty_neon(core.level$cn)

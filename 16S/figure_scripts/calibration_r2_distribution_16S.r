@@ -6,10 +6,13 @@ source('paths.r')
 output.path <- prior_16S_r2_distribution.density_figure.path
 
 #load data.----
-fg_all <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
-#fg <- readRDS(ted_ITS.prior_fg_JAGSfit_micronutrient)
-#pl <- #readRDS(ted_ITS_prior_phylo.group_JAGSfits)
-pl <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+#fg_all <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+#pl <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
+pl <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
+phyla <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+
+pl$phylum <- phyla$phylum
+
 #loop over lists and get R2 values.----
 #functional groups.
 fg.r2.all <- list()
@@ -34,6 +37,7 @@ fg.r2.all <- unlist(fg.r2.all)
 pl.r2 <- list()
 for(i in 1:length(pl)){
   lev <- pl[[i]]
+  lev <- lev$all.preds
   obs <- lev$observed
   pred <- lev$predicted
   lev.r2 <- list()

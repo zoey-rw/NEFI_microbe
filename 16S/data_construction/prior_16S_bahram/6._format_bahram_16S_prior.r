@@ -82,8 +82,6 @@ metadata$forest <-ifelse(metadata$Biome %in% c('Temperate_coniferous_forests',
                                                'Temperate_deciduous_forests','Dry_tropical_forests','Boreal_forests'),1,0)
 metadata$conifer <- ifelse(metadata$Biome %in% c('Temperate_coniferous_forests'),1,0)
 
-
-
 #get worldclim2 climate variables and aridity index, merge with metadata
 climate <- worldclim2_grab(latitude = metadata$Lat,longitude=metadata$Lon)
 climate$aridity <- arid_extract(metadata$Lat, metadata$Lon)

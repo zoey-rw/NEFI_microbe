@@ -12,8 +12,12 @@ all_fcasts <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
 all_fcasts <- all_fcasts[1:5]
 
 #testing at phylum level.
-all_fcasts <- readRDS(paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_fcast_phylum.rds"))
-all_fits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum.rds"))
+all_fcasts <- readRDS(paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_cps_fcast_all_phylo_16S.rds"))
+#all_fits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum.rds"))
+
+all_fits <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
+phylum.mod <- readRDS(paste0(scc_gen_16S_dir,"JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+all_fits$phylum <- phylum.mod$phylum
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
@@ -32,11 +36,14 @@ par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 
-for (p in 1:length(all_fcasts)) {
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_new_pH.pdf")
+
+
+for (p in 2:length(all_fcasts)) {
   # p <- 1
   output <- all_fcasts[[p]]  
   fit <- all_fits[[p]]
-  #fit <- fit$no.nutr.preds
+  fit <- fit$no.nutr.preds
   
   # read in observed values
   raw.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)

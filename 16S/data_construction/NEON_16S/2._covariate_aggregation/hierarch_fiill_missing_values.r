@@ -21,13 +21,10 @@ output.path <- hierarch_filled_16S.path
 no.ecm <- c('CPER','STER','WOOD')
 
 #load prior model fit- model fit at site level.
-mod <- readRDS(bahram_16S.prior_12gen_JAGSfit)
+mod <- readRDS(paste0(scc_gen_16S_dir, "/JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+mod <- mod$phylum
 preds <- mod$all.preds$species_parameter_output$other$predictor
 if('relEM' %in% preds){preds <- c(as.character(preds),'b.relEM')}
-
-# fix upstream if re-running prior model later - 
-# change 'PH' to 'pH' to match NEON covariates
-preds <- replace(preds, preds=="PH", "pH")
 
 #add plot, site and sampleID to preds.
 keys <- c('sampleID','plotID','siteID')
