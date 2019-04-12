@@ -18,9 +18,12 @@ library(RColorBrewer)
 
 # read in descriptors for samples & sites 
 map<-readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/bahram_prior_gen.rds")
-
+map <- readRDS("16S/data_construction/data_QC/metadata_all_lats.rds")
 # read in OTU file
 bahram_otu <- readRDS(bahram_dada2_SV_table.path)
+#bahram_otu <- readRDS(bahram_dada2_SV_table_rare.path)
+map <- as.data.frame(map)
+map <- map[as.character(map$Run) %in% rownames(bahram_otu),]
 # subset by sites in dataset
 bahram_otu <- bahram_otu[rownames(bahram_otu) %in% map$Run,]
 
@@ -35,9 +38,11 @@ bahram_track <- bahram_track[rownames(bahram_track) %in% map$Run,]
 Seq_bin <- as.numeric(cut(bahram_track$seqs_nonchim, 12))
 treat <- map$Biome
 levels(treat)[levels(treat)=="-"] <- "other"
-
-
-
+PH <- cut(map$pH, breaks=8)
+CN <- cut(map$cn, breaks=8)
+MAP <- cut(map$map, breaks=8)
+MAT <- cut(map$mat, breaks=8)
+lat <- cut(map$Lat, breaks=8)
 ### visualization ###
 
 # BRAY-CURTIS #
@@ -62,13 +67,35 @@ dev.copy(png,'16S/data_construction/data_QC/nmds_seqdepth_bahram.png')
 dev.off()
 #ordispider(init_NMDS, Seq_bin, col = "purple", label= TRUE)
 
-# plot data by treatment 
+# plot data by biome 
 plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - habitat");
 points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(7, "Set2")[unclass(factor(treat))],cex=1.5); 
 #ordiellipse(all.site.coordinates, treat, kind = "se", draw = "lines", conf = 0.95)
 dev.copy(png,'16S/data_construction/data_QC/nmds_habitat_bahram.png')
 dev.off()
 #ordispider(init_NMDS, treat, col = "purple",  label= TRUE)
+
+# plot by pH
+plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - pH");
+points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(9, "RdPu")[unclass(factor(PH))],cex=1.5); 
+
+
+# plot by C:N
+plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - CN");
+points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(9, "RdPu")[unclass(factor(CN))],cex=1.5); 
+
+# plot by MAP
+plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - MAP");
+points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(9, "RdPu")[unclass(factor(MAP))],cex=1.5); 
+
+# plot by MAT
+plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - MAT");
+points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(9, "RdPu")[unclass(factor(MAT))],cex=1.5); 
+
+# plot by lat
+plot(init_NMDS,type="n",display = "sites", main="Bahram - Bray-curtis - Latitude");
+points(all.site.coordinates $NMDS1, all.site.coordinates $NMDS2,pch=c(21),bg=brewer.pal(9, "RdPu")[unclass(factor(lat))],cex=1.5); 
+
 
 # JACCARD #
 

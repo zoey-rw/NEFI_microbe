@@ -403,7 +403,6 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_cosmo_abundances_16S.path <- paste0(dir, "NEON_cosmo_abundances_16S.rds")
 NEON_site_fcast_genera_16S.path <- paste0(dir, "NEON_site_fcast_cosmo_16S.rds")
-hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
 NEON_genera_variable_importance_data_16S.path <- paste0(dir, "NEON_genera_variable_importance_data_16S.rds")
 NEON_cps_fcast_all_phylo_16S.path <- paste0(dir, "NEON_cps_fcast_all_phylo_16S.rds")
 NEON_cps_fcast_phyla_16S.path <- paste0(dir, "NEON_cps_fcast_phyla_16S.rds")
@@ -437,7 +436,9 @@ system(cmd)
     plot_glob_16S.path <- paste0(dir, "plot_glob_16S.rds")
     site_site_16S.path <- paste0(dir, "site_site_16S.rds")
     site_glob_16S.path <- paste0(dir, "site_glob_16S.rds")
-
+    hierarch_filled_16S.path <- paste0(dir, "hierarch_filled_16S.rds")
+    missing_data_removed_16S.path <- paste0(dir, "missing_data_removed_16S.rds")
+    
 #Paths to spatial x and y variables for modeling.
 obs.table_16S.path <- paste0(dir, 'obs.table_16S.rds') 
 core.table_16S.path <- paste0(dir,'core.table_16S.rds') 

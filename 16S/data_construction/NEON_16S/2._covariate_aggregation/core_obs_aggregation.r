@@ -3,6 +3,7 @@
 #This is currently soil pH, soil %C and soil C:N.
 #clear environment, source paths.
 rm(list=ls())
+library(runjags)
 source('paths.r')
 source('NEFI_functions/pC_uncertainty_neon.r')
 source('NEFI_functions/cn_uncertainty_neon.r')
@@ -40,8 +41,20 @@ merged$year <- substring(merged$dateID,1,4)
 merged <- merged[!is.na(merged$siteID),]
 
 # Subset to 2014. we're not going to subset to peakGreenness for these covariates.
-#merged <- merged[merged$sampleTiming == 'peakGreenness' & merged$year == '2014',]
-merged <- merged[merged$year == '2014',]
+#merged <- merged[merged$sampleTiming == 'peakGreenness',]
+merged$siteID <- as.character(merged$siteID)
+sites <- unique(merged$siteID)
+year_grab <- list()
+for(i in 1:length(sites)){
+  year_grab[[i]] <- min(merged[merged$siteID == sites[i], ]$year)
+}
+site_years <- data.frame(sites, unlist(year_grab))
+colnames(site_years) <- c('siteID','year')
+to_keep <- list()
+for(i in 1:nrow(site_years)){
+  to_keep[[i]] <- merged[merged$siteID == site_years$siteID[i] & merged$year == site_years$year[i],]
+}
+merged <- do.call(rbind, to_keep)
 #get rid of duped geneticSampleIDs.
 merged <- merged[!(duplicated(merged$geneticSampleID)),]
 
@@ -54,7 +67,7 @@ merged$pH_KCl <- pH_KCl$mean
 merged$pH_sd <- pH_KCl$sd
 
 #finalize columns for core.level.----
-core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','pH_sd','pH_KCl','organicCPercent','CNratio')]
+core.level <- merged[,c('sampleID','geneticSampleID','dnaSampleID','siteID','plotID','dateID','collectDate','horizon','elevation','soilMoisture','sampleTiming','pH_sd','pH_KCl','organicCPercent','CNratio')]
 colnames(core.level)[(ncol(core.level) - 2) : ncol(core.level)] <- c('pH','pC','cn')
 core.level$pC_sd <- pC_uncertainty_neon(core.level$pC)
 core.level$cn_sd <- cn_uncertainty_neon(core.level$cn)
@@ -82,6 +95,10 @@ pH.glob <- pH.ag$glob.table[,c('Mean','SD')]
 colnames(pH.plot)[2:3] <- c('pH','pH_sd')
 colnames(pH.site)[2:3] <- c('pH','pH_sd')
 
+# now that plot- and site-level averages have used any available data from 2014,
+# let's remove samples that are not from peakGreenness
+core.level <- core.level[which(core.level$sampleTiming=="peakGreenness"),]
+
 #final output.
 #core level.
 core.out <- core.level
@@ -100,6 +117,8 @@ colnames(to_add) <- 'plotID'
 plot.out <- plyr::rbind.fill(plot.out,to_add)
 plot.out$siteID <- substring(plot.out$plotID, 1, 4)
 plot.out <- plot.out[order(plot.out$plotID),]
+# remove plots in plot-level that aren't in core-level.
+plot.out <- plot.out[plot.out$plotID %in% core.out$plotID,]
 
 #site level.
 site.out <- merge(pC.site, cn.site, all = T)
@@ -109,6 +128,8 @@ to_add <- as.character(unique(plot.out[!(plot.out$siteID %in% site.out$siteID),]
 to_add <- data.frame(to_add)
 colnames(to_add) <- 'siteID'
 site.out <- plyr::rbind.fill(site.out,to_add)
+# remove sites in site-level that aren't in plot-level.
+site.out <- site.out[site.out$siteID %in% plot.out$siteID,]
 
 #global level
 glob.out <- rbind(pC.glob, cn.glob, pH.glob)

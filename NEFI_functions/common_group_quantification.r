@@ -71,7 +71,7 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   colnames( evenness) <- c( 'evenness','groups')
   
   #put together frequency table and order.
-  frequency <- data.frame(cbind(groups,frequency))
+  frequency <- cbind.data.frame(groups,frequency)
   colnames(frequency)[2] <- 'sample_frequency'
   frequency$sample_frequency <- as.character(frequency$sample_frequency)
   frequency$sample_frequency <- as.numeric(frequency$sample_frequency)
