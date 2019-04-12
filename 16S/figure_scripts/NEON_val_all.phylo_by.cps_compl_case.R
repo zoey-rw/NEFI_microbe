@@ -1,5 +1,6 @@
-# Validation plots of functional group forecasts to NEON core/plot/sites, 
+# Validation plots of phylogenetic group forecasts to NEON core/plot/sites, 
 # plotted by group, each with c/p/s.
+# only complete sets of data
 
 rm(list=ls())
 source('paths.r')
@@ -8,11 +9,8 @@ library(data.table)
 
 
 # load forecast 
-all_fcasts <- readRDS(NEON_cps_fcast_N.cycler_16S.path)
-all_fcasts <- all_fcasts[1:5]
-
 #testing at phylum level.
-all_fcasts <- readRDS(paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_cps_fcast_all_phylo_16S.rds"))
+all_fcasts <- readRDS(paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_fcast_comp_cases.rds"))
 #all_fits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum.rds"))
 
 all_fits <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
@@ -21,8 +19,8 @@ all_fits$phylum <- phylum.mod$phylum
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
-map <- readRDS(core_obs_16S.path)
-
+no_missing_data <- readRDS(missing_data_removed_16S.path)
+map <- no_missing_data[[1]]
 # read in prior fit.
 #all_fits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
@@ -36,10 +34,10 @@ par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_new_pH.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_moreC.pdf")
+pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_compl_case.pdf")
 
-for (p in 2:length(all_fcasts)) {
+
+for (p in 1:length(all_fcasts)) {
   # p <- 1
   output <- all_fcasts[[p]]  
   fit <- all_fits[[p]]
@@ -112,6 +110,11 @@ for (p in 2:length(all_fcasts)) {
     fcast <- output$plot.fit	
     # read in plot-level observed values 
     truth <- raw.truth$plot.fit
+    present.plots <- no_missing_data[[4]]$plotID
+    present.plots <- stringr::str_replace(present.plots, "_", ".")
+    truth$mean <- truth$mean[rownames(truth$mean) %in% present.plots,] 
+    truth$lo95 <- truth$lo95[rownames(truth$lo95) %in% present.plots,] 
+    truth$hi95 <- truth$hi95[rownames(truth$hi95) %in% present.plots,] 
     
     for(k in 1:length(truth)){	
       rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)	
@@ -158,6 +161,14 @@ for (p in 2:length(all_fcasts)) {
     fcast <- output$site.fit
     # read in site-level observed values
     truth <- raw.truth$site.fit
+    present.sites <- no_missing_data[[6]]$siteID
+    present.sites <- stringr::str_replace(present.sites, "_", ".")
+    truth$mean <- truth$mean[rownames(truth$mean) %in% present.sites,] 
+    truth$lo95 <- truth$lo95[rownames(truth$lo95) %in% present.sites,] 
+    truth$hi95 <- truth$hi95[rownames(truth$hi95) %in% present.sites,] 
+    
+    
+    
     #organize data.
     for(k in 1:length(truth)){
       rownames(truth[[k]]) <- gsub('.','_',rownames(truth[[k]]), fixed = T)
@@ -200,4 +211,4 @@ for (p in 2:length(all_fcasts)) {
     #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
   }
 }
-#dev.off()
+dev.off()

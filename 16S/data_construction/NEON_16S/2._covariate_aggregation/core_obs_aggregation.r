@@ -35,6 +35,7 @@ to_merge$geneticSampleID <- dp1.10086$geneticSampleID
 merged <- merge(dp1.10801,to_merge)
 to_merge <- dp1.10078[,!c(colnames(dp1.10078) %in% colnames(merged))]
 to_merge$sampleID <- dp1.10078$sampleID
+to_merge <- to_merge[!(to_merge$acidTreatment=="N" & is.na(to_merge$organicCPercent)),] # get rid of samples where acid treatment prevents C/N ratio
 to_merge <- to_merge[!(duplicated(to_merge$sampleID)),] #get rid of analytical replicates.
 merged <- merge(merged,to_merge, by = 'sampleID', all.x=T)
 merged$year <- substring(merged$dateID,1,4)
@@ -42,6 +43,7 @@ merged <- merged[!is.na(merged$siteID),]
 
 # Subset to 2014. we're not going to subset to peakGreenness for these covariates.
 #merged <- merged[merged$sampleTiming == 'peakGreenness',]
+merged <- merged[merged$year == '2014',]
 merged$siteID <- as.character(merged$siteID)
 sites <- unique(merged$siteID)
 year_grab <- list()
