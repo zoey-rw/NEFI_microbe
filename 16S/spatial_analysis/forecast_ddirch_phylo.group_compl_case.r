@@ -15,7 +15,7 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 #set output path.----
-output.path <- paste0(pecan_gen_16S_dir,"/NEON_forecast_data/NEON_fcast_comp_cases.rds")
+output.path <- paste0(pecan_gen_16S_dir,"NEON_forecast_data/NEON_fcast_comp_cases.rds")
 
 #load prior model results.----
 #all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/bahram_16S.prior_phylo_new_test.rds'))
@@ -37,6 +37,7 @@ core.preds <- merge(core_mu   , plot_mu)
 core.preds <- merge(core.preds, site_mu)
 core.preds$relEM <- NULL
 names(core.preds)[names(core.preds)=="b.relEM"] <- "relEM"
+core.preds <- core.preds[complete.cases(core.preds),]
 
 #get core-level SD.
 core_sd <- dat$core.core.sd
@@ -48,6 +49,7 @@ core.sd <- merge(core_sd   , plot_sd)
 core.sd <- merge(core.sd, site_sd)
 core.sd$relEM <- NULL
 names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
+core.sd <- core.sd[complete.cases(core.sd),]
 
 #get plot-level covariate means and sd.----
 core_mu <- dat$core.plot.mu
@@ -59,6 +61,7 @@ plot.preds <- merge(core_mu,plot_mu)
 plot.preds <- merge(plot.preds,site_mu)
 plot.preds$relEM <- NULL
 names(plot.preds)[names(plot.preds)=="b.relEM"] <- "relEM"
+plot.preds <- plot.preds[complete.cases(plot.preds),]
 
 #get plot-level SD.
 core_sd <- dat$core.plot.sd
@@ -70,6 +73,7 @@ plot.sd <- merge(core_sd,plot_sd)
 plot.sd <- merge(plot.sd,site_sd)
 plot.sd$relEM <- NULL
 names(plot.sd)[names(plot.sd)=='b.relEM'] <- "relEM"
+plot.sd <- plot.sd[complete.cases(plot.sd),]
 
 #get site-level covariate means and sd.----
 core_mu <- dat$core.site.mu

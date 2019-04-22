@@ -154,7 +154,7 @@ for(j in 1:ncol(plot_plot_mu)){
     }
   }
   if(name == 'b.relEM'){
-    plot_plot_mu[plot_plot_mu$siteID %in% no.ecm, j] < -10
+    plot_plot_mu[plot_plot_mu$siteID %in% no.ecm, j] <- -10
     plot_plot_sd[plot_plot_sd$siteID %in% no.ecm, j] <- 0.01
   }
 }

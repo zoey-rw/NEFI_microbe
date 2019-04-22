@@ -100,7 +100,7 @@ truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID", "siteID")],
 truth1$geneticSampleID <- gsub('-GEN','',truth1$geneticSampleID)
 NEON <- merge(truth1, core_mu, by.x="geneticSampleID",by.y="sampleID")
 dim(NEON)
-plot(NEON$pH, NEON$Acidobacteria)
+plot(NEON$pH, NEON$Acidobacteria, main="NEON",  xlab="pH", ylab="Acidobacteria")
 
 
 truth2[which(truth2$pH == truth2$pH[1]),]$siteID.x
@@ -115,7 +115,7 @@ phyla$Run <- rownames(phyla)
 
 phyla <- phyla[order(phyla$Run),]
 meta <- meta[order(meta$Run),]
-plot(meta$pH, phyla$Acidobacteria)
+plot(meta$pH, phyla$Acidobacteria, main="Bahram",  xlab="pH", ylab="Acidobacteria")
 
 ITS <- readRDS(hierarch_filled.path)
 ITS <- ITS$core.core.mu

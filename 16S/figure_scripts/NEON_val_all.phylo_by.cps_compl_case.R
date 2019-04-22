@@ -19,25 +19,33 @@ all_fits$phylum <- phylum.mod$phylum
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
-no_missing_data <- readRDS(missing_data_removed_16S.path)
-map <- no_missing_data[[1]]
+#no_missing_data <- readRDS(missing_data_removed_16S.path)
+#map <- no_missing_data[[1]]
+map <- readRDS(core_obs_16S.path)
+
 # read in prior fit.
 #all_fits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
 #validate against observed data by plotting.----
-trans <- 0.3
-limy <- c(0,.1)
-#i = 2 
 
+#i = 2 
+filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_compl_case.pdf"
+pdf(filename,onefile=T)
 #pdf(NEON_cps.fcast_phyla_16S.path)
+
+#global plot settings.----
 par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
+trans <- 0.3
+limy <- c(0,1)
+core.cex <- 0.7
+plot.cex <- 1.0
+site.cex <- 1.5
+outer.cex <- 2
+glob.pch <- 16
 
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_compl_case.pdf")
-
-
-for (p in 1:length(all_fcasts)) {
+for (p in 1:1){#length(all_fcasts)) {
   # p <- 1
   output <- all_fcasts[[p]]  
   fit <- all_fits[[p]]
@@ -212,3 +220,4 @@ for (p in 1:length(all_fcasts)) {
   }
 }
 dev.off()
+

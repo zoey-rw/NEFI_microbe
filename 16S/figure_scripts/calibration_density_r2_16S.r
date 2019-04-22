@@ -76,6 +76,8 @@ mtext(expression(paste("Calibration R"^"2")), side = 1, line = 2.5, cex = o.cex)
 x <- 1:length(lev.mu)
 limy <- c(0,max(lev.mu + lev.se))
 plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n')
+segments(x,lev.mu-lev.se,x,lev.mu+lev.se)
+
 lines(x, lev.mu, lty = 2)
 mtext(expression(paste("Calibration R"^"2")), side = 2, line = 2.2, cex = o.cex)
 axis(1, labels = F)

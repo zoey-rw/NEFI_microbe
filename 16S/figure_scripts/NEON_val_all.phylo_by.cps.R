@@ -27,20 +27,31 @@ map <- readRDS(core_obs_16S.path)
 #all_fits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
 #validate against observed data by plotting.----
-trans <- 0.3
-limy <- c(0,.1)
+
 #i = 2 
 
 #pdf(NEON_cps.fcast_phyla_16S.path)
+
+
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_new_pH.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_moreC.pdf")
+filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_16S_lessmissingdata.pdf"
+pdf(filename,onefile=T)
+
+#global plot settings.----
 par(mfrow = c(3,1))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
+trans <- 0.3
+limy <- c(0,1)
+core.cex <- 0.7
+plot.cex <- 1.0
+site.cex <- 1.5
+outer.cex <- 2
+glob.pch <- 16
 
-#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_new_pH.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_moreC.pdf")
-
-for (p in 2:length(all_fcasts)) {
-  # p <- 1
+for (p in 1:length(all_fcasts)) {
+   #p <- 1
   output <- all_fcasts[[p]]  
   fit <- all_fits[[p]]
   fit <- fit$no.nutr.preds
@@ -76,6 +87,7 @@ for (p in 2:length(all_fcasts)) {
     pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
     pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
     group_name <- colnames(fcast$mean)[i]
+    if (!group_name %in% colnames(truth)) next()
     obs.mu   <- truth[,c(group_name),drop=FALSE][order(match(names(truth[,c(group_name),drop=FALSE]),names(mu)))]
     obs.mu <- obs.mu[,c(group_name)]
     # get prior rsq.
@@ -200,4 +212,4 @@ for (p in 2:length(all_fcasts)) {
     #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
   }
 }
-#dev.off()
+dev.off()

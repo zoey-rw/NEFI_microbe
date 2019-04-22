@@ -98,36 +98,24 @@ for(j in 1:ncol(plot_site_mu)){
 for(j in 1:ncol(plot_plot_mu)){
   name <- colnames(plot_plot_mu)[j]
   if(name == 'b.relEM'){
-    plot_plot_mu[plot_plot_mu$siteID %in% no.ecm, j] < -10
+    plot_plot_mu[plot_plot_mu$siteID %in% no.ecm, j] <- -10
     plot_plot_sd[plot_plot_sd$siteID %in% no.ecm, j] <- 0.01
   }
 }
 
-#reduce reduce reduce
-core_site_mu <- core_site_mu[complete.cases(core_site_mu),]
-core_plot_mu <- core_plot_mu[complete.cases(core_plot_mu),]
-core_core_mu <- core_core_mu[complete.cases(core_core_mu),]
-
-plot_plot_mu <- plot_plot_mu[plot_plot_mu$plotID %in% core_plot_mu$plotID,]
-plot_plot_sd <- plot_plot_sd[plot_plot_sd$plotID %in% core_plot_mu$plotID,]
-plot_site_mu <- plot_site_mu[plot_site_mu$siteID %in% core_site_mu$siteID,]
-plot_site_sd <- plot_site_sd[plot_site_sd$siteID %in% core_site_mu$siteID,]
-site_site_mu <- site_site_mu[site_site_mu$siteID %in% core_site_mu$siteID,]
-site_site_sd <- site_site_sd[site_site_sd$siteID %in% core_site_mu$siteID,]
-
-# remove any other rows with missing data
+# remove any rows with missing data
 df.list <- list(core_core_mu,core_core_sd,
                 core_plot_mu,core_plot_sd,
                 core_site_mu,core_site_sd,
                 plot_plot_mu,plot_plot_sd,
                 plot_site_mu,plot_site_sd,
                 site_site_mu,site_site_sd)
-output.list <- lapply(df.list, function(x) x[complete.cases(x),])
+#output.list <- lapply(df.list, function(x) x[complete.cases(x),])
 
 core_obs$sampleID <- substr(core_obs$geneticSampleID, 1, nchar(core_obs$geneticSampleID)-4) 
 core_obs <- core_obs[core_obs$sampleID %in% core_core_mu$sampleID,]
 
-output.list <- c(list(core_obs),output.list)
+output.list <- append(list(core_obs),df.list)
 names(output.list) <- c('core.obs',
                         'core.core.mu','core.core.sd',
                         'core.plot.mu','core.plot.sd',

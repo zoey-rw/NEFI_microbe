@@ -18,16 +18,10 @@ eval(parse(text = script))
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
-# include micronutrients (K, Mg, P, C)?
-#nutr <- TRUE
-nutr <- FALSE
-
-#set output path.----
-if (nutr == TRUE) {
-output.path <- NEON_cps_fcast_fg_16S.path
-} else {
-  output.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_fg_16S_no.nutr.rds"
-}
+compl_cases <- TRUE
+if (compl_cases== T){
+  output.path <- paste0(pecan_gen_16S_dir,"NEON_forecast_data/NEON_fcast_fg_comp_cases.rds")
+} else output.path <- NEON_cps_fcast_fg_16S.path
 
 #load prior model fits----
 fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
@@ -36,18 +30,16 @@ fg <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #all_mods <- do.call(c, list(phylo,fg))
 
 all_fcasts <- list()
-all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
+#all_fcasts <- readRDS(NEON_cps_fcast_fg_16S.path)
 for (p in 1:length(fg)) {
      #12:length(fg)) {
 mod <- fg[[p]]
-
-if (nutr == TRUE) {
-mod <- mod$all.preds
-} else mod <- mod$no.nutr.preds
+mod <- mod$no.nutr.preds
 #mod <- mod$all.preds #just the selected covariates
 
 #get core-level covariate means and sd.----
-dat <- readRDS(hierarch_filled.path) # using ITS data right now.
+if (compl_cases==T) { dat <- readRDS(missing_data_removed_16S.path)
+}else dat <- readRDS(hierarch_filled_16S.path) # using ITS data right now.
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
 site_mu <- dat$site.site.mu
@@ -113,14 +105,13 @@ site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
-# remove micronutrients if specified.
-if (nutr == FALSE) {
+# remove micronutrients.
 lst <- list(core.preds, core.sd, plot.preds, plot.sd, site.preds, site.sd)
 names(lst) <- c("core.preds", "core.sd", "plot.preds", "plot.sd", "site.preds", "site.sd")
 list2env(
   lapply(lst, function(x) x[!(names(x) %in% c("P", "K", "Mg", "Ca"))]), 
          envir=.GlobalEnv)
-}
+
 
 #Get forecasts from ddirch_forecast.----
 tic()
