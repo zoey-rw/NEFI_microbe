@@ -373,6 +373,7 @@ prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # 
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
 prior_fg_abundances_16S.path <- paste0(dir, "prior_fg_abundances_16S.rds")
+bahram_16S_phylo_lineage_abun_16S.path <- paste0(dir, "bahram_16S_phylo_lineage_abun_16S.rds")
 
 # metadata
 bahram_metadata.path <-  paste0(dir, "bahram_metadata.rds") # processed prior metadata
@@ -448,6 +449,7 @@ site.table_16S.path <- paste0(dir,'site.table_16S.rds')
 # path to NEON group abundances
 NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
 NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
+
 #to delete:
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")

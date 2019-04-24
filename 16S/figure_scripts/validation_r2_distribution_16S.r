@@ -68,7 +68,6 @@ for(i in 1:length(pl.cast)){
   y$deprecatedVialID <- rownames(y)
   y <- merge(y, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
   rownames(y) <- gsub('-GEN','',y$geneticSampleID)
-  y[,c(1,4)] <- NULL
   y <- y[rownames(y) %in% rownames(x),]
   x <- x[rownames(x) %in% rownames(y),]
   y <- y[,colnames(y) %in% colnames(x)]
@@ -76,16 +75,10 @@ for(i in 1:length(pl.cast)){
   x <- x[order(match(rownames(x),rownames(y))),]
   x <- x[,order(match(colnames(x),colnames(y)))]
   
-  
   #fit model, grab r2.
   for(k in 1:ncol(fcast$core.fit$mean)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
     core.rsq[[k]] <- rsq
   }
@@ -94,7 +87,6 @@ for(i in 1:length(pl.cast)){
   y <- pl.truth[[i]]$plot.fit$mean
   #make sure row and column order match.
   rownames(y) <- gsub('\\.','_',rownames(y))
-  #rownames(y) <- gsub('-GEN','',rownames(y))
   y <- y[rownames(y) %in% rownames(x),]
   x <- x[rownames(x) %in% rownames(y),]
   y <- y[,colnames(y) %in% colnames(x)]
@@ -105,11 +97,6 @@ for(i in 1:length(pl.cast)){
   for(k in 1:ncol(y)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
     plot.rsq[[k]] <- rsq
   }
@@ -128,11 +115,6 @@ for(i in 1:length(pl.cast)){
   for(k in 1:ncol(y)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
     site.rsq[[k]] <- rsq
   }
@@ -140,19 +122,18 @@ for(i in 1:length(pl.cast)){
   all.core.rsq[[i]] <- unlist(core.rsq)
   all.plot.rsq[[i]] <- unlist(plot.rsq)
   all.site.rsq[[i]] <- unlist(site.rsq)
-  
+  all.core.rsq[[i]] <- all.core.rsq[[i]][-grep('other',names(all.core.rsq[[i]]))]
+  all.plot.rsq[[i]] <- all.plot.rsq[[i]][-grep('other',names(all.plot.rsq[[i]]))]
+  all.site.rsq[[i]] <- all.site.rsq[[i]][-grep('other',names(all.site.rsq[[i]]))]
 }
 lev.mu <- unlist(lapply(all.site.rsq, mean  ))
 lev.sd <- unlist(lapply(all.site.rsq, sd    ))
 lev.N  <- unlist(lapply(all.site.rsq, length))
 lev.se <- lev.sd / sqrt(lev.N)
-names(lev.mu) <- names(pl.cast)
+names(lev.mu) <- names(pl.truth)
 core.rsq <- unlist(all.core.rsq)
 plot.rsq <- unlist(all.plot.rsq)
 site.rsq <- unlist(all.site.rsq)
-core.rsq <- core.rsq[-grep('other',names(core.rsq))]
-plot.rsq <- plot.rsq[-grep('other',names(plot.rsq))]
-site.rsq <- site.rsq[-grep('other',names(site.rsq))]
 
 #Subset to observations that have a minimum calibration R2 value.----
 pass <- all.r2[all.r2 > .1]
@@ -183,7 +164,7 @@ mtext(expression(paste("Validation R"^"2")), side = 1, line = 2.5, cex = o.cex)
 
 #Validation rsq ~ function/phylo scale.----
 x <- 1:length(lev.mu)
-limy <- c(0,max(lev.mu + lev.se))
+limy <- c(0,1)
 plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n')
 lines(x, lev.mu, lty = 2)
 mtext(expression(paste("Validation R"^"2")), side = 2, line = 2.2, cex = o.cex)

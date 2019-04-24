@@ -14,11 +14,8 @@ library(RCurl)
 # source paths.r from colins github
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
-# source ddirch_forecast
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
 
-compl_cases <- TRUE
+compl_cases <- F
 if (compl_cases== T){
   output.path <- paste0(pecan_gen_16S_dir,"NEON_forecast_data/NEON_fcast_fg_comp_cases.rds")
 } else output.path <- NEON_cps_fcast_fg_16S.path

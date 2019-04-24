@@ -6,7 +6,7 @@ source('paths.r')
 output.path <- prior_16S_r2_distribution.density_figure.path
 
 #load data.----
-#fg_all <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+fg_all <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 #pl <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 pl <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
 phyla <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
@@ -18,8 +18,6 @@ pl$phylum <- phyla$phylum
 fg.r2.all <- list()
 for (p in 1:length(fg_all)){
   fg <- fg_all[[p]]
-# obs <- fg$all.preds$observed
-# pred <- fg$all.preds$predicted
   obs <- fg$no.nutr.preds$observed
   pred <- fg$no.nutr.preds$predicted
 fg.r2 <- list()
@@ -28,11 +26,11 @@ for(i in 1:ncol(obs)){
   }
 fg.r2 <- unlist(fg.r2)
 names(fg.r2) <- colnames(obs)
-#drop 'other'.
-fg.r2 <- fg.r2[names(fg.r2) != 'other']
+fg.r2 <- fg.r2[names(fg.r2) != 'other'] #drop 'other'.
 fg.r2.all[[p]] <- fg.r2
 }
 fg.r2.all <- unlist(fg.r2.all)
+names(fg.r2.all) <- paste0("functional group.", names(fg.r2.all))
 #phylogenetic groups.
 pl.r2 <- list()
 for(i in 1:length(pl)){

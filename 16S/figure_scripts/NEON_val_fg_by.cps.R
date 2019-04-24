@@ -7,7 +7,7 @@ source('NEFI_functions/crib_fun.r')
 library(data.table)
 
 
-compl_cases <- TRUE
+compl_cases <- F
 
 # load forecast 
 if (compl_cases== T){
