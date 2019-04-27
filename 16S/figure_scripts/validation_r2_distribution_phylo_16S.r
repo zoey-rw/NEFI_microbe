@@ -228,7 +228,7 @@ plot(lev.mu ~ x, cex = 2, ylim = limy, pch = 18, col = rgb(red = 1, green = 0, b
 
 points(r2.df$val ~ jitter(r2.df$num,.2), cex=.6, pch = 16)
 
-mtext(expression(paste("Calibration R"^"2")), side = 2, line = 2.2, cex = o.cex)
+mtext(expression(paste("Validation R"^"2")), side = 2, line = 2.2, cex = o.cex)
 axis(1, labels = F)
 text(x=x, y = -.04, labels= names(lev.mu), srt=45, adj=1.1, xpd=TRUE)
 
