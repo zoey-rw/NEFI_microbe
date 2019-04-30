@@ -412,6 +412,8 @@ NEON_cps_fcast_fg_16S.path <- paste0(dir, "NEON_cps_fcast_fg_16S.rds")
 NEON_cps_fcast_fg_16S_no.nutr.path <- paste0(dir, "NEON_cps_fcast_fg_16S_no.nutr.rds")
 NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
 NEON_fg_variable_importance_data_16S.path <- paste0(dir, "NEON_fg_variable_importance_data_16S.rds")
+NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
+NEON_ddirch_var.decomp_phylo.group_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_phylo.group_16S.rds")
 
 #### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')

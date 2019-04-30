@@ -1,19 +1,27 @@
-#calculating spatial signal in taxa by phylo scale across NEON, using entire network.
-
-# NOT adapted for 16S yet.
+#calculating 16S spatial signal in taxa by phylo scale across NEON, using entire network.
 
 rm(list=ls())
 source('paths.r')
 library(boot)
+library(ape)
 
 #logit transform observed values and model residuals?----
 do_logit <- F
 
 #Load data.----
+# soil core data
+loc_all <- readRDS(dp1.10086.00_output_16S.path)
+# abundance data
+fg <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
 d_all <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)
-loc_all <- readRDS(dp1.10086.00_output.path)
+d_all <- c(fg, d_all)
 #spatial forecast.
+fcast_fg <- readRDS(NEON_cps_fcast_fg_16S.path)
 fcast <- readRDS(NEON_cps_fcast_all_phylo_16S.path)
+fcast <- c(fcast_fg, fcast)
+# read in obs table that links deprecatedVialID and geneticSampleID
+#map <- readRDS(obs.table_16S.path)
+map <- readRDS(core_obs_16S.path)
 
 #Calculate spatial statistics for all levels on forecast residuals.----
 a_out <- list() #spatial signal of raw values.
@@ -26,7 +34,14 @@ for(k in 1:length(d_all)){
   pred <- fcast[[k]]$core.fit$mean
   
   #match up data, subset to mineral soil, drop stuff from identical locations.----
-  rownames(d) <- gsub('-GEN','',rownames(d))
+  map <- map[,c("deprecatedVialID", "geneticSampleID")]
+  map$geneticSampleID <- gsub('-GEN','',map$geneticSampleID)
+  d <- as.data.frame(d)
+  d$deprecatedVialID <- rownames(d)
+  d <- merge(d, map, by = "deprecatedVialID")
+  rownames(d) <- d$geneticSampleID
+  d$geneticSampleID <- NULL
+  d$deprecatedVialID <- NULL
   #drop organic horizons. Generates zero distances.
   loc <- loc[loc$horizon == 'M',]
   loc$lat_lon <- paste0(loc$adjDecimalLongitude, loc$adjDecimalLatitude)
@@ -35,12 +50,20 @@ for(k in 1:length(d_all)){
   loc <- loc[loc$sampleID %in% rownames(d),]
   d <-   d[rownames(d) %in% loc$sampleID,]
   loc <- loc[order(match(loc$sampleID, rownames(d))),]
+
+  #make sure pred/obs are in both dataframes
   pred <- pred[rownames(pred) %in% rownames(d),]
   d <- d[rownames(d) %in% rownames(pred),]
-  pred <- pred[order(match(rownames(pred), rownames(d))),]
+  pred <- pred[colnames(pred) %in% colnames(d),]
+  d <- d[colnames(d) %in% colnames(pred),,drop=FALSE]
   #make sure predictions and observation columns are in the same order.
   pred <- pred[,order(match(colnames(pred), colnames(d)))]
-
+  d <- d[,order(match(colnames(d), colnames(pred)))]
+  loc <- loc[loc$sampleID %in% rownames(d),]
+  
+  #remove "other" column
+  pred <- pred[,colnames(pred) != "other", drop=FALSE]
+  d <- d[,colnames(d) != "other", drop=FALSE]
   
   #generate model residuals as a logit difference.
   resid <- (d) - (pred)
@@ -95,6 +118,21 @@ for(k in 1:length(d_all)){
 names(a_out) <- names(d_all)
 names(b_out) <- names(d_all)
 
+# flatten 12 functional group models into one list item
+fg_a <- a_out[1:12]
+fg_a_group <- dplyr::bind_rows(fg_a)
+rownames(fg_a_group) <- c(names(fg_a)[1:11], "copiotroph", "oligotroph") #so cop/olig are separate
+fg_a_group <- list(fg_a_group)
+names(fg_a_group) <- "functional"
+a_out <- c(fg_a_group, a_out[13:17]) # recombine fg with phylo groups
+
+fg_b <- b_out[1:12]
+fg_b_group <- dplyr::bind_rows(fg_b)
+rownames(fg_b_group) <- c(names(fg_b)[1:11], "copiotroph", "oligotroph") #so cop/olig are separate
+fg_b_group <- list(fg_b_group)
+names(fg_b_group) <- "functional"
+b_out <- c(fg_b_group, b_out[13:17]) # recombine fg with phylo groups
+
 #calculate average morans I for all groups.----
 a_avg <- list()
 b_avg <- list()
@@ -121,14 +159,14 @@ rownames(a_avg) <- names(a_out)
 rownames(b_avg) <- names(b_out)
 
 #assign x positions, functional groups first.
-a_avg$x <- c(2:(nrow(a_avg)), 1)
-b_avg$x <- c(2:(nrow(b_avg)), 1)
+a_avg$x <- c(1:(nrow(a_avg)))
+b_avg$x <- c(1:(nrow(b_avg)))
 
 #plot.-----
 par(mfrow=c(1,2))
 
 #Raw spatial signal.----
-limy <- c(0, max(a_avg$mu + a_avg$se))
+limy <- c(0, max(b_avg$mu + b_avg$se))
 plot(mu ~ x, data = a_avg, cex = 2, pch = 16, ylim = limy,
      ylab = "Moran's I", xlab = NA, xaxt = 'n')
 #error bars.

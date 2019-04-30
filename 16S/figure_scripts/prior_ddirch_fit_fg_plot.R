@@ -8,13 +8,16 @@ library(coda)
 library(ddpcr) # for quiet()
 source('NEFI_functions/crib_fun.r')
 
+group <- "phylo"
+#group <- "functional"
+
 #Load JAGS model.
-# allfits <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+if (group=="phylo"){
 # allfits <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
 allfits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_fewer_taxa.rds"))
 phyla <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
-
 allfits$phylum <- phyla$phylum
+} else allfits <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
 
 # allfits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_class.rds")) # did not converge with no nutrients
 # allfits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_JAGSfit_order.rds")) # order doesn't converge when nutrients are included
@@ -47,7 +50,10 @@ for (i in 1:length(allfits)) {
 fit$species_parameter_output
 # save plots.
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_fg_no_nutr_fig.pdf")
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_fg_fig.pdf")
+switch(group,
+       "phylo" = pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_phylo.group.pdf"),
+       "functional" = pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_fg_fig.pdf"))
+
 
 #check the plots.
 par(mfrow = c(2,2))
@@ -64,6 +70,7 @@ for(i in 2:ncol(fit$predicted)) {
   abline(lm(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i]), lty = 2, col = 'purple')
   mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
   rsq <-round(summary(mod)$pseudo.r.squared, 3)
+  #print(rsq)
   mtext(colnames(fit$predicted)[i], side = 3)
   mtext(paste0('R2=',rsq), side = 3, line = -1.5, adj = 0.05)
 }
