@@ -16,19 +16,19 @@ val <- readRDS(NEON_cps_fcast_all_phylo_16S.path)
 val.obs <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)
 
 
-
-#load FG data.----
-#load in-/out-of-sample diversity stats.
-cal.div <- readRDS(prior_fg_abundances_16S.path)
-val.div <- readRDS(NEON_fg_abundances_16S.path)
-
-#Load in calibration/validation models.
-cal <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
-val <- readRDS(NEON_cps_fcast_fg_16S.path)
-
-#Load in validation data.
-val.obs <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-
+# 
+# #load FG data.----
+# #load in-/out-of-sample diversity stats.
+# cal.div <- readRDS(prior_fg_abundances_16S.path)
+# val.div <- readRDS(NEON_fg_abundances_16S.path)
+# 
+# #Load in calibration/validation models.
+# cal <- readRDS(prior_16S_all.fg.groups_JAGSfits.path)
+# val <- readRDS(NEON_cps_fcast_fg_16S.path)
+# 
+# #Load in validation data.
+# val.obs <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
+# 
 
 
 
@@ -140,9 +140,9 @@ summary(lm(val_rsq ~ cal_diversity, data = d))
 summary(lm(val_diversity ~ val_variance, data = d[d$cal_rsq > 0.1,]))
 summary(lm(val_rsq ~ log10(cal_N.SV), data = d[d$cal_rsq > 0.1,]))
 summary(lm(val_rsq ~ log10(cal_N.SV)+val_variance, data = d[d$cal_rsq > 0.1,]))
-summary(lm(val_rsq ~ val_variance, data = d[d$cal_rsq > 0.1,])) #p=.0004, adjR2=.1072
-summary(lm(val_rsq ~ phylo_level, data = d[d$cal_rsq > 0.1,])) #p=.46
-summary(lm(val_rsq ~ val_samp_freq, data = d)) #p=
+summary(lm(val_rsq ~ val_variance, data = d[d$cal_rsq > 0.1,])) #p=.0003, adjR2=.1118
+summary(lm(val_rsq ~ phylo_level, data = d[d$cal_rsq > 0.1,])) 
+summary(lm(val_rsq ~ val_samp_freq, data = d)) 
 summary(lm(val_rsq ~ phylo_level, data = d[d$cal_rsq > 0.1,])) #p=
 
 summary(lm(val_rsq ~ phylo_level, data = d))
@@ -180,7 +180,10 @@ summary(step)
 vif(fit)
 sqrt(vif(fit)) > 2
 
-
+# no phyla
+np <- d[d$phylo_level != "phylum",]
+head(np)
+summary(lm(val_rsq ~ cal_rsq, data = np[np$cal_rsq > 0.33,])) #p=.46
 
 
 #THIS IS THE ANSWER. 
