@@ -78,7 +78,7 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   #subset to those that are found in > sam_freq of samples (default 50%).
   ref.frequency <- frequency[frequency$sample_frequency > samp_freq,]
   #kill unknown and anything unknown
-  ref.frequency <- ref.frequency[!(ref.frequency$groups %in% c('unknown','Unknown')),]
+  ref.frequency <- ref.frequency[!(ref.frequency$groups %in% c('unknown','Unknown','')),]
   #merge in number of OTUs, diversity and evenness in each group to frequency table.
   frequency <- merge(frequency,unique.sv, all.x = T)
   frequency <- merge(frequency,diversity, all.x = T)
