@@ -56,6 +56,26 @@ acido.tree <- as.Node(acido)
 print(acido.tree)
 plot(as.dendrogram(acido.tree, edgetext = T))
 
+acido.2 <- acido[acido$family != "",]
+acido.2.tree <- as.Node(acido.2)
+SetNodeStyle(acido.2.tree, style = "filled,rounded", shape = "box")
+plot(acido.2.tree)
+plot(as.dendrogram(acido.tree, edgetext = T))
+
+
+dim(tax[tax$phylum %in% c("Bacteroidetes"),])
+actino <- tax[tax$phylum %in% c("Bacteroidetes"),]
+rownames(actino) <- NULL
+actino <- actino[,!colnames(actino) %in% c("species")]
+actino <- actino[!duplicated(actino),]
+actino <- actino[!is.na(actino$class) & actino$class != "",]
+actino[is.na(actino)] <- ""
+actino <- actino[!duplicated(actino),]
+
+
+
+
+
 #get each level of taxonomy output.----
 phylum.out <- common_group_quantification(otu,tax,unique(tax$phylum),'phylum', samp_freq = .95)
 class.out <- common_group_quantification(otu,tax,unique(tax$class),'class', samp_freq = .95 )

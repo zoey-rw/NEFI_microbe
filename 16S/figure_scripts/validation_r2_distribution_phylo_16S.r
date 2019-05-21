@@ -1,10 +1,9 @@
-# distribution of validation R2 by functional and taxonomic group - 
-# right now, just phylogenetic
+# distribution of validation R2 by functional and taxonomic group 
 
 rm(list=ls())
 source('paths.r')
 #source('NEFI_functions/zero_truncated_density.r')
-
+# 
 # source ddirch_forecast
 library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/zero_truncated_density.r", ssl.verifypeer = FALSE)
@@ -51,7 +50,7 @@ pl.cast <- readRDS(NEON_cps_fcast_all_phylo_16S.path)
 pl.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)
 pl.core <- readRDS(NEON_16S_phylo_groups_abundances.path)
 
-fg.cast <- readRDS(NEON_cps_fcast_fg_16S_no.nutr.path)
+fg.cast <- readRDS(NEON_cps_fcast_fg_16S.path)
 fg.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
 fg.core <- readRDS(NEON_fg_abundances_16S.path)
 
@@ -177,7 +176,7 @@ plot.d <- zero_truncated_density(plot.rsq)
 site.d <- zero_truncated_density(site.rsq)
 
 #png save line.----
-png(filename=output.path,width=8,height=5,units='in',res=300)
+#png(filename=output.path,width=8,height=5,units='in',res=300)
 
 #global plot settings.----
 par(mfrow = c(1,2))
@@ -194,11 +193,11 @@ polygon(site.d, col = adjustcolor(cols[1],trans))
 mtext('Density', side = 2, line = 2.2, cex = o.cex)
 mtext(expression(paste("Validation R"^"2")), side = 1, line = 2.5, cex = o.cex)
 
-# #Validation rsq ~ function/phylo scale.----
+#Validation rsq ~ function/phylo scale.----
 # x <- 1:length(lev.mu)
-# limy <- c(0,1)
+# limy <- c(0,.7)
 # plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n')
-# segments(x,lev.mu-lev.se,x,lev.mu+lev.se)
+# #segments(x,lev.mu-lev.se,x,lev.mu+lev.se)
 # lines(x, lev.mu, lty = 2)
 # mtext(expression(paste("Validation R"^"2")), side = 2, line = 2.2, cex = o.cex)
 # axis(1, labels = F)
@@ -217,7 +216,7 @@ for (i in 1:6){
   lev$num <- i
   levs[[i]] <- lev
 }
-r2.df <- bind_rows(levs)
+r2.df <- dplyr::bind_rows(levs)
 r2.df$level <- as.factor(r2.df$level)
 levels(r2.df$level) <- as.factor(unique(r2.df$level))
 
@@ -228,8 +227,8 @@ plot(lev.mu ~ x, cex = 2, ylim = limy, pch = 18, col = rgb(red = 1, green = 0, b
 
 points(r2.df$val ~ jitter(r2.df$num,.2), cex=.6, pch = 16)
 
-mtext(expression(paste("Calibration R"^"2")), side = 2, line = 2.2, cex = o.cex)
+mtext(expression(paste("Validation R"^"2")), side = 2, line = 2.2, cex = o.cex)
 axis(1, labels = F)
 text(x=x, y = -.04, labels= names(lev.mu), srt=45, adj=1.1, xpd=TRUE)
 
-dev.off()
+#dev.off()

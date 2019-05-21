@@ -14,9 +14,9 @@ location <- readRDS(dp1.10086.00_output_16S.path)
 sites <- unique(location$siteID)
 
 #within eah site get mean latitude, longitude and elevation.
-lat <- aggregate(decimalLatitude  ~ siteID, data = location, FUN = mean)
-lon <- aggregate(decimalLongitude ~ siteID, data = location, FUN = mean)
-ele <- aggregate(elevation        ~ siteID, data = location, FUN = mean)
+lat <- aggregate(adjDecimalLatitude  ~ siteID, data = location, FUN = mean)
+lon <- aggregate(adjDecimalLongitude ~ siteID, data = location, FUN = mean)
+ele <- aggregate(adjElevation        ~ siteID, data = location, FUN = mean)
 
 #extract climate and uncertainty from worldclim2
 climate <- worldclim2_grab(latitude = lat[,2], longitude = lon[,2], elev = ele[,2])

@@ -1,18 +1,18 @@
 #Get soil physical properties data from DP1.10086.00 for 16S data
 
 rm(list=ls())
+library(geoNEON)
 source('paths.r')
 
 #get site dates of interest (those that have ITS sequence data)
 site_dates <- readRDS(site_dates_16S.path)
 
-
-#connect to NEON API for DP1.10086.00
+#connect to NEON API for DP1.10086.00.----
 req <- httr::GET("http://data.neonscience.org/api/v0/products/DP1.10086.001")
 req.text <- httr::content(req, as="text")
 avail <- jsonlite::fromJSON(req.text, simplifyDataFrame=T, flatten=T)
 
-#grab a vector of the urls to data. One per unique site-date combination.
+#grab a vector of the urls to data. One per unique site-date combination.-----
 urls <- unlist(avail$data$siteCodes$availableDataUrls)
 
 site_output <- list()
@@ -79,7 +79,10 @@ for(i in 1:length(site_dates)){
   date_output <- do.call(plyr::rbind.fill, date_output)
   site_output[[i]] <- date_output
 }
-#collapse data frames across sites, save.
-site_output <- do.call(plyr::rbind.fill, site_output)
 
+#collapse data frames across sites, Get adjusted lat/lon to account for within plot x-y coordinates of soil cores.----
+site_output <- do.call(plyr::rbind.fill, site_output)
+site_output <- geoNEON::def.calc.geo.os(site_output, 'sls_soilCoreCollection')
+
+#save output.----
 saveRDS(site_output, dp1.10086.00_output_16S.path)
