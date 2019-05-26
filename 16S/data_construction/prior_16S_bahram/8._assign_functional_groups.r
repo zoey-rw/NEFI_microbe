@@ -15,11 +15,11 @@ source('paths.r')
 # read in reference and taxonomic data.
 
 # load csv with literature-review classifications.
-fg <- read.csv(paste0(pecan_gen_16S_dir, "bacteria_func_groups.csv"))
+fg <- read.csv(paste0(pecan_gen_16S_dir, "reference_data/bacteria_func_groups.csv"))
 # load excel from Albright with N-cycle pathway presence/absence.
-N_cyclers_raw <-  read_excel(paste0(pecan_gen_16S_dir, "Npathways_Albright2018.xlsx"))
+N_cyclers_raw <-  read_excel(paste0(pecan_gen_16S_dir, "reference_data/Npathways_Albright2018.xlsx"))
 # load csv from Berlemont and Martiny with cellulolytic pathway presence/absence
-cell <-  read.csv(paste0(pecan_gen_16S_dir, "cellulolytic_Berlemont.csv"))
+cell <-  read.csv(paste0(pecan_gen_16S_dir, "reference_data/cellulolytic_Berlemont.csv"))
 # load Bahram SV table as otu file
 otu <- readRDS(bahram_dada2_SV_table_rare.path)
 # load Bahram taxonomy
@@ -39,7 +39,7 @@ tax <- as.data.frame(tax)
 colnames(tax) <- tolower(colnames(tax))
 
 # remove taxa that do not assign to a kingdom from tax and otu table.
-tax <- tax[tax$kingdom == 'Bacteria' | tax$kingdom == 'Archaea',] # removes ~500 counts
+tax <- tax[tax$kingdom == 'Bacteria',] # removes ~900 counts
 otu <- otu[, colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
 tax_save <- tax # just so we have this taxonomic table for later.
@@ -48,7 +48,7 @@ tax_save <- tax # just so we have this taxonomic table for later.
 
 ########## 2. assign copiotroph/oligotroph groups. ############
 tax <- tax_save
-tax$group <- NA
+tax$group <- "other"
 
 # read in groups from csv
 c_o_groups  <-  fg[fg$Classification.system == "Copiotroph_oligotroph",]
@@ -63,7 +63,10 @@ for (i in 1:length(levels)) {
   tax[which(tax[[p]] %in% oligotrophs),]$group <- "oligotroph"
 }
 
-#Get seq abundances of copiotrophs vs oligotrophs, in one dataframe.----
+Cop_olig <- tax$group
+tax_function <- cbind(tax_save, Cop_olig) # creating a tax dataframe with all functional groups
+
+#Get seq abundances of copiotrophs vs oligotrophs.----
 classification <- c("copiotroph", "oligotroph")
 cop_olig <- list()
 k <- data.table(cbind(tax, t(otu)))
@@ -122,7 +125,7 @@ N_cyclers[, c("Partial_Nitrification",
 # create pathway columns
 tax <- tax_save
 pathway_names <- colnames(N_cyclers[9:15])
-tax[, pathway_names] <- NA
+tax[, pathway_names] <- "other"
 
 # taxon assignments
 for (i in 1:length(pathway_names)) {
@@ -148,6 +151,16 @@ for (i in 1:length(pathway_names)) {
     tax[which(tax$genus %in% has_pathway),][p] <- 1
   }
 }
+
+# for tax_function data frame.
+tax_function[, pathway_names] <- "other"
+tax_function[tax$Assim_nitrite_reduction %in% 1,]$Assim_nitrite_reduction <- "Assim_nitrite_reduction"
+tax_function[tax$Dissim_nitrite_reduction %in% 1,]$Dissim_nitrite_reduction <- "Dissim_nitrite_reduction"
+tax_function[tax$Assim_nitrate_reduction %in% 1,]$Assim_nitrate_reduction <- "Assim_nitrate_reduction"
+tax_function[tax$N_fixation %in% 1,]$N_fixation <- "N_fixation"
+tax_function[tax$Dissim_nitrate_reduction %in% 1,]$Dissim_nitrate_reduction <- "Dissim_nitrate_reduction"
+tax_function[tax$Nitrification %in% 1,]$Nitrification <- "Nitrification"
+tax_function[tax$Denitrification %in% 1,]$Denitrification <- "Denitrification"
 
 #Get seq abundances of each pathway
 all_N_pathways <- list()
@@ -189,13 +202,13 @@ cellulolytic$genus <- word(rownames(cellulolytic), 1) # grab first word (genus)
 cellulolytic[cellulolytic$genus == "Candidatus",]$genus <- # if first word is candidatus, grab two words
   word(rownames(cellulolytic[cellulolytic$genus == "Candidatus",]), 1, 2) 
 
-# taxon assignments
-levels <- c("phylum", "class", "order", "family", "genus")
-for (i in 1:length(levels)) {
-  p <- levels[i]
-  tax[which(tax[[p]] %in% copiotrophs),]$group <- "copiotroph"
-  tax[which(tax[[p]] %in% oligotrophs),]$group <- "oligotroph"
-}
+# # taxon assignments # whyy is this here - is it supposed to be something else?
+# levels <- c("phylum", "class", "order", "family", "genus")
+# for (i in 1:length(levels)) {
+#   p <- levels[i]
+#   tax[which(tax[[p]] %in% copiotrophs),]$group <- "copiotroph"
+#   tax[which(tax[[p]] %in% oligotrophs),]$group <- "oligotroph"
+# }
 
 
 #### assign carbon-cycling taxa ####
@@ -203,7 +216,7 @@ for (i in 1:length(levels)) {
 tax <- tax_save
 pathway_names <-
   c("Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph") 
-tax[, pathway_names] <- NA
+tax[, pathway_names] <- "other"
 
 # check if sample genus is in classification data, and that a classified pathway is present;
 # assign those genera a present pathway
@@ -232,6 +245,13 @@ for (i in 1:length(pathway_names)) {
     }
   } # close cellulolytic section
 }
+
+tax_function[, pathway_names] <- "other"
+tax_function[tax$Cellulolytic %in% 1,]$Cellulolytic <- "Cellulolytic"
+tax_function[tax$Chitinolytic %in% 1,]$Chitinolytic <- "Chitinolytic"
+tax_function[tax$Lignolytic %in% 1,]$Lignolytic <- "Lignolytic"
+tax_function[tax$Methanotroph %in% 1,]$Methanotroph <- "Methanotroph"
+
 
 # # check how many ended up without classifications.
 # tax_classified <- tax[, 8:11]
@@ -272,3 +292,6 @@ names(fg_abundances) <- fg_names
   
 # save all functional group abundances.
 saveRDS(fg_abundances, prior_fg_abundances_16S.path)
+
+# save all functional group assignments.
+saveRDS(tax_function, "/fs/data3/caverill/NEFI_data/16S/pecan_gen/prior_data/prior_fg_taxa_16S.rds")

@@ -88,11 +88,11 @@ climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
 climate$aridity <- arid_extract(map$latitude, map$longitude)
 map <- cbind(map, climate)
 
-
-#Rarefy OTU table.----
-set.seed(5) # so that rarefaction is repeatable.
-otu <- otu[rowSums(otu) >= 5000,]
-otu <- vegan::rrarefy(otu, 5000)
+# moved rarefaction to the RDP step, so that we're only classifying the OTUs we kept.
+#Rarefy OTU table.---- 
+# set.seed(5) # so that rarefaction is repeatable.
+# otu <- otu[rowSums(otu) >= 5000,]
+# otu <- vegan::rrarefy(otu, 5000)
 
 #subset map so that it does not include observations not in otu table.----
 map <- map[map$Run %in% rownames(otu),]
