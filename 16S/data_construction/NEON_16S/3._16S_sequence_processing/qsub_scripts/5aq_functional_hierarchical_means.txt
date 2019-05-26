@@ -13,6 +13,9 @@
 #Give the job a name
 #$ -N NEON_fg_hier_means
 #
+# Request buy-in nodes
+#$ -l buyin
+#
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
 #$ -o $JOB_NAME.log
@@ -34,7 +37,7 @@ module load jags/4.0.0
 #
 #
 # invoke this function:
-Rscript 16S/data_construction/NEON_16S/3._16S_sequence_processing/8._functional_hierarchical_means.r
+Rscript 16S/data_construction/NEON_16S/3._16S_sequence_processing/5a._functional_hierarchical_means.r
 #
 #
 #End of commands.
