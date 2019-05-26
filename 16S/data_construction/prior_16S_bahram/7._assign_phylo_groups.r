@@ -2,7 +2,7 @@
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
-#source('NEFI_functions/common_group_quantification.r')
+source('NEFI_functions/common_group_quantification.r')
 
 library(RCurl)
 # source function from colins github
@@ -15,11 +15,13 @@ library(data.table)
 output.path <- bahram_16S_common_phylo_groups_list.path
 
 #load data.----
-map <- readRDS(bahram_metadata.path)
+map <- as.data.frame(readRDS(bahram_metadata.path))
 otu <- readRDS(bahram_dada2_SV_table_rare.path)
 tax <- readRDS(bahram_dada2_tax_table.path)
 
-#subset otu file to match mapping file.----
+#subset otu file to match mapping file and vice versa.----
+map <- map[as.character(map$Run) %in% rownames(otu),]
+map <- map[complete.cases(map),]
 otu <- otu[rownames(otu) %in% map$Run,]
 
 #format taxonomy table.----
@@ -31,9 +33,9 @@ for(i in 1:ncol(tax)){
 #for column names to be lower case.
 colnames(tax) <- tolower(colnames(tax))
 
-#remove taxa that do not assign to fungi from tax and otu table.----
+#remove taxa that do not assign to bacteria from tax and otu table.----
 tax <- as.data.frame(tax)
-tax <- tax[tax$kingdom == 'Bacteria'|tax$kingdom == 'Archaea',] # only removes ~500 counts
+tax <- tax[tax$kingdom == 'Bacteria',] # removes ~900 counts
 otu <- otu[,colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
 
