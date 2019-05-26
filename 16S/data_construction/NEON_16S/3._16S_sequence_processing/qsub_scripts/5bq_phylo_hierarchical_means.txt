@@ -13,6 +13,9 @@
 #Give the job a name
 #$ -N NEON_phylo_hier_means
 #
+# Request buy-in nodes
+#$ -l buyin
+#
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
 #$ -o $JOB_NAME.log
