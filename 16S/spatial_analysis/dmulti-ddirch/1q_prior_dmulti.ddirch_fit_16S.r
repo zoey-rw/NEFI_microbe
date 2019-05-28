@@ -38,7 +38,7 @@ module load R/3.4.3
 module load jags
 #
 # in the directory specified above, invoke this function:
-Rscript I6S/spatial_analysis/dmulti-ddirch/1._prior_dmulti.ddirch_fit_16S.r
+Rscript 16S/spatial_analysis/dmulti-ddirch/1._prior_dmulti.ddirch_fit_16S.r
 #
 #
 #End of commands.
