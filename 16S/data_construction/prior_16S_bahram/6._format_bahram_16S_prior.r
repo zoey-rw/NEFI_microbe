@@ -17,7 +17,7 @@ source('NEFI_functions/arid_extract.r')
 
 # set output path
 metadata.output.path <- bahram_metadata.path 
-otu.output.path <- bahram_dada2_SV_table_rare.path
+otu.output.path <- bahram_dada2_SV_table_rare.path #output is the otu table, subsetted by the metadata samples
 
 
 ##### load files ####
@@ -34,8 +34,7 @@ map_raw <- data.table(map_raw)
 
 # load times - sent to Colin separately by Leho Tedersoo
 time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
-otu <- readRDS(bahram_dada2_SV_table.path)
-
+otu <- readRDS(bahram_dada2_SV_table_rare_not_subset.path) # otu table with 233 samples
 
 ##### Format metadata file #####
 
@@ -97,8 +96,8 @@ map <- cbind(map, climate)
 #subset map so that it does not include observations not in otu table.----
 map <- map[map$Run %in% rownames(otu),]
 otu <- otu[rownames(otu) %in% map$Run,]
-otu <- otu[order(rownames(otu), map$Run),]
+otu <- otu[order(match(rownames(otu), map$Run)),]
 
 #save output.----
-saveRDS(metadata, metadata.output.path)
+saveRDS(map, metadata.output.path)
 saveRDS(otu, otu.output.path)
