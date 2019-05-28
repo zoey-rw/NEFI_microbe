@@ -19,7 +19,6 @@ source('NEFI_functions/arid_extract.r')
 metadata.output.path <- bahram_metadata.path 
 otu.output.path <- bahram_dada2_SV_table_rare.path #output is the otu table, subsetted by the metadata samples
 
-
 ##### load files ####
 
 # SRA RunInfo table from: https://trace.ncbi.nlm.nih.gov/Traces/study/?acc=ERP021922
@@ -34,7 +33,7 @@ map_raw <- data.table(map_raw)
 
 # load times - sent to Colin separately by Leho Tedersoo
 time <- read.csv(ted_sampling_dates.path, header = TRUE, row.names=1, check.names = FALSE)
-otu <- readRDS(bahram_dada2_SV_table_rare_not_subset.path) # otu table with 233 samples
+otu <- readRDS(bahram_dada2_SV_table_rare_all.samples.path) # otu table with 233 samples
 
 ##### Format metadata file #####
 
@@ -86,12 +85,6 @@ map <- as.data.frame(map)
 climate <- worldclim2_grab(latitude = map$latitude, longitude = map$longitude)
 climate$aridity <- arid_extract(map$latitude, map$longitude)
 map <- cbind(map, climate)
-
-# moved rarefaction to the RDP step, so that we're only classifying the OTUs we kept.
-#Rarefy OTU table.---- 
-# set.seed(5) # so that rarefaction is repeatable.
-# otu <- otu[rowSums(otu) >= 5000,]
-# otu <- vegan::rrarefy(otu, 5000)
 
 #subset map so that it does not include observations not in otu table.----
 map <- map[map$Run %in% rownames(otu),]

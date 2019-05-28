@@ -18,7 +18,7 @@ set.seed(5) # so that rarefaction is repeatable.
 otu_rare <- otu[rowSums(otu) >= 5000,]
 otu_rare <- vegan::rrarefy(otu_rare, 5000)
 # save rarefied otu table
-saveRDS(otu_rare, bahram_dada2_SV_table_rare.path)
+saveRDS(otu_rare, bahram_dada2_SV_table_rare_not_subset.path)
 
 to_assign <- colnames(otu_rare) #grab sequences to assign.
 

@@ -339,6 +339,7 @@ cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 bahram_dada2_SV_table.path <- paste0(dir,'bahram_dada2_SV_table.rds')
 bahram_dada2_SV_table_rare_not_subset.path <- paste0(dir,'bahram_dada2_SV_table_rare_not_subset.rds')
+bahram_dada2_SV_table_rare_all.samples.path <- paste0(dir, 'bahram_dada2_SV_table_rare_all.samples.rds')
 bahram_dada2_SV_table_rare.path <- paste0(dir,'bahram_dada2_SV_table_rare.rds')
 bahram_dada2_tax_table.path <- paste0(dir,'bahram_dada2_tax_table.rds')
 bahram_dada2_track_table.path <- paste0(dir,'bahram_dada2_track_table.rds')
@@ -357,6 +358,7 @@ bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfi
 bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
 prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits')
+bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits')
 
 #### 16S/scc_gen: raw sequence and metadata for prior metadata ####
 dir <-  scc_gen_16S_dir

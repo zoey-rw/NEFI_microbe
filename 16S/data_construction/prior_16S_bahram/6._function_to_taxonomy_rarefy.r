@@ -13,6 +13,10 @@ library(tidyr)
 library(stringr)
 source('paths.r')
 
+# output paths
+tax_function.output <- bahram_tax_fg_16S.path
+otu.output <- bahram_dada2_SV_table_rare_all.samples.path
+
 # read in reference and taxonomic data.
 
 # load csv with literature-review classifications.
@@ -22,7 +26,7 @@ N_cyclers_raw <-  read_excel(paste0(pecan_gen_16S_dir, "reference_data/Npathways
 # load csv from Berlemont and Martiny with cellulolytic pathway presence/absence
 cell <-  read.csv(paste0(pecan_gen_16S_dir, "reference_data/cellulolytic_Berlemont.csv"))
 # load Bahram SV table as otu file
-otu <- readRDS(bahram_dada2_SV_table_rare.path)
+otu <- readRDS(bahram_dada2_SV_table.path)
 # load Bahram taxonomy
 tax <- readRDS(bahram_dada2_tax_table.path)
 
@@ -42,9 +46,14 @@ colnames(tax) <- tolower(colnames(tax))
 tax <- tax[tax$kingdom == 'Bacteria',] # removes ~900 counts
 otu <- otu[, colnames(otu) %in% rownames(tax)]
 tax <- tax[rownames(tax) %in% colnames(otu),]
-tax_save <- tax # just so we have this taxonomic table for later.
 
+# rarefy otu table
+set.seed(5) # so that rarefaction is repeatable.
+otu <- otu[rowSums(otu) >= 5000,]
+otu <- vegan::rrarefy(otu, 5000)
 
+# save rarefied otu table without non-bacteria
+saveRDS(otu, otu.output)
 
 #### 2. Format N-cycle dataset from Albright 2008 ####
 
@@ -149,7 +158,7 @@ for (i in 1:length(levels)) {
 
 
 # save all functional group assignments.
-saveRDS(tax, bahram_tax_fg_16S.path)
+saveRDS(tax, tax_function.output)
 
 
 # # check how many taxa belong to a functional group
