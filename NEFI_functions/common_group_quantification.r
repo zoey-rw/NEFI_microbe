@@ -13,15 +13,11 @@
 #' @export
 #'
 #' @examples
-common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 0.5){
+common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 0.5, ref_filter = F){
   #some tests.
   if(ncol(sv) != nrow(tax)){
     stop('Number of columns of sv table does not match number of rows in taxonomy table.')
   }
-  tax_level <- tolower(tax_level)
-  #make sure taxonomy column names are lower case.
-  tax_names <- c('kingdom','phylum','class','order','family','genus','species')
-  colnames(tax) <- tax_names
   
   #merge taxonomy and sv file.
   k <- cbind(tax, t(sv))
@@ -33,7 +29,7 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   frequency <- list()
   unique.sv <- list()
   diversity <- list()
-   evenness <- list()
+  evenness <- list()
   for(i in 1:length(groups)){
     z <- k[tax_level == groups[i],]
     start <- ncol(tax) + 1
@@ -51,19 +47,19 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
     frequency[[i]] <- seq.freq
     unique.sv[[i]] <- n.SVs
     diversity[[i]] <- div
-     evenness[[i]] <- even
+    evenness[[i]] <- even
   }
   abundance <- do.call(rbind,abundance)
   frequency <- do.call(rbind,frequency)
   unique.sv <- data.frame(unlist(unique.sv))
   diversity <- data.frame(unlist(diversity))
-   evenness <- data.frame(unlist( evenness))
+  evenness <- data.frame(unlist( evenness))
   
   
   #name some stuff.
-     unique.sv$groups <- groups
-     diversity$groups <- groups
-      evenness$groups <- groups
+  unique.sv$groups <- groups
+  diversity$groups <- groups
+  evenness$groups <- groups
   rownames(abundance) <- groups
   colnames(abundance) <- rownames(sv)
   colnames(unique.sv) <- c('N.SVs','groups')
@@ -76,9 +72,15 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   frequency$sample_frequency <- as.character(frequency$sample_frequency)
   frequency$sample_frequency <- as.numeric(frequency$sample_frequency)
   #subset to those that are found in > sam_freq of samples (default 50%).
-  ref.frequency <- frequency[frequency$sample_frequency > samp_freq,]
+  if(ref_filter == F){
+    ref.frequency <- frequency[frequency$sample_frequency > samp_freq,]
+  }
+  #if ref_filter is on, don't filter by frequency, filter by supplied unique groups.
+  if(ref_filter == T){
+    ref.frequency <- frequency[frequency$groups %in% groups,]
+  }
   #kill unknown and anything unknown
-  ref.frequency <- ref.frequency[!(ref.frequency$groups %in% c('unknown','Unknown','')),]
+  ref.frequency <- ref.frequency[!(ref.frequency$groups %in% c('unknown','Unknown','',' ','NA')),]
   #merge in number of OTUs, diversity and evenness in each group to frequency table.
   frequency <- merge(frequency,unique.sv, all.x = T)
   frequency <- merge(frequency,diversity, all.x = T)
@@ -93,12 +95,12 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   abundance <- t(abundance)
   
   #get abundances and relative abundances.
-          other <- seq_total - rowSums(abundance)
-      abundance <- cbind(other, abundance)
-  rel.abundance <- abundance / colSums(abundance)
+  other <- seq_total - rowSums(abundance)
+  abundance <- cbind(other, abundance)
+  rel.abundance <- abundance / rowSums(abundance)
   
   #return output: abundances, relative abundances, sequence depth, group sample frequencies.
-         to_return  <- list(abundance,rel.abundance,seq_total,frequency)
-   names(to_return) <- c('abundances','rel.abundances','seq_total','group_frequencies')
+  to_return  <- list(abundance,rel.abundance,seq_total,frequency)
+  names(to_return) <- c('abundances','rel.abundances','seq_total','group_frequencies')
   return(to_return)
 }

@@ -368,12 +368,13 @@ dir <- paste0(pecan_gen_16S_dir, 'prior_data/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 # group abundances
-bahram_16S_common_phylo_groups_list.path <- paste0(dir,"bahram_16S_common_phylo_groups_list.rds") # all cosmopolitan taxa
+bahram_16S_common_phylo_fg_abun.path <- paste0(dir,"bahram_16S_common_phylo_fg_abun.rds") # all cosmopolitan taxa and functional groups
 phyla_output_16S.path <- paste0(dir,"phyla_output_16S.rds") # 15 cosmopolitan phyla
 prior_cop_olig_abundances.path <- paste0(dir,"prior_cop_olig_abundances.rds") # copiotrophic/oligotrophic relative abundances - Bahram
 prior_N_cyclers_abundances.path <- paste0(dir, "prior_N_cyclers_abundances.rds")
 prior_C_cyclers_abundances.path <- paste0(dir, "prior_C_cyclers_abundances.rds")
 prior_fg_abundances_16S.path <- paste0(dir, "prior_fg_abundances_16S.rds")
+bahram_tax_fg_16S.path <- paste0(dir, "bahram_tax_fg_16S.rds")
 bahram_16S_phylo_lineage_abun_16S.path <- paste0(dir, "bahram_16S_phylo_lineage_abun_16S.rds")
 
 # metadata
