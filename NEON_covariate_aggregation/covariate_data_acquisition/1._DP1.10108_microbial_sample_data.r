@@ -4,6 +4,8 @@ rm(list=ls())
 source('paths.r')
 library(neonUtilities)
 
+output.path <- dp1.10108.001_output.path
+
 # Grab all sites that have microbial sequence metadata.
 # Downloads about 12 MB, from 2013 to 2019, into the workspace. Takes a couple minutes.
 dat <- loadByProduct(dpID="DP1.10108.001", site="all", startdate="2013-01", enddate="2019-05",
@@ -29,9 +31,10 @@ core.data_ITS <- merge(pcr.data_ITS, dna.merge, all=T)
 core.data_ITS <- core.data_ITS[which(core.data_ITS$sequenceAnalysisType != "metagenomics"),]
 core.data_ITS$dateID <- substr(core.data_ITS$collectDate, 1, 7)
 
+# Save DP1.10108 output
 output <- list(core.data_ITS, core.data_16S)
 names(output) <- c("core_ITS", "core_16S")
-saveRDS(output, dp1.10108.001_output.path)
+saveRDS(output, output.path)
 
 
 # get nested list of sites and dates sampled.

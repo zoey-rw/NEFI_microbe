@@ -462,13 +462,16 @@ dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 
-dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/NEON_covariates_raw')
+dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/NEON_covariates_raw/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 site_dates.path <- paste0(dir, "sites_dates.rds")
 dp1.10108.001_output.path <- paste0(dir, "dp1.10108.001_output.rds")
-
-
+dp1.10086.001_output.path <- paste0(dir, "dp1.10086.001_output.rds")
+dp1.10109.001_output.path <- paste0(dir, "dp1.10109.001_output.rds")
+dp1.10078.001_output.path <- paste0(dir, "dp1.10078.001_output.rds")
+dp1.10098.001_output.path <- paste0(dir, "dp1.10098.001_output.rds")
+dp1.10098.001_plot.level_16S.path <- paste0(dir, "dp1.10098.001_plot.level_output.rds")
 
 
 
