@@ -456,6 +456,36 @@ site.table_16S.path <- paste0(dir,'site.table_16S.rds')
 NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
 NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
 
+
+# NEON covariate data (16S/ITS)
+dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+
+dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/NEON_covariates_raw')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+site_dates.path <- paste0(dir, "sites_dates.rds")
+dp1.10108.001_output.path <- paste0(dir, "dp1.10108.001_output.rds")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #to delete:
 NEON_gen_abundances.path <- paste0(dir, "NEON_gen_abundances.rds")
 NEON_all_gen_abundances.path <- paste0(dir, "NEON_all_gen_abundances.rds")
