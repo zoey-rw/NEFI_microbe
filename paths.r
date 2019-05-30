@@ -471,7 +471,8 @@ dp1.10086.001_output.path <- paste0(dir, "dp1.10086.001_output.rds")
 dp1.10109.001_output.path <- paste0(dir, "dp1.10109.001_output.rds")
 dp1.10078.001_output.path <- paste0(dir, "dp1.10078.001_output.rds")
 dp1.10098.001_output.path <- paste0(dir, "dp1.10098.001_output.rds")
-dp1.10098.001_plot.level_16S.path <- paste0(dir, "dp1.10098.001_plot.level_output.rds")
+dp1.10098.001_plot.level_output.path <- paste0(dir, "dp1.10098.001_plot.level_output.rds")
+site_level_covariates.path <- paste0(dir, "site_level_covariates.rds")
 
 
 
