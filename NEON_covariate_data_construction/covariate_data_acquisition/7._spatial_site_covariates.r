@@ -12,9 +12,13 @@ source('NEFI_functions/extract_npp.r')
 output.path <- site_level_covariates.path
 
 # Get site level lat-longitude.
-d <- readRDS(site_dates_16S.path)
 location <- readRDS(dp1.10086.001_output.path)
 sites <- unique(location$siteID)
+
+core_obs <- readRDS(core_obs_data.path)
+# subset to the sites that we have observations for
+sites <- sites[sites %in% core_obs$siteID]
+location <- location[location$siteID %in% sites,]
 
 # Within eah site get mean latitude, longitude and elevation.
 lat <- aggregate(adjDecimalLatitude  ~ siteID, data = location, FUN = mean)

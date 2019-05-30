@@ -10,6 +10,7 @@ source('NEFI_functions/crib_fun.r')
 
 #Load JAGS model.
 allfits <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
+allfits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S_prior_dmulti.ddirch_fg_JAGSfits")
 
 # has everything converged? print any high prsf scores for all groups.
 for (i in 1:length(allfits)) {
@@ -28,7 +29,8 @@ par(mfrow = c(2,2))
 for (p in 1:length(allfits)) {
   fit <- allfits[[p]]
 
-  for(i in 2:ncol(fit$predicted)) {
+  for(i in 1:ncol(fit$predicted)) {
+    if (colnames(fit$predicted)[i]=="other") next
     plot(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i], 
          pch = 16, xlab="predicted abundance", ylab="observed abundance")
     Axis(x="predicted", side=2)

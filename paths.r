@@ -462,6 +462,7 @@ dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 
+# raw data from NEON, WorldClim, etc
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/NEON_covariates_raw/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
@@ -474,9 +475,21 @@ dp1.10098.001_output.path <- paste0(dir, "dp1.10098.001_output.rds")
 dp1.10098.001_plot.level_output.path <- paste0(dir, "dp1.10098.001_plot.level_output.rds")
 site_level_covariates.path <- paste0(dir, "site_level_covariates.rds")
 
-
-
-
+# aggregated data for forecasts
+dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/NEON_covariates_aggregated/')
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+core_obs_data.path <- paste0(dir, "core_obs_data.rds")
+core_core_data.path <- paste0(dir, "core_core_data.rds")
+core_plot_data.path <- paste0(dir, "core_plot_data.rds")
+core_site_data.path <- paste0(dir, "core_site_data.rds")
+core_glob_data.path <- paste0(dir, "core_glob_data.rds")
+plot_plot_data.path <- paste0(dir, "plot_plot_data.rds")
+plot_site_data.path <- paste0(dir, "plot_site_data.rds")
+plot_glob_data.path <- paste0(dir, "plot_glob_data.rds")
+site_site_data.path <- paste0(dir, "site_site_data.rds")
+site_glob_data.path <- paste0(dir, "site_glob_data.rds")
+hierarch_filled_data.path <- paste0(dir, "hierarch_filled_data.rds")
 
 
 

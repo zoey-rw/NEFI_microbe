@@ -142,7 +142,7 @@ for (i in 1:length(pathway_names)) {
   if (p == "Cellulolytic") {
     has_pathway <- cellulolytic[cellulolytic$is.cell == 1,]$genus # one species with pathway is enough to classify genus
     if (nrow(tax[which(tax$genus %in% has_pathway),][p]) != 0) {
-      tax[which(tax$genus %in% has_pathway),][p] <- 1
+      tax[which(tax$genus %in% has_pathway),][p] <- p
     }
   } # close cellulolytic section
   
