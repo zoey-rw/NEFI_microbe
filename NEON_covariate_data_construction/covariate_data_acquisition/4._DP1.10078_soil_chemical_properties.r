@@ -17,7 +17,9 @@ output <- dat$sls_soilChemistry
 
 # Add a couple columns for later
 output$dateID <- substr(output$collectDate,1,7)
-output$site_date <- paste(output$siteID, output$dateID)
+output$site_date <- paste0(output$siteID,'-', output$dateID)
+output$site_date_plot <- paste0(output$siteID,'-',output$dateID,'-',output$plotID)
+
 
 # Save DP.10078 output
 saveRDS(output, output.path)

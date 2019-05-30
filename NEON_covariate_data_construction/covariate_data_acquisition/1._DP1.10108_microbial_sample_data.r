@@ -18,22 +18,30 @@ pcr.data_16S <- dat$mmg_soilPcrAmplification_16S
 
 # Remove unnecessary columns from DNA data
 dna.merge <- dna.data[,!(colnames(dat$mmg_soilDnaExtraction) %in% colnames(pcr.data_16S))]
-keep_cols <- c("dnaSampleID", "namedLocation", "siteID", "plotID", "collectDate")
+keep_cols <- c("dnaSampleID", "namedLocation", "siteID", "plotID", "collectDate","deprecatedVialID")
 dna.merge[,keep_cols] <- dna.data[,keep_cols]
 
-# Merge 16S data
-core.data_16S <- merge(pcr.data_16S, dna.merge, all=T)
+# Merge 16S DNA/PCR data
+core.data_16S <- merge(pcr.data_16S, dna.merge, all.x=T)
 core.data_16S <- core.data_16S[which(core.data_16S$sequenceAnalysisType != "metagenomics"),]
 core.data_16S$dateID <- substr(core.data_16S$collectDate, 1, 7)
 
-# Merge ITS data
+# Merge ITS DNA/PCR data
 core.data_ITS <- merge(pcr.data_ITS, dna.merge, all=T)
 core.data_ITS <- core.data_ITS[which(core.data_ITS$sequenceAnalysisType != "metagenomics"),]
 core.data_ITS$dateID <- substr(core.data_ITS$collectDate, 1, 7)
 
+
+# Remove columns from 16S data, merge with ITS
+core.data_16S.merge <- core.data_16S[,!(colnames(core.data_16S) %in% colnames(core.data_ITS))]
+keep_cols <- c("geneticSampleID", "namedLocation", "siteID", "plotID", "collectDate", "dateID")
+core.data_16S.merge[,keep_cols] <- core.data_16S[,keep_cols]
+core.data_merged <- merge(core.data_ITS, core.data_16S.merge, all=T)
+
+
 # Save DP1.10108 output
-output <- list(core.data_ITS, core.data_16S)
-names(output) <- c("core_ITS", "core_16S")
+output <- list(core.data_ITS, core.data_16S, core.data_merged)
+names(output) <- c("core_ITS", "core_16S", "core_16S_ITS")
 saveRDS(output, output.path)
 
 
