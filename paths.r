@@ -356,9 +356,12 @@ bahram_16S.prior_cop_olig_all_var_JAGSfit <- paste0(dir,'bahram_16S.prior_cop_ol
 bahram_16S_prior_phylo.group_JAGSfits <- paste0(dir,'bahram_16S.prior_phylo_JAGSfit.rds')
 bahram_16S_prior_N_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_N_cycle_JAGSfit.rds')
 bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfit.rds')
-bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS')
-prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits')
-bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits')
+bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS.rds')
+prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits.rds')
+bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits.rds')
+
+core.CV_NEON_dmulti.ddirch_16S.path <- paste0(dir,'core.CV_NEON_dmulti.ddirch_16S.rds')
+core.CV_NEON_cal.val_data_16S.path <- paste0(dir,'core.CV_NEON_cal.val_data_16S.rds')
 
 #### 16S/scc_gen: raw sequence and metadata for prior metadata ####
 dir <-  scc_gen_16S_dir
