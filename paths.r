@@ -399,6 +399,7 @@ NEON_plot.level_phyla_obs_16S.path <- paste0(dir,'NEON_plot.level_phyla_obs_16S.
 NEON_site.level_phyla_obs_16S.path <- paste0(dir,'NEON_site.level_phyla_obs_16S.rds')
 NEON_all.fg_plot.site_obs_16S.path <- paste0(dir,'NEON_all.fg_plot.site_obs_16S.rds')
 NEON_all.phylo.levels_plot.site_obs_16S.path <- paste0(dir, 'NEON_all.phylo.levels_plot.site_obs_16S.rds')
+NEON_tax_fg_16S.path <- paste0(dir, 'NEON_tax_fg_16S.rds')
 
 #### 16S/pecan_gen ####
 
@@ -418,6 +419,9 @@ NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S
 NEON_fg_variable_importance_data_16S.path <- paste0(dir, "NEON_fg_variable_importance_data_16S.rds")
 NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
 NEON_ddirch_var.decomp_phylo.group_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_phylo.group_16S.rds")
+# newer paths
+NEON_cps_fcast_dmulti.ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_dmulti.ddirch_16S.rds")
+
 
 #### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
@@ -455,7 +459,8 @@ site.table_16S.path <- paste0(dir,'site.table_16S.rds')
 # path to NEON group abundances
 NEON_16S_phylo_groups_abundances.path <- paste0(dir, "NEON_16S_phylo_groups_abundances.rds")
 NEON_fg_abundances_16S.path <- paste0(dir, "NEON_fg_abundances_16S.rds")
-
+NEON_16S_phylo_fg_abundances.path <- paste0(dir, "NEON_phylo_fg_abundances_16S.rds")
+NEON_phylo_fg_plot.site_obs_16S.path <- paste0(dir, "NEON_phylo_fg_plot.site_obs_16S.rds")
 
 # NEON covariate data (16S/ITS)
 dir <- paste0(pecan_gen_16S_dir,'NEON_covariates_16S_ITS/')
