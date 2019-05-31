@@ -21,10 +21,10 @@ eval(parse(text = script))
 tic()
 
 #set output.path----
-output.path <- NEON_all.phylo.levels_plot.site_obs_16S.path
+output.path <- NEON_phylo_fg_plot.site_obs_16S.path
 
 #load data and format.----
-d <- readRDS(NEON_16S_phylo_groups_abundances.path)
+d <- readRDS(NEON_16S_phylo_fg_abundances.path)
 
 #register parallel environment.----
 n.cores <- detectCores()
@@ -36,8 +36,9 @@ output <-
   foreach(i = 1:length(d)) %dopar% {
     #Get y multivariate matrix.
     abundances <- d[[i]]$abundances
-    y <- as.matrix((abundances + 1) / rowSums(abundances + 1))
-    
+    abundances <- abundances[, colSums(abundances != 0) > 0] # remove empty "other" column
+    y <- as.matrix((abundances + 1) / rowSums(abundances + 1)) # need to change this
+
     #get core_plot and plot_site indexing.
     core_plot <- substr(rownames(y), 1, 8)
     core_site <- substr(rownames(y), 1, 4)
