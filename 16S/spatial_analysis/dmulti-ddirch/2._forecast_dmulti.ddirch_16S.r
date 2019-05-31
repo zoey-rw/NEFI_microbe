@@ -6,13 +6,13 @@ source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/precision_matrix_match.r')
 #source('NEFI_functions/ddirch_forecast.r')
 
-# source ddirch_forecast
+# source dmulti_ddirch_forecast
 library(RCurl)
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_forecast.r", ssl.verifypeer = FALSE)
+script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/dmulti_ddirch_forecast.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
 #set output path.----
-output.path <- NEON_cps_fcast_all_phylo_16S.path
+output.path <- NEON_cps_fcast_dmulti.ddirch_16S.path
 
 #load prior model results and covariate data.----
 all.mod <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
@@ -83,6 +83,7 @@ names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
 #run forecast over all phylo/functional levels.----
 all.output <- list()
+tic()
 for(i in 1:length(all.mod)){
   mod <- all.mod[[i]]
   core.fit <- dmulti_ddirch_forecast(mod, cov_mu = core.preds, cov_sd = core.sd, names = core.preds$sampleID)
@@ -96,6 +97,7 @@ for(i in 1:length(all.mod)){
   all.output[[i]] <- output
   cat(names(all.mod)[i],'forecast complete.',i,'of',length(all.mod),'forecasts completed.\n')
 }
+toc()
 names(all.output) <- names(all.mod)
 
 #Save output.----

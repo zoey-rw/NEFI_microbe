@@ -5,31 +5,13 @@ source('paths.r')
 output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_16S.png")
 
 #load data.----
-# load fits for phylogenetic groups
+# load fits for phylogenetic and functional groups
 pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
-# load fits for functional groups
-fg_all <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S_prior_dmulti.ddirch_fg_JAGSfits")
 
-fg.r2.all <- list()
-for (p in 1:length(fg_all)){
-  fg <- fg_all[[p]]
-  obs <- fg$observed
-  pred <- fg$predicted
-  fg.r2 <- list()
-  for(i in 1:ncol(obs)){
-    fg.r2[[i]] <- summary(lm(obs[,i] ~ pred[,i]))$r.squared
-  }
-  fg.r2 <- unlist(fg.r2)
-  names(fg.r2) <- colnames(obs)
-  fg.r2 <- fg.r2[names(fg.r2) != 'other' & names(fg.r2) !="Cellulolytic"] #drop 'other'.
-  fg.r2.all[[p]] <- fg.r2
-}
-fg.r2.all <- list(unlist(fg.r2.all))
-names(fg.r2.all)<- "functional group"
-#phylogenetic groups.
+#phylogenetic and functional groups.
 pl.r2 <- list()
 lev.r2.out <- list()
-for(i in 1:5){
+for(i in 1:length(pl)){
   #if (p==1) lev <- pl[[i]]$
   lev <- pl[[i]]
   obs <- lev$observed
@@ -38,11 +20,14 @@ for(i in 1:5){
   for(j in 1:ncol(obs)){lev.r2[[j]] <- summary(lm(obs[,j] ~ pred[,j]))$r.squared}
   lev.r2 <- unlist(lev.r2)
   names(lev.r2) <- colnames(obs)
-  lev.r2 <- lev.r2[names(lev.r2) != 'other']
+  lev.r2 <- lev.r2[names(lev.r2) != 'other' & names(lev.r2) !="1"]
   pl.r2[[i]] <- lev.r2
   names(pl.r2)[[i]] <- names(pl)[i]
 }
-all.r2 <- c(fg.r2.all, pl.r2)
+fg <- unname(pl.r2[6:17])
+fg.r2.all <- list(unlist(fg))
+names(fg.r2.all)<- "functional group"
+all.r2 <- c(fg.r2.all, pl.r2[1:5])
 lev.mu <- unlist(lapply(all.r2, mean))
 lev.sd <- unlist(lapply(all.r2, sd))
 lev.N  <- unlist(lapply(all.r2, length))
