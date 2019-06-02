@@ -17,7 +17,7 @@ library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/dmulti-ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
-# source dmulti_ddirch_forecast
+# source paths.r
 library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
@@ -36,8 +36,8 @@ calval_data.path <- core.CV_NEON_cal.val_data_16S.path
 dat <- readRDS(hierarch_filled_data.path)
 #y <- readRDS(tedersoo_ITS_common_phylo_groups_list_1k.rare.path)
 #pl.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_fastq_1k_rare.path) #this has the plot and site values for NEON.
-y <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
-
+y <- readRDS(NEON_16S_phylo_fg_abundances.path)
+map <- readRDS(core_obs.path)
 
 #get core-level covariate means and sd.----
 core_mu <- dat$core.core.mu
@@ -51,8 +51,20 @@ core.preds <- merge(core.preds, site_mu)
 core.preds$relEM <- NULL
 names(core.preds)[names(core.preds)=="b.relEM"] <- "relEM"
 
+# get the rownames from mapping file
+core.preds$geneticSampleID <- core.preds$sampleID
+map$geneticSampleID <- gsub('-GEN','',map$geneticSampleID)
+core.preds <- merge(core.preds, map[,c("deprecatedVialID", "geneticSampleID")], by = "geneticSampleID")
+core.preds$sampleID <- core.preds$deprecatedVialID
+
 #get core-level SD.
 core_sd <- dat$core.core.sd
+
+# get the rownames from mapping file
+core_sd$geneticSampleID <- core_sd$sampleID
+core_sd <- merge(core_sd, map[,c("deprecatedVialID", "geneticSampleID")], by = "geneticSampleID")
+core_sd$sampleID <- core_sd$deprecatedVialID
+
 plot_sd <- dat$plot.plot.sd
 site_sd <- dat$site.site.sd
 #merge together.
@@ -70,7 +82,9 @@ core.sd   $map <- core.sd   $map / 1000
 set.seed(420)
 ID <- rownames(y$phylum$abundances)
 cal.ID <- sample(ID, round(length(ID)/ 2))
+cal.ID <- cal.ID[cal.ID %in% core.preds$sampleID]
 val.ID <- ID[!(ID %in% cal.ID)]
+val.ID <- val.ID[val.ID %in% core.preds$sampleID]
 
 #loop through y values. Wasn't an easy way to loop through levels of list.
 y.cal <- list()
@@ -121,7 +135,7 @@ names(dat.cal) <- c('y.cal','x_mu.cal','x_sd.cal')
 names(dat.val) <- c('y.val','x_mu.val','x_sd.val')
 dat.out <- list(dat.cal, dat.val)
 names(dat.out) <- c('cal','val')
-saveRDS(dat.out, core.CV_NEON_cal.val_data.path)
+saveRDS(dat.out, core.CV_NEON_cal.val_data_16S.path)
 
 #fit model using function in parallel loop.-----
 #for running production fit on remote.
@@ -132,7 +146,7 @@ output.list<-
     y.group <- y.cal[[i]]
     y.group <- y.group$abundances
     fit <- site.level_multi.dirich_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, seq.depth = rowSums(y.group),
-                                        adapt = 200, burnin = 16000, sample = 5000, 
+                                        adapt = 2000, burnin = 16000, sample = 5000, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                     #allows nested loop to work.

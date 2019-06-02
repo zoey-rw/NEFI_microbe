@@ -11,14 +11,26 @@ source('paths.r')
 #output.path <- NEON_cps_rep.groups_forecast_figure.path
 
 #groups of interest----
-namey <- c('Chitinolytic','Russula','Ascomycota')
-level <- c('function_group','genus','phylum')
+namey <- c("Proteobacteria", "Verrucomicrobia", "Actinobacteria", 
+           "Planctomycetes", "Chloroflexi", "Acidobacteria", "Firmicutes", 
+           "Bacteroidetes", "Gemmatimonadetes", "Armatimonadetes")
+level <- rep('phylum', length(namey))
+#namey <- c('Chloroflexi','Chitinolytic','Mycobacterium')
+#level <- c('phylum','function_group','genus')
+
+namey <- c("Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate_reduction", 
+           "N_fixation", "Dissim_nitrate_reduction", "Nitrification", "Denitrification", 
+           "Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph", 
+           "copiotroph", "oligotroph")
+#level <- rep('functional_group', length(namey))
+level <- c(namey[1:11], "Cop_olig", "Cop_olig")
 
 #grab forecasts and observations of functional and phylogenetic groups.----
 pl.cast <- readRDS(NEON_cps_fcast_dmulti.ddirch_16S.path)
-pl.truth <- readRDS(NEON_all.fg_plot.site_obs_16S.path)
-names(pl.cast )[names(pl.cast ) == 'fg'] <- 'function_group'
-names(pl.truth)[names(pl.truth) == 'fg'] <- 'function_group'
+pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
+map <- readRDS(core_obs.path)
+#names(pl.cast )[names(pl.cast ) == 'fg'] <- 'function_group'
+#names(pl.truth)[names(pl.truth) == 'fg'] <- 'function_group'
 
 #grab the data of interest based on 'namey', set above.
 pl.core_mu <- list()
@@ -28,7 +40,9 @@ pl.plot_lo95 <- list()
 pl.plot_hi95 <- list()
 pl.site_lo95 <- list()
 pl.site_hi95 <- list()
-for(i in 1:length(pl.truth)){
+#for(i in 1:length(pl.truth)){
+for(i in 1:length(pl.truth)){  
+  if (!names(pl.truth)[[i]] %in% level) next
   col.namey <- colnames(pl.truth[[i]]$core.fit)[colnames(pl.truth[[i]]$core.fit) %in% namey]
   pl.core_mu  [[i]] <- data.frame(pl.truth[[i]]$core.fit     [,colnames(pl.truth[[i]]$core.fit     ) %in% namey])
   pl.plot_mu  [[i]] <- data.frame(pl.truth[[i]]$plot.fit$mean[,colnames(pl.truth[[i]]$plot.fit$mean) %in% namey])
@@ -45,22 +59,23 @@ for(i in 1:length(pl.truth)){
   colnames(pl.site_lo95[[i]]) <- col.namey
   colnames(pl.site_hi95[[i]]) <- col.namey
 }
-pl.core_mu <- do.call(cbind,pl.core_mu)
-pl.plot_mu <- do.call(cbind,pl.plot_mu)
-pl.site_mu <- do.call(cbind,pl.site_mu)
-pl.plot_lo95 <- do.call(cbind,pl.plot_lo95)
-pl.plot_hi95 <- do.call(cbind,pl.plot_hi95)
-pl.site_lo95 <- do.call(cbind,pl.site_lo95)
-pl.site_hi95 <- do.call(cbind,pl.site_hi95)
+Filter(length, pl.core_mu)
+pl.core_mu <- do.call(cbind,Filter(length,pl.core_mu))
+pl.plot_mu <- do.call(cbind,Filter(length,pl.plot_mu))
+pl.site_mu <- do.call(cbind,Filter(length,pl.site_mu))
+pl.plot_lo95 <- do.call(cbind,Filter(length,pl.plot_lo95))
+pl.plot_hi95 <- do.call(cbind,Filter(length,pl.plot_hi95))
+pl.site_lo95 <- do.call(cbind,Filter(length,pl.site_lo95))
+pl.site_hi95 <- do.call(cbind,Filter(length,pl.site_hi95))
 #name problem.
-rownames(pl.core_mu) <- gsub('-GEN','',rownames(pl.core_mu))
+#rownames(pl.core_mu) <- gsub('-GEN','',rownames(pl.core_mu))
 
 #DEFINE OUTLIER SITES for groups- DSNY-ECM in this case.----
-out_sites <- c('DSNY')
+#out_sites <- c('DSNY')
 out_spp   <- c('Ectomycorrhizal')
 
 #png save line.----
-png(filename=output.path,width=12,height=12,units='in',res=300)
+#png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
 par(mfrow = c(3,3),
@@ -83,14 +98,22 @@ for(i in 1:length(names)){
   #organize data.
   fcast <- pl.cast[[level[i]]]$core.fit
   obs <- pl.core_mu
+  truth <- pl.core_mu
+  truth <- as.data.frame(truth)
+  truth$deprecatedVialID <- rownames(truth)
+  truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
+  rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
+  truth1$geneticSampleID <- NULL
+  obs <- truth1
+  
   obs <- obs[rownames(obs) %in% rownames(fcast$mean),]
   for(k in 1:length(fcast)){
     fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(obs),]
   }
-  obs <- obs[,colnames(obs) %in% colnames(fcast$mean)]
+  obs <- obs[,colnames(obs) %in% colnames(fcast$mean),drop=FALSE]
   obs <- as.matrix(obs)
-  colnames(obs) <- names[names %in% colnames(fcast$mean)]
-  rownames(obs) <- rownames(pl.core_mu)
+  colnames(obs) <- names[names %in% colnames(fcast$mean),drop=FALSE]
+  #rownames(obs) <- rownames(fcast[[k]])
   pos <- which(colnames(fcast$mean) == names[i]) #position that matches the fungal type we are plotting.
   mu <- fcast$mean[,pos][order(fcast$mean[,pos])]
   ci_0.975 <- fcast$ci_0.975[,pos][order(match(names(fcast$ci_0.975[,pos]),names(mu)))]
@@ -103,9 +126,9 @@ for(i in 1:length(names)){
   
   #make DSNY sites light gray for Ectos.
   obs.cols <- rep('black',nrow(obs))
-  if(names[i] %in% out_spp){
-    obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
-  }
+  # if(names[i] %in% out_spp){
+  #   obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
+  # }
   
   #get y-limit.
   obs_limit <- max(obs.mu)
@@ -167,9 +190,9 @@ for(i in 1:length(names)){
   
   #Make out_sites sites gray for out_spp.
   obs.cols <- rep('black',length(obs.mu))
-  if(names[i] %in% out_spp){
-    obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
-  }
+  # if(names[i] %in% out_spp){
+  #   obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
+  # }
   
   #get y-limit.
   obs_limit <- max(obs.hi95)
