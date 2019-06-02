@@ -1,3 +1,5 @@
+# View NEON out-of-sample validation density plots by spatial scale 
+
 rm(list=ls())
 source('paths.r')
 #source('NEFI_functions/zero_truncated_density.r')
@@ -12,8 +14,9 @@ output.path <- 'test.png'
 
 #Load calibration data.----
 pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits) #all phylo and functional groups.
+
 #re-order list, make function group first.
-pl <- pl[c('fg','phylum','class','order','family','genus')]
+#pl <- pl[c('fg','phylum','class','order','family','genus')]
 
 #Get calibration r2 values.----
 pl.r2 <- list()
@@ -37,20 +40,20 @@ names(fg.r2.all)<- "fg"
 pl <- pl.r2[1:5]
 names(pl) <- c('phylum','class','order','family','genus')
 all.r2 <- c(fg.r2.all, pl)
-all.r2 <- unlist(all.r2)
+cal.rsq <- unlist(all.r2)
 
 #load forecasts predicted and observed.----
-pl.cast <- readRDS(NEON_dmulti.ddirch_fcast_fg.path)
-pl.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_fastq_1k_rare.path)
-pl.core <- readRDS(NEON_ITS_fastq_all_cosmo_phylo_groups_1k_rare.path)
-
-#Re-order.
-pl.cast <- pl.cast[c('fg','phylum','class','order','family','genus')]
-pl.truth <- pl.truth[c('fg','phylum','class','order','family','genus')]
-pl.core <- pl.core[c('fg','phylum','class','order','family','genus')]
+pl.cast <- readRDS(NEON_cps_fcast_dmulti.ddirch_16S.path)
+pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
+pl.core <- readRDS(NEON_16S_phylo_fg_abundances.path)
+# 
+# #Re-order.
+# pl.cast <- pl.cast[c('fg','phylum','class','order','family','genus')]
+# pl.truth <- pl.truth[c('fg','phylum','class','order','family','genus')]
+# pl.core <- pl.core[c('fg','phylum','class','order','family','genus')]
 
 #names.
-names(pl.cast)[1] <- 'functional'
+#names(pl.cast)[1] <- 'functional'
 
 #get core, plot site R2 values out of sample.----
 all.core.rsq <- list()
@@ -62,10 +65,21 @@ for(i in 1:length(pl.cast)){
   plot.rsq <- list()
   site.rsq <- list()
   #core.level----
-  y <- (pl.core[[i]]$abundances + 1)/pl.core[[i]]$seq_total
+  y <- pl.truth[[i]]$core.fit
+  #y <- (pl.core[[i]]$abundances + 1)/pl.core[[i]]$seq_total
   x <- fcast$core.fit$mean
   #make sure row and column orders match.
   rownames(y) <- gsub('-GEN','',rownames(y))
+  truth <- y
+  map <- readRDS(core_obs_16S.path)
+  truth <- as.data.frame(truth)
+  truth$deprecatedVialID <- rownames(truth)
+  truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
+  truth1 <- truth1[!duplicated(truth1$geneticSampleID),]
+  rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
+  truth <- truth1
+  y <- truth
+  
   y <- y[rownames(y) %in% rownames(x),]
   x <- x[rownames(x) %in% rownames(y),]
   y <- y[,colnames(y) %in% colnames(x)]
@@ -73,23 +87,17 @@ for(i in 1:length(pl.cast)){
   x <- x[order(match(rownames(x),rownames(y))),]
   x <- x[,order(match(colnames(x),colnames(y)))]
   #fit model, grab r2.
-  for(k in 1:ncol(fcast$core.fit$mean)){
+  for(k in 1:ncol(x)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
-    if(fungi_name == 'other'){next}
     core.rsq[[k]] <- rsq
   }
   #plot.level----
   x <- fcast$plot.fit$mean
   y <- pl.truth[[i]]$plot.fit$mean
   #make sure row and column order match.
-  rownames(y) <- gsub('-GEN','',rownames(y))
+  rownames(y) <- gsub('\\.','_',rownames(y))
   y <- y[rownames(y) %in% rownames(x),]
   x <- x[rownames(x) %in% rownames(y),]
   y <- y[,colnames(y) %in% colnames(x)]
@@ -100,13 +108,7 @@ for(i in 1:length(pl.cast)){
   for(k in 1:ncol(y)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
-    if(fungi_name == 'other'){next}
     plot.rsq[[k]] <- rsq
   }
   #site.level----
@@ -124,42 +126,67 @@ for(i in 1:length(pl.cast)){
   for(k in 1:ncol(y)){
     fungi_name <- colnames(x)[k]
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
-    if(fungi_name == 'Ectomycorrhizal'){
-      sub.y <- y[-grep('DSNY',rownames(y)),]
-      sub.x <- x[-grep('DSNY',rownames(x)),]
-      rsq <- summary(lm(sub.y[,k] ~ sub.x[,k]))$r.squared
-    }
     names(rsq) <- fungi_name
-    if(fungi_name == 'other'){next}
     site.rsq[[k]] <- rsq
   }
   #wrap up for return.----
   all.core.rsq[[i]] <- unlist(core.rsq)
   all.plot.rsq[[i]] <- unlist(plot.rsq)
   all.site.rsq[[i]] <- unlist(site.rsq)
+  
+  all.core.rsq[[i]] <-  all.core.rsq[[i]][-grep('other',names(all.core.rsq[[i]]))]
+  all.plot.rsq[[i]] <-  all.plot.rsq[[i]][-grep('other',names(all.plot.rsq[[i]]))]
+  all.site.rsq[[i]] <-  all.site.rsq[[i]][-grep('other',names(all.site.rsq[[i]]))]
+  
 }
-
-lev.mu <- unlist(lapply(all.site.rsq, mean  ))
-lev.sd <- unlist(lapply(all.site.rsq, sd    ))
-lev.N  <- unlist(lapply(all.site.rsq, length))
-lev.se <- lev.sd / sqrt(lev.N)
-names(lev.mu) <- names(pl.cast)
 core.rsq <- unlist(all.core.rsq)
 plot.rsq <- unlist(all.plot.rsq)
 site.rsq <- unlist(all.site.rsq)
-#core.rsq <- core.rsq[-grep('other',names(core.rsq))]
-#plot.rsq <- plot.rsq[-grep('other',names(plot.rsq))]
-#site.rsq <- site.rsq[-grep('other',names(site.rsq))]
 
+# fix the functional-group grouping for each level
+core.rsq.fg <- list(unlist(all.core.rsq[6:17]))
+names(core.rsq.fg)<- "fg"
+core.rsq.pl <- all.core.rsq[1:5]
+names(core.rsq.pl) <- c('phylum','class','order','family','genus')
+core.rsq <- c(core.rsq.fg, core.rsq.pl)
+core.rsq <- unlist(core.rsq)
+
+plot.rsq.fg <- list(unlist(all.plot.rsq[6:17]))
+names(plot.rsq.fg)<- "fg"
+plot.rsq.pl <- all.plot.rsq[1:5]
+names(plot.rsq.pl) <- c('phylum','class','order','family','genus')
+plot.rsq <- c(plot.rsq.fg, plot.rsq.pl)
+plot.rsq <- unlist(plot.rsq)
+
+site.rsq.fg <- list(unlist(all.site.rsq[6:17]))
+names(site.rsq.fg)<- "fg"
+site.rsq.pl <- all.site.rsq[1:5]
+names(site.rsq.pl) <- c('phylum','class','order','family','genus')
+site.rsq.list <- c(site.rsq.fg, site.rsq.pl)
+site.rsq <- unlist(site.rsq.list)
+
+# shouldn't we be getting these values *after* subsetting by calibration R2?
+lev.mu <- unlist(lapply(site.rsq.list, mean  ))
+lev.sd <- unlist(lapply(site.rsq.list, sd    ))
+lev.N  <- unlist(lapply(site.rsq.list, length))
+lev.se <- lev.sd / sqrt(lev.N)
+names(lev.mu) <- names(site.rsq.list)
 
 #Subset to observations that have a minimum calibration R2 value.----
-pass <- all.r2[all.r2 > .1]
+pass <- cal.rsq[cal.rsq > .1]
 core.rsq <- core.rsq[names(core.rsq) %in% names(pass)]
 plot.rsq <- plot.rsq[names(plot.rsq) %in% names(pass)]
 site.rsq <- site.rsq[names(site.rsq) %in% names(pass)]
+
+
+# get densities
 core.d <- zero_truncated_density(core.rsq)
 plot.d <- zero_truncated_density(plot.rsq)
 site.d <- zero_truncated_density(site.rsq)
+
+
+
+
 
 #png save line.----
 png(filename=output.path,width=8,height=5,units='in',res=300)
@@ -167,7 +194,7 @@ png(filename=output.path,width=8,height=5,units='in',res=300)
 #global plot settings.----
 par(mfrow = c(1,2))
 limx <- c(0,1)
-limy <- c(0, 5.1)
+limy <- c(0, 8)
 trans <- 0.2 #shading transparency.
 o.cex <- 1.3 #outer label size.
 cols <- c('purple','cyan','yellow')
@@ -175,11 +202,14 @@ par(mfrow = c(1,2), mar = c(5,4.2,1.5,1.5))
 
 #Density plot.----
 plot(site.d,xlim = c(0, 0.89), ylim = limy, bty = 'n', xlab = NA, ylab = NA, main = NA, yaxs='i', xaxs = 'i', las = 1, lwd = 0)
-polygon(site.d, col = adjustcolor(cols[1],trans))
-#polygon(plot.d, col = adjustcolor(cols[2],trans))
-#polygon(core.d, col = adjustcolor(cols[3],trans))
+polygon(site.d, col = adjustcolor(cols[3],trans))
+polygon(plot.d, col = adjustcolor(cols[2],trans))
+polygon(core.d, col = adjustcolor(cols[1],trans))
 mtext('Density', side = 2, line = 2.2, cex = o.cex)
 mtext(expression(paste("Validation R"^"2")), side = 1, line = 2.5, cex = o.cex)
+legend(x = 0.6, y = 6, legend = c('core','plot','site'), col ='black', pt.bg=adjustcolor(cols,trans), bty = 'n', pch = 22, pt.cex = 1.5)
+
+
 
 #Validation rsq ~ function/phylo scale.----
 x <- 1:length(lev.mu)

@@ -54,12 +54,13 @@ output.list<-
   foreach(i = 1:length(y)) %dopar% {
     y.group <- y[[i]]
     y.group <- y.group$abundances
+    y.group <- y.group[, colSums(y.group != 0) > 0] # remove empty "other" column
     y.group <- y.group[rownames(y.group) %in% d$Run,]
     if(!sum(rownames(y.group) == d$Run) == nrow(y.group)){
       cat('Warning. x and y covariates not in the same order!')
     }
     fit <- site.level_multi.dirich_jags(y=y.group,x_mu=x, seq.depth = rowSums(y.group),
-                                        adapt = 200, burnin = 20000, sample = 5000, 
+                                        adapt = 2000, burnin = 20000, sample = 5000, 
                                         parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                  #allows nested loop to work.
   }
