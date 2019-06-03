@@ -22,8 +22,8 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-#output.path <- bahram_16S_prior_phylo.group_JAGSfits
-output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"
+output.path <- bahram_16S_prior_ddirch_all.group_JAGSfits
+#output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"
 
 #load bahram abundance data.----
 y <- readRDS(bahram_16S_common_phylo_fg_abun.path)

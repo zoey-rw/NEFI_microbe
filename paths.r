@@ -359,6 +359,7 @@ bahram_16S_prior_C_cycle_JAGSfits <- paste0(dir,'bahram_16S.prior_C_cycle_JAGSfi
 bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.selection_JAGS.rds')
 prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits.rds')
 bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits.rds')
+bahram_16S_prior_ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_ddirch_all.group_JAGSfit_16S.rds')
 
 core.CV_NEON_dmulti.ddirch_16S.path <- paste0(dir,'core.CV_NEON_dmulti.ddirch_16S.rds')
 core.CV_NEON_cal.val_data_16S.path <- paste0(dir,'core.CV_NEON_cal.val_data_16S.rds')
@@ -426,7 +427,7 @@ NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S
 NEON_ddirch_var.decomp_phylo.group_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_phylo.group_16S.rds")
 # newer paths
 NEON_cps_fcast_dmulti.ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_dmulti.ddirch_16S.rds")
-
+NEON_cps_fcast_ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_ddirch_16S.rds")
 
 #### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')

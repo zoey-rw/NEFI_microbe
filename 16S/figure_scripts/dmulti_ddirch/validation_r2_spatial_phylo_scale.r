@@ -14,7 +14,8 @@ output.path <- 'test.png'
 
 #Load calibration data.----
 pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits) #all phylo and functional groups.
-
+fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S_prior_dmulti.ddirch_fg_JAGSfits.rds")
+pl <- c(pl[1:5], fg)
 #re-order list, make function group first.
 #pl <- pl[c('fg','phylum','class','order','family','genus')]
 
