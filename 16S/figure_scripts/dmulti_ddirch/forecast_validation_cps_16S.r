@@ -1,4 +1,4 @@
-#Plotting ECM, Russula and Ascomycota - from Multinomial Dirichlet fit.
+#Plotting phyla and functional groups - from Multinomial Dirichlet fit.
 #Building so its easy to update which representative groups we use.
 #General method to combine phylo and functional data/casts, and then loop over to plot.
 #Core level plots work. Next is plot-level.
