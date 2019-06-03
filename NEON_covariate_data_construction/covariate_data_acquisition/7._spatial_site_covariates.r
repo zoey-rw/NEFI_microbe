@@ -34,6 +34,6 @@ ndep    <- extract_ndep(longitude = lon[,2],latitude = lat[,2])
 NPP     <- extract_npp(latitude = lat[,2], longitude = lon[,2])
 
 # Wrap up output and save.
-output <- cbind(sites,lat[,2],lon[,2],ele[,2],climate,ndep,NPP)
+output <- cbind(lat,lon[,2],ele[,2],climate,ndep,NPP)
 colnames(output)[1:4] <- c('siteID','latitude','longitude','elevation')
 saveRDS(output,output.path)
