@@ -426,6 +426,7 @@ NEON_fg_variable_importance_data_16S.path <- paste0(dir, "NEON_fg_variable_impor
 NEON_ddirch_var.decomp_fg_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_fg_16S.rds")
 NEON_ddirch_var.decomp_phylo.group_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_phylo.group_16S.rds")
 # newer paths
+NEON_ddirch_var.decomp_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_16S.rds")
 NEON_cps_fcast_dmulti.ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_dmulti.ddirch_16S.rds")
 NEON_cps_fcast_ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_ddirch_16S.rds")
 
