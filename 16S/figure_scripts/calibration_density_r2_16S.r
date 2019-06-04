@@ -2,11 +2,13 @@ rm(list=ls())
 source('paths.r')
 
 #Set output path.----
-output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_16S.png")
+output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_tax.scale_ddirch_16S.png")
+#output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_tax.scale_dmulti.ddirch_16S.png")
 
 #load data.----
 # load fits for phylogenetic and functional groups
-pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
+#pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
+pl <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))
 
 #phylogenetic and functional groups.
 pl.r2 <- list()
