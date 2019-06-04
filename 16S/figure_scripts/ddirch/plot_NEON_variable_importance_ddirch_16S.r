@@ -8,10 +8,7 @@ output.path <- 'test.png'
 output.path <- NEON_ddirch_var.importance_fg_figure.path
 
 #load data.----
-d <- readRDS(NEON_fg_variable_importance_data_16S.path)
-mu <- d$mean
-lo_95 <- d$ci_0.025
-hi_95 <- d$ci_0.975
+d <- readRDS(NEON_var_importance_data_ddirch_16S.path)
 
 #set output spec.----
 png(filename=output.path,width=8,height=8,units='in',res=300)
