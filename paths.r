@@ -429,6 +429,7 @@ NEON_ddirch_var.decomp_phylo.group_16S.path <- paste0(dir, "NEON_ddirch_var.deco
 NEON_ddirch_var.decomp_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_16S.rds")
 NEON_cps_fcast_dmulti.ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_dmulti.ddirch_16S.rds")
 NEON_cps_fcast_ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_ddirch_16S.rds")
+NEON_var_importance_data_ddirch_16S.path <- paste0(dir, "NEON_var_importance_data_ddirch_16S.rds")
 
 #### 16S/pecan_gen: NEON covariate data aggregation paths. ####
 dir <- paste0(pecan_gen_16S_dir,'NEON_data_aggregation/')
@@ -546,7 +547,7 @@ NEON_cps.fcast_fg_fig_16S.path <- paste0(dir, "NEON_cps.fcast_fg_fig_16S.pdf")
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
 # Forecast analysis
 NEON_ddirch_var.decomp_each.group.fig_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_each.group.fig_16S.png")
-
+NEON_ddirch_var.decomp_all.groups.fig_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_all.groups.fig_16S.png")
 #### 16S/pecan_gen: reference_data
 dir <- paste0(pecan_gen_16S_dir,'reference_data/')
 cmd <- paste0('mkdir -p ',dir)
