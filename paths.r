@@ -544,6 +544,8 @@ NEON_cps.fcast_phyla_16S.path <- paste0(dir, "NEON_cps.fcast_phyla_16S.pdf")
 NEON_cps.fcast_fg_fig_16S.path <- paste0(dir, "NEON_cps.fcast_fg_fig_16S.pdf")
 # prior calibration figures 
 prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distribution.density_fig.pdf")
+# Forecast analysis
+NEON_ddirch_var.decomp_each.group.fig_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_each.group.fig_16S.png")
 
 #### 16S/pecan_gen: reference_data
 dir <- paste0(pecan_gen_16S_dir,'reference_data/')

@@ -10,10 +10,11 @@ eval(parse(text = script))
 
 
 #set output path.----
-output.path <- paste0(scc_gen_16S_dir, "figures/out.of.sample_R2_spatial_tax_scale.png")
+output.path <- paste0(scc_gen_16S_dir, "figures/out.of.sample_R2_spatial_tax_scale_ddirch.png")
 
 #Load calibration data.----
-pl <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds") #all phylo and functional groups.
+pl <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits) #all phylo and functional groups.
+pl <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds")
 
 #re-order list, make function group first.
 #pl <- pl[c('fg','phylum','class','order','family','genus')]
