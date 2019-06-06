@@ -11,6 +11,8 @@ library(data.table)
 all_fcasts <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 # load prior model results
 all_fits <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))
+fg <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
+all_fits <- c(all_fits[1:5], fg)
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
@@ -33,7 +35,7 @@ filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_talk.fig_2p
 pdf(filename,onefile=T)
 
 #global plot settings.----
-par(mfrow = c(2,3))
+par(mfrow = c(3,3))
 par(mar = c(2,2,2,2))
 par(oma = c(0,0,2,0))
 trans <- 0.3
@@ -45,7 +47,8 @@ outer.cex <- 2
 glob.pch <- 16
 
 for (p in 1:length(all_fcasts)) {
-   #p <- 1
+#  for (p in 6:17) {
+    #p <- 1
   output <- all_fcasts[[p]]  
   fit <- all_fits[[p]]
 
@@ -53,7 +56,7 @@ for (p in 1:length(all_fcasts)) {
   raw.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
   raw.truth <- raw.truth[[p]]
   
-  for (i in 2:ncol(fit$observed)){
+  for (i in 1:ncol(fit$observed)){
   #  for (i in c(6,8)){
     
     
@@ -81,7 +84,7 @@ for (p in 1:length(all_fcasts)) {
     pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
     pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
     group_name <- colnames(fcast$mean)[i]
-    if (!group_name %in% colnames(truth)) next()
+    if (!group_name %in% colnames(truth) | group_name=="other") next()
     obs.mu   <- truth[,c(group_name),drop=FALSE][order(match(names(truth[,c(group_name),drop=FALSE]),names(mu)))]
     obs.mu <- obs.mu[,c(group_name)]
     # get prior rsq.
@@ -233,7 +236,7 @@ for (p in 1:length(all_fcasts)) {
     state <- paste0(in_it,'% of obs within interval.')
     mtext(state,side = 3,  cex = .7, line = -1.3, adj = 0.05)
     #}
-    mtext(paste0("Rsq for prior fit:", prior_rsq), cex = .7, side = 3, line = 1, outer = TRUE)
+    #mtext(paste0("Rsq for prior fit:", prior_rsq), cex = .7, side = 3, line = 1, outer = TRUE)
     #mtext(paste0("Present in ", present_percent[i], " of NEON cores."), cex = .7, side = 3, line = 0, outer = TRUE)
   }
 }

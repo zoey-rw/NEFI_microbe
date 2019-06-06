@@ -25,6 +25,9 @@ namey <- c("Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate
 #level <- rep('functional_group', length(namey))
 level <- c(namey[1:11], "Cop_olig", "Cop_olig")
 
+namey <- c("Chloroflexi", "Firmicutes", "Solibacteres")
+level <- c("phylum", "phylum", "class")
+
 #grab forecasts and observations of functional and phylogenetic groups.----
 pl.cast <- readRDS(NEON_cps_fcast_dmulti.ddirch_16S.path)
 pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
@@ -145,8 +148,16 @@ for(i in 1:length(names)){
     to_keep <- ifelse(siteID %in% out_sites, F, T)
     mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
   }
+  #r square best fit.
   rsq <- round(summary(mod_fit)$r.squared,2)
-  mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
+  #r square 1:1.
+  rss <- sum((mu -      obs.mu)  ^ 2)  ## residual sum of squares
+  tss <- sum((obs.mu - mean(obs.mu)) ^ 2)  ## total sum of squares
+  rsq1 <- 1 - rss/tss
+  if(rsq1 < 0){rsq1 <- 0}
+  #RMSE.
+  rmse <- round(sqrt(mean(mod_fit$residuals^2)), 3)
+  mtext(paste0('R2=',rsq, " RMSE=",rmse), cex = .7, side = 3, line = -2.7, adj = 0.03)
   mtext(fungi_name, side = 2, line = 2.5, cex = 1.5)
   #add confidence interval.
   range <- mu
@@ -210,8 +221,16 @@ for(i in 1:length(names)){
     to_keep <- ifelse(siteID %in% out_sites, F, T)
     mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
   }
+  #r square best fit.
   rsq <- round(summary(mod_fit)$r.squared,2)
-  mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
+  #r square 1:1.
+  rss <- sum((mu -      obs.mu)  ^ 2)  ## residual sum of squares
+  tss <- sum((obs.mu - mean(obs.mu)) ^ 2)  ## total sum of squares
+  rsq1 <- 1 - rss/tss
+  if(rsq1 < 0){rsq1 <- 0}
+  #RMSE.
+  rmse <- round(sqrt(mean(mod_fit$residuals^2)), 3)
+  mtext(paste0('R2=',rsq, " RMSE=",rmse), cex = .7, side = 3, line = -2.7, adj = 0.03)
   #1:1 line
   abline(0,1, lwd = 2)
   abline(mod_fit, lwd =2, lty = 2, col = bf_col)
@@ -276,8 +295,17 @@ for(i in 1:length(names)){
     to_keep <- ifelse(siteID %in% out_sites, F, T)
     mod_fit <- lm(obs.mu[to_keep] ~mu[to_keep])
   }
+  #r square best fit.
   rsq <- round(summary(mod_fit)$r.squared,2)
-  mtext(paste0('R2=',rsq), side = 3, line = -2.7, adj = 0.03)
+  #r square 1:1.
+  rss <- sum((mu -      obs.mu)  ^ 2)  ## residual sum of squares
+  tss <- sum((obs.mu - mean(obs.mu)) ^ 2)  ## total sum of squares
+  rsq1 <- 1 - rss/tss
+  if(rsq1 < 0){rsq1 <- 0}
+  #RMSE.
+  rmse <- round(sqrt(mean(mod_fit$residuals^2)), 3)
+  mtext(paste0('R2=',rsq, " RMSE=",rmse), cex = .7, side = 3, line = -2.7, adj = 0.03)
+  
   #1:1 line
   abline(0,1, lwd = 2)
   abline(mod_fit, lwd =2, lty = 2, col = bf_col)

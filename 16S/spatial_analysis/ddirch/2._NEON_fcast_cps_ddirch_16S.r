@@ -15,7 +15,8 @@ output.path <- NEON_cps_fcast_ddirch_16S.path
 #output.path <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_ddirch_old.hier.log.mapSD_16S.rds"
 #load prior model results.----
 all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))
-#phylo <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+fg <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
+all.mod <- c(all.mod[1:5], fg)
 #all.mod <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits)
 
 #get core-level covariate means and sd.----
