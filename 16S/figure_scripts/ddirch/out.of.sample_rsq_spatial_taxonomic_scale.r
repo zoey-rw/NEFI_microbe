@@ -13,8 +13,10 @@ eval(parse(text = script))
 output.path <- paste0(scc_gen_16S_dir, "figures/out.of.sample_R2_spatial_tax_scale_ddirch.png")
 
 #Load calibration data.----
-pl <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits) #all phylo and functional groups.
-pl <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds")
+#pl <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits) #all phylo and functional groups.
+pl <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"))
+fg <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
+pl <- c(pl[1:5], fg)
 
 #re-order list, make function group first.
 #pl <- pl[c('fg','phylum','class','order','family','genus')]
@@ -43,8 +45,14 @@ names(pl) <- c('phylum','class','order','family','genus')
 all.r2 <- c(fg.r2.all, pl)
 cal.rsq <- unlist(all.r2)
 
+
+cal.lev.mu <- unlist(lapply(all.r2, mean))
+cal.lev.sd <- unlist(lapply(all.r2, sd))
+cal.lev.N  <- unlist(lapply(all.r2, length))
+cal.lev.se <- cal.lev.sd / sqrt(cal.lev.N)
+
 #load forecasts predicted and observed.----
-# pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
+#pl.cast <- readRDS(NEON_cps_fcast_dmulti.ddirch_16S.path)
 pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 #pl.cast <- readRDS(paste0(pecan_gen_16S_dir, "/NEON_forecast_data/NEON_cps_fcast_ddirch_old.hier_16S.rds"))
 pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
@@ -148,21 +156,21 @@ site.rsq <- unlist(all.site.rsq)
 
 # fix the functional-group grouping for each level
 core.rsq.fg <- list(unlist(all.core.rsq[6:17]))
-names(core.rsq.fg)<- "fg"
+names(core.rsq.fg)<- "functional"
 core.rsq.pl <- all.core.rsq[1:5]
 names(core.rsq.pl) <- c('phylum','class','order','family','genus')
 core.rsq <- c(core.rsq.fg, core.rsq.pl)
 core.rsq <- unlist(core.rsq)
 
 plot.rsq.fg <- list(unlist(all.plot.rsq[6:17]))
-names(plot.rsq.fg)<- "fg"
+names(plot.rsq.fg)<- "functional"
 plot.rsq.pl <- all.plot.rsq[1:5]
 names(plot.rsq.pl) <- c('phylum','class','order','family','genus')
 plot.rsq <- c(plot.rsq.fg, plot.rsq.pl)
 plot.rsq <- unlist(plot.rsq)
 
 site.rsq.fg <- list(unlist(all.site.rsq[6:17]))
-names(site.rsq.fg)<- "fg"
+names(site.rsq.fg)<- "functional"
 site.rsq.pl <- all.site.rsq[1:5]
 names(site.rsq.pl) <- c('phylum','class','order','family','genus')
 site.rsq.list <- c(site.rsq.fg, site.rsq.pl)
@@ -213,17 +221,25 @@ mtext(expression(paste("Validation R"^"2")), side = 1, line = 2.5, cex = o.cex)
 legend(x = 0.6, y = 6, legend = c('core','plot','site'), col ='black', pt.bg=adjustcolor(cols,trans), bty = 'n', pch = 22, pt.cex = 1.5)
 
 
+png(filename=paste0(pecan_gen_16S_dir, "figures/cal.val_by.tax.scale_ddirch_16S.png"),width=4,height=5,units='in',res=300)
 
-#Validation rsq ~ function/phylo scale.----
+#Calibration/Validation rsq ~ function/phylo scale.----
 x <- 1:length(lev.mu)
-limy <- c(0,max(lev.mu + lev.se))
-plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n')
-arrows(x, lev.mu - lev.se, x1 = x, y1 = lev.mu + lev.se, length=0.00, angle=90, code=3, col = 'black')
-lines(x, lev.mu, lty = 2)
-mtext(expression(paste("Validation R"^"2")), side = 2, line = 2.2, cex = o.cex)
+limy <- c(0,max(cal.lev.mu + cal.lev.se))
+plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n', col="grey")
+points(cal.lev.mu ~ x, cex = 2.5, pch = 16)
+#arrows(x, lev.mu - lev.se, x1 = x, y1 = lev.mu + lev.se, length=0.00, angle=90, code=3, col = 'black')
+lines(x, lev.mu, lty = 2, col="grey")
+lines(x, cal.lev.mu, lty = 2)
+mtext(expression(paste("Site-Level R"^"2")), side = 2, line = 2.2, cex = o.cex)
 axis(1, labels = F)
 text(x=x, y = -.04, labels= names(lev.mu), srt=45, adj=1, xpd=TRUE)
-
+legend("bottomleft", 
+       legend = c("calibration", "validation"), 
+       col = c("black","grey"), 
+       pch = 19, 
+       bty = "n",
+       pt.cex = 2)
 
 #end plot.----
 dev.off()

@@ -1,14 +1,22 @@
 rm(list=ls())
 source('paths.r')
 
-#Set output path.----
-output.path <- paste0(pecan_gen_16S_dir, "figures/NEON.plot_calibration_density_tax.scale_ddirch_16S.png")
-#output.path <- paste0(pecan_gen_16S_dir, "figures/calibration_density_tax.scale_dmulti.ddirch_16S.png")
+spatial.scale <- "core"
+spatial.scale <- "plot"
 
-#load data.----
-# load fits for phylogenetic and functional groups
-#pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
-pl <- readRDS(plot.CV_NEON_dmulti.ddirch_16S.path)
+# change output/input depending on our scale of interest
+if (spatial.scale == "core") {
+  output.path <-
+    paste0(pecan_gen_16S_dir, "figures/NEON.core_calibration_density_tax.scale_ddirch_16S.png")
+  # load fits
+  pl <- readRDS(core.CV_NEON_dmulti.ddirch_16S.path)
+} else if (spatial.scale == "plot") {
+  #Set output path.----
+  output.path <-
+    paste0(pecan_gen_16S_dir, "figures/NEON.plot_calibration_density_tax.scale_ddirch_16S.png")
+  # load fits
+  pl <- readRDS(plot.CV_NEON_dmulti.ddirch_16S.path)
+}
 
 #phylogenetic and functional groups.
 pl.r2 <- list()
@@ -26,14 +34,17 @@ for(i in 1:length(pl)){
   pl.r2[[i]] <- lev.r2
   names(pl.r2)[[i]] <- names(pl)[i]
 }
-
-# fg <- unname(pl.r2[6:17])
-# fg.r2.all <- list(unlist(fg))
-# names(fg.r2.all)<- "functional group"
-# all.r2 <- c(fg.r2.all, pl.r2[1:5])
-
-# since theres no fg here right now
 all.r2 <- pl.r2
+# if we do have functional groups
+if (length(pl.r2) > 5) {
+fg <- unname(pl.r2[6:17])
+fg.r2.all <- list(unlist(fg))
+names(fg.r2.all)<- "functional group"
+all.r2 <- c(fg.r2.all, pl.r2[1:5])
+
+# since theres no good fg here right now
+all.r2 <- all.r2[2:6]
+}
 
 lev.mu <- unlist(lapply(all.r2, mean))
 lev.sd <- unlist(lapply(all.r2, sd))
@@ -74,7 +85,7 @@ mtext(expression(paste("Calibration R"^"2")), side = 1, line = 2.5, cex = o.cex)
 # #calbiration R2 as a function of phylo/function scale.
 x <- 1:length(lev.mu)
 limy <- c(0,max(lev.mu + lev.se))
-plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n')
+plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n', main=paste0(spatial.scale, "-level fit"))
 #segments(x,lev.mu-lev.se,x,lev.mu+lev.se)
 lines(x, lev.mu, lty = 2)
 mtext(expression(paste("Calibration R"^"2")), side = 2, line = 2.2, cex = o.cex)

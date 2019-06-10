@@ -5,12 +5,12 @@ library(ggbiplot)
 library(RColorBrewer)
 
 #set output path.----
-output.path <- paste0(pecan_gen_16S_dir, 'parameter_PCA_ddirch_16S.png')
+output.path <- paste0(pecan_gen_16S_dir, 'figures/parameter_PCA_ddirch_16S.png')
 
 #load raw data and predictors.----
 pl <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))[1:5]
-pl <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
-pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)[1:5]
+#pl <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+#pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)[1:5]
 #names(pl)[6] <- 'functional'
 
 #colors.----
