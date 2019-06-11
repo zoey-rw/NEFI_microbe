@@ -6,7 +6,7 @@ library(doParallel)
 library(DirichletReg)
 
 #set output path.----
-output.path <- paste0(scc_gen_16S_dir, "JAGS_output/NEON_sampling_effort_analysis_plot.level_16S.rds")
+output.path <- NEON_sampling_effort_analysis_plot.level_16S.path
 
 #detect and register cores.----
 n.cores <- detectCores()

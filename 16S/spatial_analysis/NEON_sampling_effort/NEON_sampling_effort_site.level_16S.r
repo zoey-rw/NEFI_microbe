@@ -10,7 +10,7 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 #set output path.----
-output.path <- paste0(scc_gen_16S_dir, "JAGS_output/HARV_sampling_effort_analysis_16S.rds")
+output.path <- HARV_sampling_effort_analysis_16S.path
 
 #detect and register cores.----
 n.cores <- detectCores()
