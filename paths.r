@@ -360,6 +360,9 @@ bahram_16S_prior_fg_cov.selection_JAGS <- paste0(dir,'bahram_16S_prior_fg_cov.se
 prior_16S_all.fg.groups_JAGSfits.path <- paste0(dir,'prior_16S_all.fg.groups_JAGSfits.rds')
 bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits.rds')
 bahram_16S_prior_ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_ddirch_all.group_JAGSfit_16S.rds')
+NEON_observation_uncertainty_16S.path <- paste0(dir,'NEON_observation_uncertainty_16S.rds')
+NEON_observation_uncertainty_core_16S.path <- paste0(dir,'NEON_observation_uncertainty_core_16S.rds')
+NEON_observation_uncertainty_plot_16S.path <- paste0(dir,'NEON_observation_uncertainty_plot_16S.rds')
 
 core.CV_NEON_dmulti.ddirch_16S.path <- paste0(dir,'core.CV_NEON_dmulti.ddirch_16S.rds')
 core.CV_NEON_cal.val_data_16S.path <- paste0(dir,'core.CV_NEON_cal.val_data_16S.rds')
