@@ -28,8 +28,8 @@ site_mu <- as.matrix(data.frame(y1,y2,y3,y4))
 #assign variances, higher number means lower variance.
 #These are based on Harvard Forest and Dopheide 2018 intra-core uncertainty.
 core.var <- 300 
-plot.var <- 20
-site.var <- 4
+plot.var <- 200
+site.var <- 60
 
 #run the simulation.----
 #This takes a real long time. Function automatically detects number of available processors.
