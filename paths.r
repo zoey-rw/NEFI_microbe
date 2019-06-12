@@ -363,8 +363,8 @@ bahram_16S_prior_ddirch_all.group_JAGSfits <- paste0(dir,'bahram_16S_prior_ddirc
 NEON_observation_uncertainty_16S.path <- paste0(dir,'NEON_observation_uncertainty_16S.rds')
 NEON_observation_uncertainty_core_16S.path <- paste0(dir,'NEON_observation_uncertainty_core_16S.rds')
 NEON_observation_uncertainty_plot_16S.path <- paste0(dir,'NEON_observation_uncertainty_plot_16S.rds')
-HARV_sampling_effort_analysis_16S.path <- paste0(dir, "JAGS_output/HARV_sampling_effort_analysis_16S.rds")
-NEON_sampling_effort_analysis_plot.level_16S.path <- paste0(dir, "JAGS_output/NEON_sampling_effort_analysis_plot.level_16S.rds")
+HARV_sampling_effort_analysis_16S.path <- paste0(dir, "HARV_sampling_effort_analysis_16S.rds")
+NEON_sampling_effort_analysis_plot.level_16S.path <- paste0(dir, "NEON_sampling_effort_analysis_plot.level_16S.rds")
 
 
 core.CV_NEON_dmulti.ddirch_16S.path <- paste0(dir,'core.CV_NEON_dmulti.ddirch_16S.rds')
