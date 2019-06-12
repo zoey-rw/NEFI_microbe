@@ -49,8 +49,8 @@ tic()
 super.super.out <- list()
 for(k in 1:length(plots)){
   dat <- all.dat[all.dat$plot == plots[k],]
-  dat$geneticSampleID <- NULL
-#  dat <- dat[,c('other','Ectomycorrhizal','Arbuscular','Saprotroph','Pathogen')]
+  dat[,c("geneticSampleID", "plot", "site", "horizon")] <- NULL
+  #  dat <- dat[,c('other','Ectomycorrhizal','Arbuscular','Saprotroph','Pathogen')]
   dat <- (dat + 1)
   dat <- dat/rowSums(dat)
   n.samp <- potential.n.samp[potential.n.samp <= nrow(dat)]
