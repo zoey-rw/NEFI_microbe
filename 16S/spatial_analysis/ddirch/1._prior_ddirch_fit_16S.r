@@ -6,6 +6,7 @@ rm(list = ls())
 library(data.table)
 library(doParallel)
 source('NEFI_functions/tic_toc.r')
+source('NEFI_functions/crib_fun.r')
 source('paths.r')
 #source('NEFI_functions/ddirch_site.level_JAGS.r')
 
@@ -31,7 +32,6 @@ y <- readRDS(bahram_16S_common_phylo_fg_abun.path)
 #load bahram metadata and format----
 d <- data.table(readRDS(bahram_metadata.path))
 #subset to predictors of interest, complete case the thing.
-#d <- d[,.(Run,pC,cn,pH,NPP,map,mat,forest,conifer,relEM, Ca, Mg, P, K)]
 d <- d[,.(Run,pC,cn,pH,NPP,map,mat,forest,conifer,relEM)]
 d <- d[complete.cases(d),] #optional. This works with missing data.
 d <- d[d$Run %in% rownames(y[[1]]$abundances),]
@@ -42,17 +42,6 @@ rownames(x) <- x$Run
 x$Run <- NULL
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
-#IMPORTANT: LOG TRANSFORM MAP.
-#log transform map, magnitudes in 100s-1000s break JAGS code.
-x$map <- log(x$map)
-
-#define multiple subsets
-# x.no.nutr <- x[,.(intercept,pC,cn,pH,NPP,mat,map,forest,conifer,relEM)]
-# x.all  <- x[,.(intercept,pC,cn,pH,Ca,Mg,P,K,NPP,mat,map,forest,conifer,relEM)] # all nutrients + moisture
-# x.list <- list(
-#   #x.cov_select,x.cov_select.no.nutr,
-#   x.no.nutr,
-#   x.all)
 
 #fit model using function.
 #for running production fit on remote.
@@ -78,9 +67,6 @@ output.list<-
   }
 cat('Model fitting loop complete! ')
 toc()
-
-#get intercept only fit.
-#output.list[[length(x.list) + 1]] <- site.level_dirlichet_intercept.only_jags(y=y, silent.jags = T)
 
 #name the items in the list
 names(output.list) <- names(y)

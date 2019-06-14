@@ -556,6 +556,8 @@ prior_16S_r2_distribution.density_figure.path <- paste0(dir, "prior_16S_r2_distr
 # Forecast analysis
 NEON_ddirch_var.decomp_each.group.fig_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_each.group.fig_16S.png")
 NEON_ddirch_var.decomp_all.groups.fig_16S.path <- paste0(dir, "NEON_ddirch_var.decomp_all.groups.fig_16S.png")
+NEON_design_observation_uncertainty_fig_16S.path <-  paste0(dir, "NEON_design_observation_uncertainty_fig_16S")
+
 #### 16S/pecan_gen: reference_data
 dir <- paste0(pecan_gen_16S_dir,'reference_data/')
 cmd <- paste0('mkdir -p ',dir)
