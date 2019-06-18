@@ -9,6 +9,10 @@ core_obs <- readRDS(core_obs_data.path)
 # subset to the sites that we have observations for
 site.out <- site.out[site.out$siteID %in% core_obs$siteID,]
 
+# convert MAP to from mm to m.
+site.out$map <- site.out$map/1000
+site.out$map_sd <- site.out$map_sd/1000
+
 #get global means.
 to_ag <- site.out[,c('map','mat','NPP','n.dep','dry.dep')]
 Mean <- apply(to_ag, 2, mean, na.rm=TRUE)
