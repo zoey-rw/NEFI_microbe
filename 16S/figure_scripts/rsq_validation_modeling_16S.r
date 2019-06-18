@@ -197,8 +197,8 @@ y <- d[d$cal_rsq > 0.33,]$val_rsq
 x <- fitted(mod2)
 plot(y ~ x, ylab = NA, xlab = NA, bty =  'l', pch = 16, cex = 1.5, main = "val_rsq ~ cal_rsq.1 + cal_evenness \n+ val_abundance + val_variance + 
              val_range + val_samp_freq + phylo_level, \n for cal_rsq > 0.33")
-mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5, cex = o.cex))
-mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3, cex = o.cex))
+mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5))
+mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3))
 abline(lm(y~x), lwd = 2)
 mtext(paste0('R2 = ',round(summary(mod2)$r.squared,2)), side = 3, line = -2, adj = 0.05, cex = 1.2)
 
@@ -209,8 +209,8 @@ mod3 <- lm(val_rsq ~ cal_rsq + phylo_level, data = d)
 y <- d$val_rsq
 x <- fitted(mod3)
 plot(y ~ x, ylab = NA, xlab = NA, bty =  'l', pch = 16, cex = 1.5, main="val_rsq ~ cal_rsq + phylo_level")
-mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5, cex = o.cex))
-mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3, cex = o.cex))
+mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5))
+mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3))
 abline(lm(y~x), lwd = 2)
 mtext(paste0('R2 = ',round(summary(mod3)$r.squared,2)), side = 3, line = -2, adj = 0.05, cex = 1.2)
 mtext('b.', side = 1, line = -1.5, adj = 0.95, cex = 1.2)
