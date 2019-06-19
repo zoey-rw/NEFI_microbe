@@ -1,24 +1,26 @@
-#compare out of sample forecast to number of SVs within a group.
+#compare out of sample forecast to number of SVs within a group, among other things.
 rm(list=ls())
 source('paths.r')
 library(data.table)
+library(MASS)
+library(corrplot) 
+library(caret)
 
-#load PHYLO data.----
-#load in-/out-of-sample diversity stats.
+#load in-/out-of-sample abundances and diversity stats.
 cal.div <- readRDS(bahram_16S_common_phylo_fg_abun.path)
 val.div <- readRDS(NEON_16S_phylo_fg_abundances.path)
 
-#Load in calibration/validation models.
-#cal <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
+# Load in calibration/validation models.
+# cal <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
 cal <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"))
-fg <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
-cal <- c(cal[1:5], fg)
+fg.cal <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
+cal <- c(cal[1:5], fg.cal) # until the model is re-run, fg model must be loaded separately
 
+# Load in forecast
 val <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 
-#Load in validation data.
+# Load in validation data.
 val.obs <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
-
 
 
 #Get calibration R2 values, merge in diversity stats.----
@@ -104,17 +106,12 @@ cal.stats <- do.call(rbind, cal.r2_table)
 val.stats <- do.call(rbind, val.r2_table)
 d <- merge(cal.stats, val.stats)
 
+# rename functional groups
 d[!d$phylo_level %in% c('phylum','class','order','family','genus'),]$phylo_level <- "fg"
 
-fg <- d[d$phylo_level=="fg",]
-mod <- lm(val_rsq ~ cal_rsq,data = fg[fg$cal_rsq > 0.33,])
-summary(mod)
-fit <- lm(fg$val_rsq~.,data=fg[,-c(4,8,9,13,17)])
-step <- stepAIC(fit, direction="both")
-summary(step)
-step$anova # display results
-
 #Model the R2 values.----
+
+# Fungi results:
 #vlaidation rsq of taxa with cal_rsq > 0.10.
 #calibration and validation rsq are not related.
 #validation rsq is related to validation variance, N.SVs (which are correlated). Best model just includes val_variance.
@@ -122,51 +119,37 @@ step$anova # display results
 #also related to phylo level, but again, this mkaes val_variance model worse.
 #true whether we model rsq or rsq.1 
 #--------
-#### all of the above was for fungi, not bacteria ####
-mod <- lm(val_rsq ~ cal_rsq + phylo_level,data = d[d$cal_rsq > 0.33,])
+
+#### now for bacteria ####
+mod <- lm(val_rsq ~ cal_rsq + phylo_level,data = d[d$cal_rsq > 0.1,])
 summary(mod)
 
-par(mfrow = c(2,2)) # no clear patterns
-plot(val_rsq ~ cal_rsq        , data = d[d$cal_rsq > 0.33,])
+par(mfrow = c(2,2)) # no clear patterns, other than with variance
+plot(val_rsq ~ cal_rsq        , data = d[d$cal_rsq > 0.1,])
 plot(val_rsq ~ log10(val_N.SV), data = d[d$cal_rsq > 0.1,])
 plot(val_rsq ~ val_diversity  ,data = d[d$cal_rsq > 0.1,])
 plot(val_rsq ~ val_variance   , data = d[d$cal_rsq > 0.1,])
 
-summary(lm(val_rsq ~ cal_diversity, data = d))
-summary(lm(val_diversity ~ val_variance, data = d[d$cal_rsq > 0.1,]))
-summary(lm(val_rsq ~ log10(cal_N.SV), data = d[d$cal_rsq > 0.1,]))
-summary(lm(val_rsq ~ log10(cal_N.SV)+val_variance, data = d[d$cal_rsq > 0.1,]))
-summary(lm(val_rsq ~ val_variance, data = d[d$cal_rsq > 0.1,])) #p=.0003, adjR2=.1118
-summary(lm(val_rsq ~ phylo_level, data = d[d$cal_rsq > 0.1,])) 
-summary(lm(val_rsq ~ val_samp_freq, data = d)) 
-summary(lm(val_rsq ~ phylo_level, data = d[d$cal_rsq > 0.1,])) #p=
 
-summary(lm(val_rsq ~ phylo_level, data = d))
-
-plot(val_rsq ~ log10(cal_N.SV), data = d[d$cal_rsq > 0.1,])
-plot(val_rsq ~ cal_diversity, data = d[d$cal_rsq > 0.1,])
+# subset for stepwise regression
 h <- d[d$cal_rsq > 0.33,]
 x <- h[,!colnames(h) %in% c("val_rsq", "val_rsq.1", "group")]
-
-library(MASS)
-fit <- lm(h$val_rsq~.,data=x)
+fit <- lm(h$val_rsq ~ .,data=x)
 step <- stepAIC(fit, direction="both")
 summary(step)
 step$anova # display results
 
-
+# best model includes 7 predictors (so, most of them) and has an adjusted R2 of .5296
+# doesn't account for collinearity:
 summary(lm(d$val_rsq ~ cal_rsq.1 + val_rsq.1 + val_abundance + val_variance + 
-             val_range + val_samp_freq + val_N.SV + val_diversity + val_evenness, data=d)) # best model according to stepAIC, but doesn't account for all the collinearity
-
-library(corrplot) # correlation plot
-library(caret)
+             val_range + val_samp_freq + val_N.SV + val_diversity + val_evenness, data=d)) 
+# covariate correlation plot
 dm = data.matrix(d[,!colnames(d) %in% c("val_rsq", "val_rsq1","phylo_level", "group")]) 
-corrplot(cor(dm), order = 'hclust')
-findCorrelations(cor(dm), 0.75)
+corrplot(cor(dm), order = 'hclust') 
 
 
 # can we see why phylum forecasts split neatly into good and bad???
-# no. n=11 is too small?
+# no. n=11 is too small. val_sample_freq is significant, except it's the phyla present in ~100% of samples that have 0% predictability...
 p <- d[d$phylo_level=="phylum",]
 t <- p[,!colnames(p) %in% c("val_rsq", "phylo_level", "group")]
 summary(lm(val_rsq ~ val_samp_freq, data = p)) #p=.46
@@ -175,14 +158,21 @@ step <- stepAIC(fit, direction="both")
 summary(step)
 vif(fit)
 sqrt(vif(fit)) > 2
+plot(val_rsq ~ val_samp_freq, data = p, ylab = 'validation R2', xlab = 'val sample freq R2') # too few points
 
-# no phyla
+# all tax groups except phyla 
 np <- d[d$phylo_level != "phylum",]
-head(np)
-summary(lm(val_rsq ~ cal_rsq, data = np[np$cal_rsq > 0.33,])) #p=.46
+summary(lm(val_rsq ~ val_samp_freq, data = np[np$cal_rsq > 0.1,])) 
 
+# ok, do functional groups show any trends?
+fg <- d[d$phylo_level=="fg",]
+mod <- lm(val_rsq ~ cal_rsq,data = fg[fg$cal_rsq > 0.33,])
+summary(mod)
+fit <- lm(fg$val_rsq ~ . ,data=fg[,-c(4,8,9,13,17)])
+step <- stepAIC(fit, direction="both")
+summary(step)
+step$anova # display results
 
-#THIS IS THE ANSWER. 
 #When you subset to calibration R2 > 0.33, calibration does predict validation, R2 = 0.49, unadjusted. <- not true for bacteria at all :(
 par(mfrow=(c(1,2)))
 mod1 <- lm(val_rsq ~ cal_rsq, data = d[d$cal_rsq > 0.33,])
@@ -200,18 +190,17 @@ mtext(paste0('R2 = ',round(summary(mod2)$r.squared,2)), side = 3, line = -2, adj
 
 
 
-#You can explain 88% (R2 = 0.88, unadjusted) if you add phylo/functional group to the model.
+# You can explain .59 (.52 adj) if you add a lot to the model
 mod2 <- lm(val_rsq ~ cal_rsq.1 + cal_evenness + val_abundance + val_variance + 
              val_range + val_samp_freq + phylo_level, data = d[d$cal_rsq > 0.33,])
 y <- d[d$cal_rsq > 0.33,]$val_rsq
 x <- fitted(mod2)
 plot(y ~ x, ylab = NA, xlab = NA, bty =  'l', pch = 16, cex = 1.5, main = "val_rsq ~ cal_rsq.1 + cal_evenness \n+ val_abundance + val_variance + 
              val_range + val_samp_freq + phylo_level, \n for cal_rsq > 0.33")
-mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5, cex = o.cex))
-mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3, cex = o.cex))
+mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5))
+mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3))
 abline(lm(y~x), lwd = 2)
 mtext(paste0('R2 = ',round(summary(mod2)$r.squared,2)), side = 3, line = -2, adj = 0.05, cex = 1.2)
-mtext('b.', side = 1, line = -1.5, adj = 0.95, cex = 1.2)
 
 par(mfrow=c(1,2))
 
@@ -220,8 +209,8 @@ mod3 <- lm(val_rsq ~ cal_rsq + phylo_level, data = d)
 y <- d$val_rsq
 x <- fitted(mod3)
 plot(y ~ x, ylab = NA, xlab = NA, bty =  'l', pch = 16, cex = 1.5, main="val_rsq ~ cal_rsq + phylo_level")
-mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5, cex = o.cex))
-mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3, cex = o.cex))
+mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5))
+mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3))
 abline(lm(y~x), lwd = 2)
 mtext(paste0('R2 = ',round(summary(mod3)$r.squared,2)), side = 3, line = -2, adj = 0.05, cex = 1.2)
 mtext('b.', side = 1, line = -1.5, adj = 0.95, cex = 1.2)
@@ -231,8 +220,8 @@ mod4 <- lm(val_rsq ~ cal_rsq + phylo_level, data = d[d$cal_rsq > 0.33,])
 y <- d[d$cal_rsq > 0.33,]$val_rsq
 x <- fitted(mod4)
 plot(y ~ x, ylab = NA, xlab = NA, bty =  'l', pch = 16, cex = 1.5, main = "val_rsq ~ cal_rsq + phylo_level,\n for cal_rsq > 0.33")
-mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5, cex = o.cex))
-mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3, cex = o.cex))
+mtext(mtext(expression(paste("Observed Validation R"^"2")) , side = 2, line = 2.5))
+mtext(mtext(expression(paste("Predicted R"^"2")), side = 1, line = 3))
 abline(lm(y~x), lwd = 2)
 mtext(paste0('R2 = ',round(summary(mod4)$r.squared,2)), side = 3, line = -2, adj = 0.05, cex = 1.2)
 
