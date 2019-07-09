@@ -16,6 +16,9 @@
 #$ -j y
 #$ -o $JOB_NAME.log
 #
+# Request buyin nodes
+#$ -l buyin
+#
 #
 # Have the system send mail when the job begins and when the job is aborted or ended
 #$ -m ae
