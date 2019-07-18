@@ -9,15 +9,21 @@ library(data.table)
 
 # load forecast 
 all_fcasts <- readRDS(NEON_cps_fcast_ddirch_16S.path)
+all_fcasts <- readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_ddirch_noLogMap.rds")
 # load prior model results
-all_fits <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))
-fg <- readRDS(paste0(scc_gen_16S_dir, "JAGS_output/bahram_16S_prior_ddirch_fg_JAGSfits.rds"))
-all_fits <- c(all_fits[1:5], fg)
+all_fits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"))
+phylum_fit <- readRDS(paste0(scc_gen_16S_dir,"JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
+all_fits$phylum <- phylum.mod$phylum$no.nutr.preds
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
 map <- readRDS(core_obs_data.path)
 
+no_missing_data <- readRDS(missing_data_removed_16S.path)
+map <- no_missing_data[[1]]
+complete <- no_missing_data[[2]][complete.cases(no_missing_data[[2]]),]$sampleID
+map <- map[map$sampleID %in% complete,]
+map <- map[grep("-O-", map$geneticSampleID),]
 # read in prior fit.
 #all_fits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
@@ -30,8 +36,9 @@ map <- readRDS(core_obs_data.path)
 
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_new_pH.pdf")
 #pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_phylum_16S_moreC.pdf")
-filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_all.groups_16S.pdf"
-filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_talk.fig_2phyla.pdf"
+#filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_cps.fcast_all.groups_16S.pdf"
+#filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_talk.fig_2phyla.pdf"
+filename <- "/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/NEON_organic_phyla_fcast.pdf"
 pdf(filename,onefile=T)
 
 #global plot settings.----
