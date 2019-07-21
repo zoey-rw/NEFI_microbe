@@ -14,7 +14,7 @@ source('NEFI_functions/tic_toc.r')
 
 # source function from colin's github
 library(RCurl)
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions//ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
+script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
 # source Colin's paths.r
@@ -147,8 +147,8 @@ output.list<-
     y.group <- y.cal[[i]]$mean
   
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, #seq.depth = rowSums(y.group),
-                                        #adapt = 2000, burnin = 20000, sample = 6000, 
-                                        adapt = 200, burnin = 200, sample = 200,   #testing
+                                        adapt = 2000, burnin = 10000, sample = 1000, 
+                                        #adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                     #allows nested loop to work.
   }

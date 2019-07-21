@@ -32,7 +32,6 @@
 #
 #
 # load necessary modules 
-module load R/3.4.3
 module load jags
 #
 # in the directory specified above, invoke this function:

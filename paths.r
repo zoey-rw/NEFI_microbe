@@ -540,8 +540,9 @@ emp_tax.path <- paste0(dir,'emp_tax.rds')
 
 #Bacterial ESV tables aggregated by different levels of phylogeny.
 emp_phylo.level.list_esv.path <- paste0(dir,'emp_phylo.level.list_esv.path') #normalized relative abundance
-emp_phylo.level.list_esv_comp.path <- paste0(dir, 'emp_phylo.level.list_esv_comp.path') #compositional abundance of all OTUs         
+emp_phylo.level.list_esv_comp.path <- paste0(dir, 'emp_phylo.level.list_esv_comp.path') #compositional abundance of all OTUs     
 
+greengenes.path <- paste0(data.dir,'gg_13_8_train_set_97.fa')
 
 
 
