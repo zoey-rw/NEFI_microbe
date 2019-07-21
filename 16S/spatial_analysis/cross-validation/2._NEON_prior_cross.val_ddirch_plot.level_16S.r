@@ -12,9 +12,9 @@ source('paths.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 
-# source dmulti_ddirch_forecast
+# source function from colin's github
 library(RCurl)
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/dmulti-ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
+script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions//ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
 
 # source Colin's paths.r
@@ -26,15 +26,12 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 #set output path.----
-output.path <- plot.CV_NEON_dmulti.ddirch_16S.path
+output.path <- plot.CV_NEON_ddirch_16S_JAGSfit
 calval_data.path <- plot.CV_NEON_cal.val_data_16S.path
 
 #load NEON plot-scale data.----
-#NOTE: MAP MEANS AND SDS MUST BE DIVIDED BY 1000.
-#WE SHOULD REALLY MOVE THIS TO DATA PRE-PROCESSING.
 dat <- readRDS(hierarch_filled_data.path)
 y <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)
-
 
 #get core-level covariate means and sd.----
 core_mu <- dat$core.plot.mu
@@ -58,11 +55,8 @@ core.sd <- merge(core_sd   , plot_sd)
 core.sd <- merge(core.sd, site_sd)
 core.sd$relEM <- NULL
 names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
-#IMPORTANT: Reduce magnitude of MAP!
-#log transform map means and standard deviations, magnitudes in 100s-1000s break JAGS code.
-core.preds$map <- core.preds$map / 1000
-core.sd   $map <- core.sd   $map / 1000
 
+# change plotIDs to match those from Y obs
 core.preds$plotID <- gsub('_','\\.',core.preds$plotID)
 core.sd$plotID <- gsub('_','\\.',core.sd$plotID)
 
@@ -149,10 +143,12 @@ cat('Begin model fitting loop...\n')
 tic()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
-    y.group <- round(y.cal[[i]]$mean * 3000) #Should perhaps draw from uncertainties, but these supplied hi/lo95 values dont account for covariance among taxa.
-    fit <- site.level_multi.dirich_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, seq.depth = rowSums(y.group),
-                                        adapt = 2000, burnin = 20000, sample = 6000, 
-                                        #adapt = 200, burnin = 200, sample = 200,   #testing
+    #y.group <- round(y.cal[[i]]$mean * 3000) #Should perhaps draw from uncertainties, but these supplied hi/lo95 values dont account for covariance among taxa. # <- what
+    y.group <- y.cal[[i]]$mean
+  
+    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, #seq.depth = rowSums(y.group),
+                                        #adapt = 2000, burnin = 20000, sample = 6000, 
+                                        adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
     return(fit)                                                                     #allows nested loop to work.
   }

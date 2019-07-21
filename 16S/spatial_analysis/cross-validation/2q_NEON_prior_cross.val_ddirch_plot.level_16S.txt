@@ -10,7 +10,7 @@
 #$ -pe omp 28
 #
 #Give the job a name
-#$ -N cross.val_core_dmulti_JAGS
+#$ -N cross.val_plot_ddirch_JAGS
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -36,7 +36,7 @@ module load R/3.4.3
 module load jags
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/spatial_analysis/dmulti-ddirch/3._NEON_prior_cross.val_dmulti.ddirch_core.level_16S.r
+Rscript 16S/spatial_analysis/cross-validation/2._NEON_prior_cross.val_ddirch_plot.level_16S.r
 #
 #
 #End of commands.
