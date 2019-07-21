@@ -14,7 +14,7 @@ output.path <- hierarch_filled_data.path
 no.ecm <- c('CPER','STER','WOOD')
 
 #load prior model fit- model fit at site level.
-mod <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)
+mod <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits)
 mod <- mod$phylum
 preds <- mod$species_parameter_output$other$predictor
 if('relEM' %in% preds){preds <- c(as.character(preds),'b.relEM')}
@@ -156,6 +156,12 @@ for(j in 1:ncol(plot_plot_mu)){
 #site_site
 site_site_mu <- site_site_mu[site_site_mu$siteID %in% core_obs$site,]
 site_site_sd <- site_site_sd[site_site_sd$siteID %in% core_obs$site,]
+
+# reorder core_obs and add deprecatedVialID to core_core_mu and core_core_sd
+core_obs$geneticSampleID <- as.factor(core_obs$geneticSampleID)
+core_obs <- core_obs[order(match(core_obs$geneticSampleID, core_core_mu$sampleID)),]
+core_core_mu$deprecatedVialID <- core_obs$deprecatedVialID
+core_core_sd$deprecatedVialID <- core_obs$deprecatedVialID
 
 output.list <- list(core_obs,
                     core_core_mu,core_core_sd,

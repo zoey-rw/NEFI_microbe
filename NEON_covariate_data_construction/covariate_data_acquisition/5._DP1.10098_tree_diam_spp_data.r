@@ -7,7 +7,7 @@ library(neonUtilities)
 # Specify output path
 output.path <- dp1.10098.001_output.path
 
-# Grab all sites that have soil core data
+# Grab all sites that have tree data
 # Downloads about 70 MB, from 2013 to 2019, into the workspace. Takes ~10 minutes.
 dat <- loadByProduct(dpID="DP1.10098.001", site="all", startdate="2013-01", enddate="2019-05",
                      package="expanded", check.size=F)
@@ -19,7 +19,7 @@ spp <- dat$vst_mappingandtagging # species IDs
 # Merge species info into individual tree info
 spp.merge <- spp[,!(colnames(spp) %in% colnames(diam))]
 spp.merge$individualID <- spp$individualID
-output <- merge(diam,spp.merge, all = T)
+output <- merge(diam,spp.merge, all.x = T)
 
 # Add a couple columns for later
 output$dateID <- substr(output$date,1,7)

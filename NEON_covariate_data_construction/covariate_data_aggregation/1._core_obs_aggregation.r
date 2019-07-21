@@ -127,14 +127,19 @@ colnames(pH.site)[2:3] <- c('pH','pH_sd')
 core.level <- core.level[which(core.level$sampleTiming=="peakGreenness"),]
 
 # let's also remove samples without a deprecatedVialID, which is how our samples are identified.
-core.level <- core.level[!is.na(core.level$deprecatedVialID),]
+core.level <- core.level[!is.na(core.level$deprecatedVialID) & core.level$deprecatedVialID!="",]
 
 #final output, core level.
 core.out <- core.level
 
+# removing "-GEN" from data.
+core.out$geneticSampleID <- gsub('-GEN','',core.out$geneticSampleID)
+dp1.10801$geneticSampleID <- gsub('-GEN','',dp1.10801$geneticSampleID)
+
 #y obs need to be in core.out, and vice versa. 
 # Essentially dropping any observation with no associated core-level covariate.
 core.obs <- dp1.10801[dp1.10801$geneticSampleID %in% core.out$geneticSampleID,]
+core.obs <- core.obs[!is.na(core.obs$deprecatedVialID) & core.obs$deprecatedVialID!="",]
 core.obs <- core.obs[!(duplicated(core.obs$geneticSampleID)),] #drop duplicated, as before.
 core.out <- core.out[core.out$geneticSampleID %in% core.obs$geneticSampleID,]
 core.out <- core.out[!(duplicated(core.out$geneticSampleID)),] #drop duplicated, as before.

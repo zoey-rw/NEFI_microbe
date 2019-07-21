@@ -31,7 +31,7 @@ poa.gen <- readRDS(poa_genera.path)
 #AM genera based on searching Colin's super mycorrhizal database. 
 #If there are at least 5 records and all are AM, then it gets assigned AM at the genus level.
 #if a ton of AM and one AM_ECM, still count as AM.
-am_genera <- c('Thuja','Fraxinus','Nyssa','Celtis','Cornus','Diospyros','Ilex','Lonicera','Magnolia','Viburnum',poa.gen)
+am_genera <- c('Thuja','Fraxinus','Nyssa','Celtis','Cornus','Diospyros','Ilex','Lonicera','Magnolia','Viburnum', as.character(poa.gen$genus))
 erm_genera <- c('Rhododendron','Vaccinium')
 
 #Everything is ID'd at least to genus. Species has lots of qualifiers. Lets clear these up.
