@@ -513,9 +513,34 @@ site_glob_data.path <- paste0(dir, "site_glob_data.rds")
 hierarch_filled_data.path <- paste0(dir, "hierarch_filled_data.rds")
 
 
+#### cross-validation at NEON core/plots ####
+dir <- paste0(scc_gen_16S_dir, "JAGS_output/cross_val/") # JAGS fits for priors
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+core.CV_NEON_ddirch_16S_JAGSfit <- paste0(dir, "core.CV_NEON_ddirch_16S_JAGSfit.rds")
+plot.CV_NEON_ddirch_16S_JAGSfit <- paste0(dir, "plot.CV_NEON_ddirch_16S_JAGSfit.rds")
 
+#### EMP paths (copied from Katie's old paths.r file)
 
+#raw EMP deblurred ESV table and mapping files.
+dir <- paste0(data.dir, "EMP/")
+cmd <- paste0('mkdir -p ',dir)
+system(cmd)
+emp_esv.path <- paste0(dir,'emp_deblur_150bp.release1.biom')
+emp_map.path <- paste0(dir,'emp_qiime_mapping_release1.tsv')
 
+#.csv of EMP samples to keep for .biom filtering.
+emp_soil.csv_path <- paste0(dir,'emp_soil_IDs.csv')
+
+#processed and subsetted emp ESV and mapping files.
+emp_soil_biom.path <- paste0(dir,'emp_soils_ESV.biom')
+emp_map_clean.path <- paste0(dir,'emp_map_clean.rds')
+emp_esv_clean.path <- paste0(dir,'emp_esv_clean.rds')
+emp_tax.path <- paste0(dir,'emp_tax.rds')
+
+#Bacterial ESV tables aggregated by different levels of phylogeny.
+emp_phylo.level.list_esv.path <- paste0(dir,'emp_phylo.level.list_esv.path') #normalized relative abundance
+emp_phylo.level.list_esv_comp.path <- paste0(dir, 'emp_phylo.level.list_esv_comp.path') #compositional abundance of all OTUs         
 
 
 
