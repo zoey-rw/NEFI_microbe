@@ -93,8 +93,11 @@ pH_KCl <-
 merged$pH_KCl <- pH_KCl$mean
 merged$pH_sd <- pH_KCl$sd
 
+# keep pH_water too, for bacterial forecasts
+merged$pH_water <- merged$soilInWaterpH
+
 #finalize columns for core.level.----
-core.level <- merged[,c('sampleID','geneticSampleID','deprecatedVialID', 'dnaSampleID','siteID','plotID','dateID','collectDate','horizon','adjElevation','soilMoisture','sampleTiming','pH_sd','pH_KCl','organicCPercent','CNratio')]
+core.level <- merged[,c('sampleID','geneticSampleID','deprecatedVialID', 'dnaSampleID','siteID','plotID','dateID','collectDate','horizon','adjElevation','soilMoisture','sampleTiming','pH_water','pH_sd','pH_KCl','organicCPercent','CNratio')]
 colnames(core.level)[(ncol(core.level) - 2) : ncol(core.level)] <- c('pH','pC','cn')
 core.level$pC_sd <- pC_uncertainty_neon(core.level$pC)
 core.level$cn_sd <- cn_uncertainty_neon(core.level$cn)
@@ -114,13 +117,21 @@ cn.site <- cn.ag$site.table[,c('siteID','Mean','SD')]
 cn.glob <- cn.ag$glob.table[,c('Mean','SD')]
 colnames(cn.plot)[2:3] <- c('cn','cn_sd')
 colnames(cn.site)[2:3] <- c('cn','cn_sd')
-#pH
+#pH - KCl (default)
 pH.ag <- hierarch_core.means_JAGS(core.level$pH,core_plot = core.level$plotID)
 pH.plot <- pH.ag$plot.table[,c('plotID','Mean','SD')]
 pH.site <- pH.ag$site.table[,c('siteID','Mean','SD')]
 pH.glob <- pH.ag$glob.table[,c('Mean','SD')]
 colnames(pH.plot)[2:3] <- c('pH','pH_sd')
 colnames(pH.site)[2:3] <- c('pH','pH_sd')
+
+#pH - water (for bacteria)
+pH_water.ag <- hierarch_core.means_JAGS(core.level$pH_water,core_plot = core.level$plotID)
+pH_water.plot <- pH_water.ag$plot.table[,c('plotID','Mean','SD')]
+pH_water.site <- pH_water.ag$site.table[,c('siteID','Mean','SD')]
+pH_water.glob <- pH_water.ag$glob.table[,c('Mean','SD')]
+colnames(pH_water.plot)[2:3] <- c('pH_water','pH_water_sd')
+colnames(pH_water.site)[2:3] <- c('pH_water','pH_water_sd')
 
 # now that plot- and site-level averages have used any available data from 2014,
 # let's remove samples that are not from peakGreenness
@@ -147,6 +158,7 @@ core.out <- core.out[!(duplicated(core.out$geneticSampleID)),] #drop duplicated,
 #plot level.
 plot.out <- merge(pC.plot , cn.plot, all = T)
 plot.out <- merge(plot.out, pH.plot, all = T)
+plot.out <- merge(plot.out, pH_water.plot, all = T)
 #Some plots in core-level not in plot-level.
 to_add <- as.character(unique(core.out[!(core.out$plotID %in% plot.out$plotID),]$plotID))
 to_add <- data.frame(to_add)
@@ -160,6 +172,7 @@ plot.out <- plot.out[plot.out$plotID %in% core.out$plotID,]
 #site level.
 site.out <- merge(pC.site, cn.site, all = T)
 site.out <- merge(site.out, pH.site, all = T)
+site.out <- merge(site.out, pH_water.site, all = T)
 #Some sites in plot-level not in site-level.
 to_add <- as.character(unique(plot.out[!(plot.out$siteID %in% site.out$siteID),]$siteID))
 to_add <- data.frame(to_add)
@@ -169,8 +182,8 @@ site.out <- plyr::rbind.fill(site.out,to_add)
 site.out <- site.out[site.out$siteID %in% plot.out$siteID,]
 
 #global level
-glob.out <- rbind(pC.glob, cn.glob, pH.glob)
-pred <- c('pC','cn','pH')
+glob.out <- rbind(pC.glob, cn.glob, pH.glob, pH_water.glob)
+pred <- c('pC','cn','pH','pH_water')
 glob.out <- cbind(pred,glob.out)
 
 #save output.----

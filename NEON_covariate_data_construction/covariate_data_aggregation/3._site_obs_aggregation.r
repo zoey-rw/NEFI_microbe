@@ -14,7 +14,7 @@ site.out$map <- site.out$map/1000
 site.out$map_sd <- site.out$map_sd/1000
 
 #get global means.
-to_ag <- site.out[,c('map','mat','NPP','n.dep','dry.dep')]
+to_ag <- site.out[,c('map','mat','NPP','n.dep','dry.dep','ndep.glob')]
 Mean <- apply(to_ag, 2, mean, na.rm=TRUE)
 SD <- apply(to_ag, 2,   sd, na.rm=TRUE)
 preds <- colnames(to_ag)
