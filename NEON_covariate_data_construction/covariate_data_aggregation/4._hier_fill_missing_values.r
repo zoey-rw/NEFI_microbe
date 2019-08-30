@@ -14,9 +14,12 @@ output.path <- hierarch_filled_data.path
 no.ecm <- c('CPER','STER','WOOD')
 
 #load prior model fit- model fit at site level.
-mod <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits)
-mod <- mod$phylum
-preds <- mod$species_parameter_output$other$predictor
+# mod <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits) # can't read newer objects??
+# mod <- mod$phylum
+# preds <- mod$species_parameter_output$other$predictor
+
+# adding predictors manually since they differ between fungi and bacteria.
+preds <- c("NPP", "cn", "conifer", "forest", "intercept", "map", "mat", "pC", "pH", "pH_water", "relEM", "ndep.glob")
 if('relEM' %in% preds){preds <- c(as.character(preds),'b.relEM')}
 
 #add plot, site and sampleID to preds.
