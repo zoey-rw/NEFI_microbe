@@ -35,3 +35,6 @@ vignettes/*.pdf
 
 # Log files created for qsub scripts
 *.log
+
+# Files moved to "old" folder
+16S/old/

@@ -10,7 +10,7 @@
 #$ -pe omp 16
 #
 #Give the job a name
-#$ -N ddirch_prior_delgado_fg
+#$ -N ddirch_prior_delgado_all
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y

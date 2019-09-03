@@ -36,8 +36,9 @@ y.all$Species <- NULL
 allfits <- list()
 cat('Begin model fitting loop...\n')
 tic()
+output.list<-
+  foreach(i = 1:length(y.all)) %dopar% {
 #for (i in 1:length(y.all)){
-for (i in 1:length(y.all)){
     y <- y.all[[i]]$rel.abundances
 y <- y[,colnames(y)!="other", drop=FALSE]
 y <- as.data.frame(y)
@@ -56,12 +57,15 @@ if(!sum(rownames(y) == rownames(x)) == nrow(y)){
 }
 
 fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                 adapt = 200, burnin = 500, sample = 200, 
+                                 adapt = 1000, burnin = 2000, sample = 1000, 
                                  parallel = T, parallel_method="parallel")
-allfits[[i]] <- fit
+#allfits[[i]] <- fit
 cat(paste("Model fit for", names(y.all)[i], "\n"))
+return(fit)    #allows nested loop to work.
+}
 cat('Model fitting loop complete! ')
 toc()
-}
 
-saveRDS(allfits, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado/dir_delgado_8-29-19.rds")
+names(output.list) <- names(y.all)
+saveRDS(output.list, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado/dir_delgado_8-30-19.rds")
+#saveRDS(output.list, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado/dir_delgado_fg_8-30-19.rds")
