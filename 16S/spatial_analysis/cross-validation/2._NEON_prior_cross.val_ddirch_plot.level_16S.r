@@ -1,14 +1,11 @@
-#NEON plot-scale cross-validation.
-#This has a massive amount of burnin, so takes a while to run.
-#Fit MULTINOMIAL dirlichet models to all groups of bacteria from 95% of NEON core-scale observations.
+#NEON plot-scale cross-validation data prep + calibration fits.
+#Fit dirlichet models to all groups of bacteria from 95% of Tedersoo observations (for comparability).
 #Not going to apply hierarchy, because it would not be a fair comparison to the Tedersoo model.
-#Missing data are allowed.
 #clear environment
 rm(list = ls())
 library(data.table)
 library(doParallel)
 source('paths.r')
-#source('NEFI_functions/dmulti-ddirch_site.level_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 
@@ -31,7 +28,10 @@ calval_data.path <- plot.CV_NEON_cal.val_data_16S.path
 
 #load NEON plot-scale data.----
 dat <- readRDS(hierarch_filled_data.path)
-y <- readRDS(NEON_all.phylo.levels_plot.site_obs_16S.path)
+dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
+dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
+y <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
+#y <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/pecan_gen/NEON_data_aggregation/NEON_phylo_fg_plot.site_obs_16S.rds") #old plot/site means
 
 #get core-level covariate means and sd.----
 core_mu <- dat$core.plot.mu
@@ -62,12 +62,9 @@ core.sd$plotID <- gsub('_','\\.',core.sd$plotID)
 
 #Split into calibration / validation data sets.----
 set.seed(420)
-#ID <- rownames(yphylumplot.fit$mean)
-#cal.ID <- sample(ID, round(length(ID)/ 2))
-#val.ID <- ID[!(ID %in% cal.ID)]
 #Subset by plot and site.
 cal.p <- 0.7 #how much data in calibration vs. validation.
-plotID <- rownames(y$phylum$plot.fit$mean)
+plotID <- rownames(y$Phylum$plot.fit$mean)
 siteID <- substr(plotID,1, 4)
 plots <- data.frame(plotID, siteID) 
 plots <- plots[plotID %in% core.preds$plotID,]
@@ -122,10 +119,10 @@ x_mu.val <- x_mu.val[order(match(x_mu.val$plotID, rownames(y.val$phylum$mean))),
 x_sd.val <- x_sd.val[order(match(x_sd.val$plotID, rownames(y.val$phylum$mean))),]
 
 #subset to predictors of interest, drop in intercept.----
-rownames(x_mu.cal) <- rownames(y.cal$phylum$abundances)
+rownames(x_mu.cal) <- rownames(y.cal$Phylum$abundances)
 intercept <- rep(1, nrow(x_mu.cal))
 x_mu.cal <- cbind(intercept, x_mu.cal)
-x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','conifer')]
+x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
 
 
 #save calibration/valiation data sets.----
@@ -143,13 +140,12 @@ cat('Begin model fitting loop...\n')
 tic()
 output.list<-
   foreach(i = 1:length(y)) %dopar% {
-    #y.group <- round(y.cal[[i]]$mean * 3000) #Should perhaps draw from uncertainties, but these supplied hi/lo95 values dont account for covariance among taxa. # <- what
     y.group <- y.cal[[i]]$mean
   
-    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, #seq.depth = rowSums(y.group),
-                                        adapt = 2000, burnin = 10000, sample = 1000, 
+    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
+                                        adapt = 1000, burnin = 5000, sample = 5000, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
-                                        parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
+                                        parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.
   }
 cat('Model fitting loop complete! ')

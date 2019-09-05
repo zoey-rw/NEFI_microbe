@@ -7,29 +7,23 @@ source('NEFI_functions/tic_toc.r')
 output.path <- NEON_var_importance_data_ddirch_16S.path
 
 #load forecast.----
-fcast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
-#mod <- readRDS(bahram_16S_prior_ddirch_all.group_JAGSfits)
-mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))
+fcast <- readRDS(paste0(scc_gen_16S_dir,"/NEON_forecasts/delgado-to-NEON_cps_forecast_ddirch.rds"))
+mod <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_delgado/dir_delgado_8-30-19.rds"))
 # mcmc <- mod$all.preds$jags_model$mcmc
 # mcmc <- do.call(rbind,mcmc)
 # preds <- d$site.preds
 
-#testing
-fcast <- readRDS(NEON_cps_fcast_all_phylo_16S.path)
-mod <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
-
 #get predictor mean and sd.----
-pred <- list()
-for(k in 1:length(fcast)){
-  d <- fcast[[k]]
-
 #get predictor mean and sd.----
 #get standard deviation of predictors based on the scale at which they are actually observed.
 core.preds <- c('pC','cn','pH')
 plot.preds <- c('relEM')
-site.preds <- c('map','mat','NPP') #forest and conifer not included, they are 0-1.
+site.preds <- c('map','mat','NPP','ndep.glob') #forest and conifer not included, they are 0-1.
 #Forest conifer sensitivity will be based on 0-mean, and changing the binary level.
-bin.preds <- c('forest','conifer')
+bin.preds <- c('forest')
+pred <- list()
+for(k in 1:length(fcast)){
+  d <- fcast[[k]]
 
 core_mu <- list()
 core_sd <- list()
@@ -55,12 +49,13 @@ to_name <- c(core.preds,plot.preds,site.preds,bin.preds)
 to_sim <- data.frame(to_name,grand_mu,grand_sd)
 to_sim$delta <- to_sim$grand_mu + to_sim$grand_sd
 #put in correct order.
-to_sim <- to_sim[order(match(to_sim$to_name, mod$all.preds$species_parameter_output$other$predictor)),]
+to_sim <- to_sim[order(match(to_sim$to_name, mod$Phylum$species_parameter_output$other$predictor)),]
 
 #deal with fact that we need to log transform MAP.
 #logit transform EM and multiply by 100.
-to_sim[to_sim$to_name ==   'map',2:ncol(to_sim)] <- log(to_sim[to_sim$to_name == 'map',2:ncol(to_sim)])
-to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)] <- boot::inv.logit(as.matrix(to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)]))*100
+#to_sim[to_sim$to_name ==   'map',2:ncol(to_sim)] <- log(to_sim[to_sim$to_name == 'map',2:ncol(to_sim)])
+# to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)] <- boot::inv.logit(as.matrix(to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)]))*100
+to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)] <- boot::inv.logit(as.matrix(to_sim[to_sim$to_name == 'relEM',2:ncol(to_sim)]))
 
 #return output to list.
 pred[[k]] <- to_sim

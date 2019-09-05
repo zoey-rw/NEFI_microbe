@@ -1,6 +1,5 @@
-#NEON core-scale cross-validation.
-#There was a problem in MAP values in prior that resulted in no convergence and wack values. Need to try again. All paths should work!
-#Fit MULTINOMIAL dirlichet models to all groups of fungi from 50% of NEON core-scale observations.
+#NEON core-scale cross-validation data prep + calibration fits.
+#Fit dirlichet models to all groups of bacteria from 95% of Tedersoo observations (for comparability).
 #Not going to apply hierarchy, because it would not be a fair comparison to the Tedersoo model.
 #Missing data are allowed.
 #clear environment
@@ -8,7 +7,6 @@ rm(list = ls())
 library(data.table)
 library(doParallel)
 source('paths.r')
-#source('NEFI_functions/dmulti-ddirch_site.level_JAGS.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 
@@ -32,7 +30,8 @@ calval_data.path <- core.CV_NEON_cal.val_data_16S.path
 
 #load NEON core-scale data.----
 dat <- readRDS(hierarch_filled_data.path)
-#y <- readRDS(tedersoo_ITS_common_phylo_groups_list_1k.rare.path)
+dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
+dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
 #pl.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_fastq_1k_rare.path) #this has the plot and site values for NEON.
 y <- readRDS(NEON_16S_phylo_fg_abundances.path)
 map <- readRDS(core_obs.path)
@@ -59,10 +58,10 @@ core.sd <- merge(core_sd   , plot_sd)
 core.sd <- merge(core.sd, site_sd)
 core.sd$relEM <- NULL
 names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
-
+ 
 #Split into calibration / validation data sets.----
 set.seed(420)
-ID <- rownames(y$phylum$abundances)
+ID <- rownames(y$Phylum$abundances)
 cal.ID <- sample(ID, round(length(ID)/ 2))
 cal.ID <- cal.ID[cal.ID %in% core.preds$deprecatedVialID]
 val.ID <- ID[!(ID %in% cal.ID)]
@@ -104,10 +103,10 @@ x_sd.val <- x_sd.val[order(match(x_sd.val$deprecatedVialID, rownames(y.val$phylu
 
 
 #subset to predictors of interest, drop in intercept.----
-rownames(x_mu.cal) <- rownames(y.cal$phylum$abundances)
+rownames(x_mu.cal) <- rownames(y.cal$Phylum$abundances)
 intercept <- rep(1, nrow(x_mu.cal))
 x_mu.cal <- cbind(intercept, x_mu.cal)
-x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','conifer')]
+x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
 
 
 #save calibration/valiation data sets.----
@@ -129,10 +128,10 @@ output.list<-
     y.group <- y.group$abundances
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
-    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, #seq.depth = rowSums(y.group),
-                                     adapt = 2000, burnin = 10000, sample = 1000, 
-                                     #adapt = 200, burnin = 200, sample = 200,   #testing
-                                     parallel = T, parallel_method = 'parallel') #setting parallel rather than rjparallel. 
+    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
+                                     adapt = 1000, burnin = 5000, sample = 5000, 
+                                     #adapt = 100, burnin = 100, sample = 100,   #testing
+                                     parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.
   }
 cat('Model fitting loop complete! ')
