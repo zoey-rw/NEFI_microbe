@@ -70,7 +70,15 @@ png(filename=output.path,width=10,height=10,units='in',res=300)
 lab <- colnames(d)
 par(mfrow = c(1,1))
 ggbiplot(par.pca, labels = lab, groups = col.plot) + 
+  
   xlim(-2.25, 2.5)
+
+for (i in 1:5) {
+  #pca.sub[[i]]
+  p <- ggbiplot(pca.sub[[i]], labels = lab, groups = col.plot) + 
+    xlim(-2.25, 2.5)
+  print(p)
+}
 
 #end plot.----
 dev.off()

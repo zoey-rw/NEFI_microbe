@@ -1,30 +1,28 @@
 #!/bin/bash -l
-# qsun for fitting phylogenetic and functional group models.
+#This script is for generating the ESV table with requires a lot of RAM. 
+#
 ########################################
 ####      commands for scc qsub     ####
 ########################################
-#Specfiy hard time limit for the job.
-#$ -l h_rt=120:00:00
+#Specfiy hard time limit for the job. 80 hours is plenty.
+#$ -l h_rt=80:00:00
 #
-#Use N processors on a single machine.
-#$ -pe omp 28
+#Request a machine with a ton of memory, and a ton of slots on that machine so you can use it.
+#$ -l mem_total=125G -pe omp 28
 #
 #Give the job a name
-#$ -N ddirch_prior_delgado_ramirez
+#$ -N delgado_dada2_2
+#
+# Request buy-in nodes
+#$ -l buyin
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
 #$ -o $JOB_NAME.log
 #
-# Request buyin nodes
-#$ -l buyin
 #
 # Have the system send mail when the job begins and when the job is aborted or ended
 #$ -m ae
-#
-# Inherit the current environment (load modules python/2.7.7, qiime, and find binaries)
-# Make sure th load those modules in the command line before you submit the qsub
-#$ -V 
 #
 # end of qsub arguments
 #
@@ -33,11 +31,11 @@
 ########################################
 #
 #
-# load necessary modules 
-module load jags
+cd /usr3/graduate/zrwerbin/NEFI_microbe
+#
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/spatial_analysis/prior_delgado/1._prior_ddirch_delgado.r
+Rscript 16S/data_construction/delgado/02._dada2.r
 #
 #
 #End of commands.

@@ -18,7 +18,7 @@
 site.level_dirlichet_jags     <- function(y,
                                           x_mu, 
                                           x_sd = NA,
-                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F, silent.jags = F){
+                                          adapt = 500, burnin = 1000, sample = 2000, n.chains = 3, parallel = F, silent.jags = F, parallel_method = 'rjparallel', jags.path = NULL){
   #Load some important dependencies.
   source('NEFI_functions/crib_fun.r')
   source('NEFI_functions/sd_to_precision.r')
@@ -59,43 +59,53 @@ site.level_dirlichet_jags     <- function(y,
                     x = x_mu,                     #x-value mean matrix
                     y = y)                        #species matrix, y
   
-  ###specify JAGS model.
-  jags.model = "
+###specify JAGS model.
+jags.model = "
   model {
+  
   #parameter priors for each species.
   alpha ~ dnorm(0, 1.0E-3) 
+  
   for(i in 1:N.preds){
-  x.mm[i,1] <- 0
-  for (j in 2:N.spp) {
-  x.mm[i,j] ~ dnorm(0, 1.0E-3)
-  }
+    x.mm[i,1] <- 0
+      for (j in 2:N.spp) {
+        x.mm[i,j] ~ dnorm(0, 1.0E-3)
+      }
   }
 
-  #mean center all predictors (except intercept).
+#prior for study tau:
+study_tau ~ dgamma(0.01, 0.01)
+
+#random study effects
+for(s in 1:N.study){
+        study_effect[s] ~ dnorm(0, study_tau)
+    }
+
+#mean center all predictors (except intercept).
   for(i in 1:N){
-  x.center[i,1] <- 1
-  for(j in 2:N.preds){
-  x.center[i,j] <- x[i,j] - mean(x[,j])
-  }
+    x.center[i,1] <- 1
+      for(j in 2:N.preds){
+        x.center[i,j] <- x[i,j] - mean(x[,j])
+      }
   }
   
-  #save mean values for back transforming intercept values.
+#save mean values for back transforming intercept values.
   for(j in 1:N.preds){x.center.save[j] <- mean(x[,j])}
   
-  #fit species abundances as a linear combination of predictors and parameters.
+#fit species abundances as a linear combination of predictors and parameters.
   for(i in 1:N){
-  for(j in 1:N.spp){
-  log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,])
+    for(j in 1:N.spp){
+      log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,]) + study_effect[study_id[i]]
   }
   y[i,1:N.spp] ~ ddirch(a0[i,1:N.spp]) 
   }
   
   #map to original parameterization, assuming first column of predictors is intercept.
   for (j in 1:N.spp) {
-  x.m[1,j] <- alpha + x.mm[1,j] - inprod(x.mm[2:N.preds,j], x.center.save[2:N.preds])
-  for (i in 2:N.preds){
-  x.m[i,j] <- x.mm[i,j]
-  }
+    x.m[1,j] <- alpha + x.mm[1,j] - inprod(x.mm[2:N.preds,j], x.center.save[2:N.preds])
+      for (i in 2:N.preds){
+        x.m[i,j] <- x.mm[i,j]
+      }
   }
   
   } #close model loop.
@@ -103,7 +113,16 @@ site.level_dirlichet_jags     <- function(y,
   
   ###Fit JAGS model.
   #parallel or not parallel.
-  run.method <- ifelse(parallel == F,'rjags','rjparallel')
+  run.method <- 'rjags'
+  if(parallel == T){
+    run.method = parallel_method
+  }
+  
+  path <- runjags::runjags.getOption("jagspath")
+  if(!is.null(jags.path)){
+    path <- jags.path
+  }
+  
   #run jags model.
   jags.out <- runjags::run.jags(   model = jags.model,
                                    data = jags.data,
@@ -113,7 +132,8 @@ site.level_dirlichet_jags     <- function(y,
                                    n.chains = n.chains,
                                    method = run.method,
                                    silent.jags = silent.jags,
-                                   monitor = c('x.m','x.mm','alpha','deviance'))
+                                   monitor = c('x.m','x.mm','alpha','deviance'),
+                                   jags = jags.path)
   #summarize output
   out <- summary(jags.out)
   

@@ -5,7 +5,6 @@ source('paths.r')
 
 #set output path.----
 output.path <- 'test.png'
-output.path <- NEON_ddirch_var.importance_fg_figure.path
 
 #load data.----
 d <- readRDS(NEON_var_importance_data_ddirch_16S.path)
@@ -17,10 +16,9 @@ png(filename=output.path,width=8,height=8,units='in',res=300)
 par(mfrow = c(2,2))
 outer.lab.cex <- 1.5
 
-#loop over different fungal groups.----
+#loop over different bacterial groups.----
 for (f in 1:length(d)){
 
-#2:ncol throws out 'other' category.
 for(i in 1:ncol(d[[f]]$mean)){
   #plot importance in decreasing order.
   if (colnames(d[[f]]$mean)[i]=="other") next

@@ -116,7 +116,7 @@ names(dat.cal) <- c('y.cal','x_mu.cal','x_sd.cal')
 names(dat.val) <- c('y.val','x_mu.val','x_sd.val')
 dat.out <- list(dat.cal, dat.val)
 names(dat.out) <- c('cal','val')
-saveRDS(dat.out, core.CV_NEON_cal.val_data_16S.path)
+saveRDS(dat.out, calval_data.path)
 
 #fit model using function in parallel loop.-----
 #for running production fit on remote.
@@ -129,7 +129,7 @@ output.list<-
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                     adapt = 1000, burnin = 5000, sample = 5000, 
+                                     adapt = 2000, burnin = 8000, sample = 5000, 
                                      #adapt = 100, burnin = 100, sample = 100,   #testing
                                      parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.

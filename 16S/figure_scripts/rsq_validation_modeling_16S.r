@@ -18,7 +18,7 @@ cal <- c(cal[1:5], fg.cal) # until the model is re-run, fg model must be loaded 
 
 # Load in forecast
 val <- readRDS(NEON_cps_fcast_ddirch_16S.path)
-
+val <- readRDS(paste0(pecan_gen_16S_dir, "/NEON_forecast_data/NEON_cps_fcast_ddirch_noLogMap.rds"))
 # Load in validation data.
 val.obs <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
 
@@ -74,7 +74,8 @@ for(i in 1:length(val)){
     mod <- lm(obs[,j] ~ pred[,j])
     rsq[[j]] <- summary(mod)$r.squared
     #get rsq relative to 1:1 line.
-    rss <- sum((pred[,j] - obs[,j]) ^ 2)       ## residual sum of squares
+   # rss <- sum((pred[,j] - obs[,j]) ^ 2)       ## residual sum of squares (-colin)
+    rss <- sum(resid(mod)^2)      ## residual sum of squares
     tss <- sum((obs[,j] - mean(obs[,j])) ^ 2)  ## total sum of squares
     rsq_1 <- 1 - (rss/tss)
     rsq_1 <- ifelse(rsq_1 < 0, 0, rsq_1)
@@ -124,8 +125,11 @@ d[!d$phylo_level %in% c('phylum','class','order','family','genus'),]$phylo_level
 mod <- lm(val_rsq ~ cal_rsq + phylo_level,data = d[d$cal_rsq > 0.1,])
 summary(mod)
 
+
+mod <- lm(val_rsq ~ cal_rsq + phylo_level,data = d[d$cal_rsq > 0.33,])
+summary(mod)
 par(mfrow = c(2,2)) # no clear patterns, other than with variance
-plot(val_rsq ~ cal_rsq        , data = d[d$cal_rsq > 0.1,])
+plot(val_rsq ~ cal_rsq        , data = d[d$cal_rsq > 0.33,])
 plot(val_rsq ~ log10(val_N.SV), data = d[d$cal_rsq > 0.1,])
 plot(val_rsq ~ val_diversity  ,data = d[d$cal_rsq > 0.1,])
 plot(val_rsq ~ val_variance   , data = d[d$cal_rsq > 0.1,])

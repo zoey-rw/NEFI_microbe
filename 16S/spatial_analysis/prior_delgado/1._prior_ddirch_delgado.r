@@ -1,71 +1,82 @@
-# fit prior models for bacterial taxa from Delgado-Baquerizo et al. 2018
+# fit prior models for bacterial taxa and functional groups 
+# from Delgado-Baquerizo et al. 2018 and Ramirez et al. 2018
+
 rm(list = ls())
+cat(paste0("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
+           n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRunning script at ", 
+           Sys.time(),"\n\n\n\n\n\n"))
 library(data.table)
 library(doParallel)
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/crib_fun.r')
 source('paths.r')
-#source('NEFI_functions/ddirch_site.level_JAGS.r')
-
-library(RCurl)
-# source function from colins github
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
+source('paths_fall2019.r')
+source('NEFI_functions/ddirch_site.level_JAGS_study.effects.r')
 
 #detect and register cores.
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
+# set output path
+output.path <- prior_delgado_ddirch_16S.path
 
-y.all <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/prior_abundance_mapping/Delgado/delgado_16S_common_phylo_fg_abun.rds")
-d <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/prior_abundance_mapping/Delgado/delgado_metadata_spatial.rds")
+# read in data
+y.all <- readRDS(delgado_ramirez_abun.path)
+d <- readRDS(delgado_ramirez_bahram_mapping.path)
+d <- d[d$source != "Bahram",]
 
 # set predictors of interest
-preds <- c("pC","cn","pH","NPP","forest","map","mat","ndep.glob","relEM")
+preds <- c("new.C.5","ph","forest","NPP","map","mat","relEM","ndep.glob","study_id")
 
 # format data
 x <- d
+rownames(x) <- x$sampleID
 x <- x[,colnames(x) %in% preds]
+#x <- x[1:400,] # testing
+ 
 x$map <- x$map/1000
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
-y.all$Species <- NULL
+#study_id <- as.integer(as.factor(x$study_id))
+study_id <- as.factor(x$study_id)
+x$study_id <- NULL
 
 #fit model using function.
-#for running production fit on remote.
-allfits <- list()
 cat('Begin model fitting loop...\n')
 tic()
-output.list<-
+output.list <- 
+  #foreach(i = 6:18) %dopar% {
   foreach(i = 1:length(y.all)) %dopar% {
-#for (i in 1:length(y.all)){
-    y <- y.all[[i]]$rel.abundances
-y <- y[,colnames(y)!="other", drop=FALSE]
-y <- as.data.frame(y)
-y$other <- 1-rowSums(y)
-y <- as.matrix(y)
-y <- crib_fun(y)
-y <- as.data.frame(y)
-
-x <- x[complete.cases(x),]
-y <- y[complete.cases(y),]
-x <- x[rownames(x) %in% rownames(y),]
-y <- y[rownames(y) %in% rownames(x),]
-y <- y[match(rownames(x), rownames(y)),] #order abundance table to match the metadata file
-if(!sum(rownames(y) == rownames(x)) == nrow(y)){
-  cat('Warning. x and y covariates not in the same order!')
-}
-
-fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                 adapt = 1000, burnin = 2000, sample = 1000, 
-                                 parallel = T, parallel_method="parallel")
-#allfits[[i]] <- fit
+  #foreach(i = 1:5) %dopar% {
+    #foreach(i = 1:1) %dopar% {
+      
+    y <- y.all[[i]]
+    y <- as.data.frame(y)
+    x <- x[complete.cases(x),]
+    y <- y[complete.cases(y),]
+    x <- x[rownames(x) %in% rownames(y),]
+    y <- y[rownames(y) %in% rownames(x),]
+    y <- y[match(rownames(x), rownames(y)),] #order abundance table to match the metadata file
+    if(!sum(rownames(y) == rownames(x)) == nrow(y)){
+      cat('Warning. x and y covariates not in the same order!')
+    }
+    
+    fit <- site.level_dirlichet_jags(y=y,x_mu=x,
+                                     #adapt = 1000, burnin = 2000, sample = 5000,
+                                     adapt = 100, burnin = 100, sample = 100,
+                                     parallel = T,
+                                     parallel_method="parallel",
+                                     #parallel_method='simple',
+                                     study_id = study_id,
+                                     jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags")
+    
 cat(paste("Model fit for", names(y.all)[i], "\n"))
 return(fit)    #allows nested loop to work.
 }
 cat('Model fitting loop complete! ')
 toc()
 
+#names(output.list) <- names(y.all)[6:18]
 names(output.list) <- names(y.all)
-saveRDS(output.list, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado/dir_delgado_8-30-19.rds")
-#saveRDS(output.list, "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado/dir_delgado_fg_8-30-19.rds")
+
+saveRDS(output.list, output.path)

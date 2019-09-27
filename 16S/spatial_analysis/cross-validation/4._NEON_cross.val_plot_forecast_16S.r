@@ -2,6 +2,7 @@
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/ddirch_forecast_noLogMap.r')
 
 #set output path.----

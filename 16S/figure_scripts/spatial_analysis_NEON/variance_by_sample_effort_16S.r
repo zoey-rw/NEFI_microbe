@@ -13,7 +13,8 @@ names(out) <- names(d)
 out$ORNL <- NULL
 
 #assign to ecosystem types.
-eco <- c('forest','forest','savannah','forest','forest','savannah','forest','grassland','forest','forest','grassland')
+# assuming this order: c("BART", "CPER", "DSNY", "HARV", "JERC", "OSBS", "SCBI", "STER", "TALL", "UNDE")
+eco <- c('forest','forest','savannah','forest','forest','savannah','forest','grassland','forest','forest')
 col <- c(rep('purple', length(eco)))
 col <- ifelse(eco == 'savannah','orange',col)
 col <- ifelse(eco == 'grassland','green',col)
@@ -23,7 +24,8 @@ col <- ifelse(eco == 'grassland','green',col)
 fit <- list()
 for(i in 1:length(out)){
   dat <- out[[i]]
-  mod <- nls(mu ~ a*exp(b*n.samp) + c, data = dat, start = list(a = 32, b = -0.6, c = 3))
+  #mod <- nls(mu ~ a*exp(b*n.samp) + c, data = dat, start = list(a = 32, b = -0.6, c = 3))
+  mod <- nls(mu ~ a*exp(b*n.samp) + c, data = dat, start = list(a = 150, b = -0.2, c = 90))
   range <- data.frame(seq(1, max(dat$n.samp), by = 0.1))
   colnames(range) <- c('n.samp')
   pred <- predict(mod, newdata = range)

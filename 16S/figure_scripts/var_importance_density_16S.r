@@ -8,7 +8,7 @@ library(mgcv)
 #output.path <- ITS_variable.imp_all_fungi.path
 
 #load variable importance data.----
-pl <- readRDS(NEON_fg_variable_importance_data_16S.path)
+pl <- readRDS(NEON_var_importance_data_ddirch_16S.path)
 #pl <- readRDS(NEON_var_importance_data_ddirch_16S.path) # i think this is on the SCC, which is down right now...
 
 
@@ -30,7 +30,7 @@ for(i in 1:ncol(all)){
 }
 
 #get predictor names
-namey <- c('%C','C:N','pH','NPP','MAT','MAP','Forest (0-1)','Conifers (0-1)','% ECM Trees')
+#namey <- c('%C','C:N','pH','NPP','MAT','MAP','Forest (0-1)','Conifers (0-1)','% ECM Trees')
 namey <- colnames(all)
 #get common x and y limits.----
 xmin <- list()

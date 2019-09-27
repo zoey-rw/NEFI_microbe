@@ -86,8 +86,8 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
       for(k in 1:ncol(covs)){now.cov[,k] <- rnorm(nrow(covs),covs[,k], cov.sd[,k])}
       colnames(now.cov) <- preds
       now.cov <- data.frame(now.cov)
-      #anti-logit relEM, multiply by 100 if this is one of your covariates.
-      if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM) * 100}
+      #anti-logit relEM if this is one of your covariates.
+      if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM)}
       now.cov <- as.matrix(now.cov)
     }
     
@@ -96,8 +96,8 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
       now.cov <- as.matrix(covs)
       colnames(now.cov) <- preds
       now.cov <- data.frame(now.cov)
-      #anti-logit relEM, multiply by 100 if this is one of your covariates.
-      if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM) * 100}
+      #anti-logit relEM if this is one of your covariates.
+      if('relEM' %in% colnames(now.cov)){now.cov$relEM <- boot::inv.logit(now.cov$relEM)}
       now.cov <- as.matrix(now.cov)
     }
     

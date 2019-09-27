@@ -8,12 +8,13 @@
 #' @param tax          #taxonomy for sv/otu table. 7 columns for k/p/c/o/f/g/s.
 #' @param groups       #unique groups you are looking for. ex: c('Ascomycota','Basidiomycota')
 #' @param phyla_level  #level of phylogeny in quotes. i.e. 'phylum'.
+#' @param top          #top X most common groups.
 #'
 #' @return
 #' @export
 #'
 #' @examples
-common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 0.5, ref_filter = F){
+common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 0.5, ref_filter = F, top = NULL){
   #some tests.
   if(ncol(sv) != nrow(tax)){
     stop('Number of columns of sv table does not match number of rows in taxonomy table.')
@@ -71,16 +72,20 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   colnames(frequency)[2] <- 'sample_frequency'
   frequency$sample_frequency <- as.character(frequency$sample_frequency)
   frequency$sample_frequency <- as.numeric(frequency$sample_frequency)
-  #subset to those that are found in > sam_freq of samples (default 50%).
-  if(ref_filter == F){
-    ref.frequency <- frequency[frequency$sample_frequency > samp_freq,]
-  }
   #if ref_filter is on, don't filter by frequency, filter by supplied unique groups.
   if(ref_filter == T){
-    ref.frequency <- frequency[frequency$groups %in% groups,]
+    #kill unknown and anything unknown
+    ref.frequency <- frequency[!(frequency$groups %in% c('unknown','Unknown','',' ','NA')),]
+    ref.frequency <- ref.frequency[ref.frequency$groups %in% groups,]
   }
-  #kill unknown and anything unknown
-  ref.frequency <- ref.frequency[!(ref.frequency$groups %in% c('unknown','Unknown','',' ','NA')),]
+  #if ref_filter is off, subset to the top # of taxa, OR those that are found in > sam_freq of samples (default 50%).
+  if(ref_filter == F){
+    ref.frequency <- frequency[!(frequency$groups %in% c('unknown','Unknown','',' ','NA')),]
+    if(!is.null(top)){
+      ref.frequency <- ref.frequency[order(-ref.frequency$sample_frequency),]
+      ref.frequency <- ref.frequency[1:top,]
+    } else ref.frequency <- ref.frequency[ref.frequency$sample_frequency > samp_freq,]
+  }
   #merge in number of OTUs, diversity and evenness in each group to frequency table.
   frequency <- merge(frequency,unique.sv, all.x = T)
   frequency <- merge(frequency,diversity, all.x = T)
@@ -91,7 +96,7 @@ common_group_quantification <- function(sv, tax, groups, tax_level, samp_freq = 
   seq_total <- rowSums(sv)
   
   #only keep groups that are found in >samp_freq% of samples.
-  abundance <- abundance[rownames(abundance) %in% ref.frequency$groups,]
+  abundance <- abundance[rownames(abundance) %in% ref.frequency$groups,,drop=FALSE]
   abundance <- t(abundance)
   
   #get abundances and relative abundances.
