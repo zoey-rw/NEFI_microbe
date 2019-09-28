@@ -21,10 +21,10 @@ for (i in 1:length(allfits)) {
 fit$species_parameter_output
 
 # save plots.
-pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_all_groups.pdf")
+#pdf("/fs/data3/caverill/NEFI_data/16S/pecan_gen/figures/prior_fit_ddirch_all_groups.pdf")
 
 #check the plots.
-allfits <- output.list
+#allfits <- output.list
 r2_all <- list()
 par(mfrow = c(3,3))
 

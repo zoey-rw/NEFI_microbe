@@ -15,8 +15,7 @@ tax <- readRDS(NEON_dada2_tax_table.path)
 # load reference taxonomy-to-function file.
 tax_fun <- readRDS(paste0(pecan_gen_16S_dir, "reference_data/bacteria_tax_to_function.rds"))
 # load reference common phyla from prior.----
-ref <- readRDS(paste0(scc_gen_16S_dir,"prior_abundance_mapping/Delgado/delgado_16S_common_phylo_fg_abun.rds"))
-ref$Species <- NULL
+ref <- readRDS(delgado_16S_common_phylo_fg_abun.path)
 
 ########## 1. prep taxonomic data. ############
 
@@ -76,9 +75,16 @@ if(sum(rownames(tax) == colnames(otu)) != ncol(otu)){
 of_interest <- colnames(tax)[!colnames(tax) %in% c("Kingdom","Species")]
 all_taxa_out <- list()
 for(i in 1:length(of_interest)){
-  reference <- data.table(ref[[i]]$group_frequencies)
-  reference <- as.character(reference[sample_frequency > 0.95]$groups)
-  all_taxa_out[[i]] <- common_group_quantification(otu,
+  # reference <- data.table(ref[[i]]$group_frequencies)
+  # reference <- as.character(reference[sample_frequency > 0.95]$groups)
+  reference <- data.table(ref[[i]]$abundances)
+  reference <- colnames(reference)[!colnames(reference) %in% "other"]
+  sv = otu
+tax = tax
+groups = reference
+tax_level = of_interest[i]
+ref_filter = T
+all_taxa_out[[i]] <- common_group_quantification(otu,
                                                    tax,
                                                    reference,
                                                    of_interest[i],

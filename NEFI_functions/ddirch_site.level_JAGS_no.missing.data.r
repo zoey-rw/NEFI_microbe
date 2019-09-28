@@ -73,14 +73,6 @@ jags.model = "
       }
   }
 
-#prior for study tau:
-study_tau ~ dgamma(0.01, 0.01)
-
-#random study effects
-for(s in 1:N.study){
-        study_effect[s] ~ dnorm(0, study_tau)
-    }
-
 #mean center all predictors (except intercept).
   for(i in 1:N){
     x.center[i,1] <- 1
@@ -95,7 +87,7 @@ for(s in 1:N.study){
 #fit species abundances as a linear combination of predictors and parameters.
   for(i in 1:N){
     for(j in 1:N.spp){
-      log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,]) + study_effect[study_id[i]]
+      log(a0[i,j]) <- alpha + inprod(x.mm[,j], x.center[i,]) 
   }
   y[i,1:N.spp] ~ ddirch(a0[i,1:N.spp]) 
   }

@@ -1,6 +1,8 @@
+# forecast to NEON sites using delgao-ramirez calibration models.
 
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/tic_toc.r')
 source('NEFI_functions/precision_matrix_match.r')
 source('NEFI_functions/ddirch_forecast_noLogMap.r')
@@ -11,11 +13,10 @@ script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/ma
 eval(parse(text = script))
 
 #set output path.----
-# output.path <- NEON_cps_fcast_ddirch_16S.path
-output.path <- paste0(scc_gen_16S_dir,"/NEON_forecasts/delgado-to-NEON_cps_forecast_ddirch.rds")
+output.path <- NEON_cps_fcast_ddirch_16S.path
 
 #load prior model results.----
-all.mod <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_delgado/dir_delgado_8-30-19.rds"))
+all.mod <- readRDS(prior_delgado_ddirch_16S.path)
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_data.path)
