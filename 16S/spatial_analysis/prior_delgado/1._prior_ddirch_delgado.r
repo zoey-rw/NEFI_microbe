@@ -28,7 +28,7 @@ d <- d[d$source != "Bahram",]
 setnames(d, old = c("new.C.5", "ph"), new = c("pC","pH"))
 
 # set predictors of interest
-preds <- c("pC","ph","forest","NPP","map","mat","relEM","ndep.glob","study_id")
+preds <- c("pC","pH","forest","NPP","map","mat","relEM","ndep.glob","study_id")
 
 # format data
 x <- d
@@ -39,9 +39,13 @@ x <- x[,colnames(x) %in% preds]
 x$map <- x$map/1000
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
-#study_id <- as.integer(as.factor(x$study_id))
-study_id <- as.factor(x$study_id)
+
+rownames.save <- rownames(x)
+x <- fastDummies::dummy_cols(x,remove_first_dummy = T)
 x$study_id <- NULL
+x <- apply(x, 2, as.numeric)
+rownames(x) <- rownames.save
+
 
 #fit model using function.
 cat('Begin model fitting loop...\n')
@@ -57,17 +61,19 @@ output.list <-
     x <- x[rownames(x) %in% rownames(y),]
     y <- y[rownames(y) %in% rownames(x),]
     y <- y[match(rownames(x), rownames(y)),] #order abundance table to match the metadata file
+    
+    
     if(!sum(rownames(y) == rownames(x)) == nrow(y)){
       cat('Warning. x and y covariates not in the same order!')
     }
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                     #adapt = 1000, burnin = 2000, sample = 5000,
-                                     adapt = 1000, burnin = 2000, sample = 1000,
+                                     adapt = 3000, burnin = 10000, sample = 3000,
+                                     #adapt = 100, burnin = 100, sample = 100,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
-                                     #study_id = study_id,
+                                    # study_id = study_id,
                                      jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags")
     
 cat(paste("Model fit for", names(y.all)[i], "\n"))

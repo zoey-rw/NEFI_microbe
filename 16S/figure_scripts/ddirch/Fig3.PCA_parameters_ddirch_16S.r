@@ -1,5 +1,6 @@
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 library(vegan)
 library(ggbiplot)
 library(RColorBrewer)
@@ -8,7 +9,7 @@ library(RColorBrewer)
 output.path <- paste0(pecan_gen_16S_dir, 'figures/parameter_PCA_ddirch_16S.png')
 
 #load raw data and predictors.----
-pl <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_phylo_fg_JAGSfit_16S.rds'))[1:5]
+pl <- readRDS(prior_delgado_ddirch_16S.path)
 #pl <- readRDS(bahram_16S_prior_phylo.group_JAGSfits)
 #pl <- readRDS(bahram_16S_prior_dmulti.ddirch_all.group_JAGSfits)[1:5]
 #names(pl)[6] <- 'functional'
@@ -37,7 +38,8 @@ pca.sub <- list()
   names(rsq.lev) <- names(lev)
   colnames(pars) <- names(lev)
   rownames(pars) <- as.character(lev$other$predictor)
-  pars <- pars[,!(colnames(pars) == 'other'|colnames(pars) == 'V6')]
+  pars <- pars[!(grepl("study_id",rownames(pars))),]
+  pars <- pars[,!(colnames(pars) == 'other'|colnames(pars) == 'V6'), drop=F]
   d[[i]] <- pars
   rsq.out[[i]] <- rsq.lev
   col.plot[[i]] <- rep(names(pl)[i],ncol(pars))
@@ -52,21 +54,17 @@ rsq <- round(rsq,2)
 names(pca.sub) <- names(pl)[1:5]
 
 # some names are repeated at diff levels - distinguish them
-colnames(d)[which(colnames(d) == "Actinobacteria")[1]] <- "p.Actinobacteria"
-colnames(d)[which(colnames(d) == "Gemmatimonadetes")[1]] <- "p.Gemmatimonadetes"
-colnames(d)[which(colnames(d) == "Sva0725")[1]] <- "c.Sva0725"
+colnames(d)[which(colnames(d) == "actinobacteria")[1]] <- "p.Actinobacteria"
+colnames(d)[which(colnames(d) == "gemmatimonadetes")[1]] <- "p.Gemmatimonadetes"
+#colnames(d)[which(colnames(d) == "Sva0725")[1]] <- "c.Sva0725"
 #d <- d[, colnames(d) != "V6"]
 #Do PCA ordination.----
 par.pca <- prcomp(t(d), center = TRUE,scale. = TRUE)
 
-#setup plor output.----
-png(filename=output.path,width=10,height=10,units='in',res=300)
+#setup plot output.----
+#png(filename=output.path,width=10,height=10,units='in',res=300)
 
 #plot code.----
-#lab <- paste0(colnames(d), ' ', rsq)
-
-
-
 lab <- colnames(d)
 par(mfrow = c(1,1))
 ggbiplot(par.pca, labels = lab, groups = col.plot) + 

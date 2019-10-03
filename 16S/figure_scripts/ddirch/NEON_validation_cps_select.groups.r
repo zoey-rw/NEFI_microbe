@@ -11,9 +11,9 @@ source('paths.r')
 #output.path <- NEON_cps_rep.groups_forecast_figure.path
 
 #groups of interest----
-namey <- c("Proteobacteria", "Verrucomicrobia", "Actinobacteria", 
+namey <- tolower(c("Proteobacteria", "Verrucomicrobia", "Actinobacteria", 
            "Planctomycetes", "Chloroflexi", "Acidobacteria", "Firmicutes", 
-           "Bacteroidetes", "Gemmatimonadetes", "Armatimonadetes")
+           "Bacteroidetes", "Gemmatimonadetes", "Armatimonadetes"))
 level <- rep('phylum', length(namey))
 #namey <- c('Chloroflexi','Chitinolytic','Mycobacterium')
 #level <- c('phylum','function_group','genus')
@@ -27,6 +27,10 @@ level <- c(namey[1:11], "Cop_olig", "Cop_olig")
 
 namey <- c("Chloroflexi", "Firmicutes", "Solibacteres")
 level <- c("phylum", "phylum", "class")
+
+namey <- tolower(c("Chloroflexi", "Firmicutes", "Solibacteres"))
+level <- c("phylum", "phylum", "class")
+
 
 #grab forecasts and observations of functional and phylogenetic groups.----
 pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
@@ -99,15 +103,19 @@ bf_col <- 'magenta1' #best-fit regression line color.
 for(i in 1:length(names)){
   #core.level.----
   #organize data.
-  fcast <- pl.cast[[level[i]]]$core.fit
+  fcast <- pl.cast[[i]]$core.fit
   obs <- pl.core_mu
   truth <- pl.core_mu
-  truth <- as.data.frame(truth)
-  truth$deprecatedVialID <- rownames(truth)
-  truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
-  rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
-  truth1$geneticSampleID <- NULL
-  obs <- truth1
+
+  
+  #organize data.
+  y.fix <- as.data.frame(pl.core_mu)
+  y.fix$deprecatedVialID <- rownames(y.fix)
+  y.fix <- merge(y.fix, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
+  y.fix <- y.fix[!duplicated(y.fix$geneticSampleID),]
+  rownames(y.fix) <- gsub('-GEN','',y.fix$geneticSampleID )
+  y.fix$geneticSampleID <- NULL
+  obs <- y.fix
   
   obs <- obs[rownames(obs) %in% rownames(fcast$mean),]
   for(k in 1:length(fcast)){

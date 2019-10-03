@@ -68,6 +68,6 @@ for (k in 1:length(ramirez_tax_all)){
   
   y.lev[[k]] <- y
 }
-names(y.lev) <- names(ramirez_tax_all)
+names(y.lev) <- tolower(names(ramirez_tax_all))
 
 saveRDS(y.lev, output.path)
