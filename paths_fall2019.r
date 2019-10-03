@@ -42,7 +42,7 @@ system(paste0('mkdir -p ', pecan_gen_16S_dir))
 #### big_data file paths. ####
 #Delgado-Baquerizo 2018 sequences.
 delgado.seq.dir <- paste0(big_data_dir,'Delgado/')
-cmd <- paste0('mkdir -p ',bahram.seq.dir)
+cmd <- paste0('mkdir -p ',delgado.seq.dir)
 system(cmd)
 # NEON 16S sequences.
 NEON.seq.dir <- paste0(big_data_dir,'NEON_raw_16S_fastq/')
@@ -397,6 +397,9 @@ dir <- paste0(scc_gen_16S_dir, "NEON_forecast_data/")
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 NEON_cps_fcast_ddirch_16S.path <- paste0(dir, "NEON_cps_fcast_ddirch_16S.rds")
+
+#### 16S results summary filepath. #####
+NEON_dmilti.ddirch_analysis_summary_16S.path <- paste0(dir, 'NEON_dmilti.ddirch_analysis_summary_16S.rds')
 
 #### 16S/scc_gen/figures ####
 dir <- paste0(scc_gen_16S_dir, "figures/") 
