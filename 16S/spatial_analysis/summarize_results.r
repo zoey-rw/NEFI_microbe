@@ -209,26 +209,38 @@ names(core.stat) <- names(val.cast)
 names(plot.stat) <- names(val.cast)
 names(site.stat) <- names(val.cast)
 
-#Group independent bacterial functional froups # site level into one functional dataframe within site list.-----
+#Group independent bacterial functional froups across scales into one functional dataframe within site list.-----
 fg.names <- names(site.stat)[!(names(site.stat) %in% c('phylum','class','order','family','genus'))]
-fg.sub <- site.stat[fg.names]
-fg.sub <- data.frame(do.call(rbind, fg.sub))
-site.stat <- site.stat[!(names(site.stat) %in% fg.names)]
-site.stat$fg <- fg.sub
-site.stat <- site.stat[c('fg','phylum','class','order','family','genus')]
-names(site.stat)[1] <- 'functional'
-
-#Get 'predictable' validation subset for site level.----
-site.stat.predictable <- list()
-for(i in 1:length(site.stat)){
-  site <- site.stat[[i]]
-  ref  <- cal.stat.predictable[[i]]
-  site.stat.predictable[[i]] <- site[site$name %in% ref$name,]
+val.stat <- list(core.stat, plot.stat, site.stat)
+for(i in 1:length(val.stat)){
+  fg.sub <- val.stat[[i]][fg.names]
+  fg.sub <- data.frame(do.call(rbind, fg.sub))
+  lev.stat <- val.stat[[i]][!(names(val.stat[[i]]) %in% fg.names)]
+  lev.stat$fg <- fg.sub
+  lev.stat <- lev.stat[c('fg','phylum','class','order','family','genus')]
+  names(lev.stat)[1] <- 'functional'
+  val.stat[[i]] <- lev.stat
 }
-names(site.stat.predictable) <- names(site.stat)
+names(val.stat) <- c('core.stat','plot.stat','site.stat')
+
+#Get 'predictable' validation subset for core plot and site levels.----
+val.stat.predictable <- list()
+for(i in 1:length(val.stat)){
+  lev <- val.stat[[i]]
+  lev.return.list <- list()
+  for(k in 1:length(lev)){
+    lev2 <- lev[[k]]
+    ref  <- cal.stat.predictable[[k]]
+    lev.return.list[[k]] <- lev2[lev2$name %in% ref$name,]
+  }
+  names(lev.return.list) <- names(lev)
+  val.stat.predictable[[i]] <- lev.return.list
+}
+names(val.stat.predictable) <- names(val.stat)
 
 #Get validation summaries @# site level for all and predictable taxa.----
 #all validation summary - site level.
+site.stat <- val.stat$site.stat
 site.stat.sum <- list()
 for(i in 1:length(site.stat)){
   rsq       <- mean(site.stat[[i]]$rsq  )
@@ -245,6 +257,7 @@ site.stat.sum <- cbind(names(site.stat), site.stat.sum)
 colnames(site.stat.sum)[1] <- 'level'
 
 #predictable validation summary - site level.
+site.stat.predictable <- val.stat.predictable$site.stat
 site.stat.predictable.sum <- list()
 for(i in 1:length(site.stat)){
   rsq       <- mean(site.stat.predictable[[i]]$rsq  )
@@ -261,10 +274,6 @@ site.stat.predictable.sum <- cbind(names(site.stat), site.stat.predictable.sum)
 colnames(site.stat.predictable.sum)[1] <- 'level'
 
 #wrap all validation data.----
-val.stat <- list(core.stat, plot.stat, site.stat)
-names(val.stat) <- c('core.stat','plot.stat','site.stat')
-val.stat.predictable <- list(site.stat.predictable)
-names(val.stat.predictable) <- c('site.stat')
 validation <- list(val.stat,val.stat.predictable,site.stat.sum, site.stat.predictable.sum)
 names(validation) <- c('val.stat','val.stat.predictable','site.stat.sum','site.stat.predictable.sim')
 
