@@ -60,12 +60,18 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
   pred.out <- list()
   cred.out <- list()
   for(j in 1:n.samp){
+    
     #Sample parameters from mcmc output.----
     mcmc <- do.call(rbind,j.mod$mcmc)
     mcmc.sample <- mcmc[sample(nrow(mcmc),1),]
     #grab x.m values, convert to matrix.
     x.m <- mcmc.sample[grep("^x\\.m\\[", names(mcmc.sample))]
     x.m <- matrix(x.m, nrow = ncol(covs), ncol = length(x.m)/ncol(covs))
+    
+   # s.effs <- mcmc.sample[grep("study_effect", names(mcmc.sample))]
+    s.tau <-  mcmc.sample[grep("study_tau", names(mcmc.sample))]
+    # convert study_tau to SD
+    s.eff.sd <- sqrt(1/s.tau)
     
     #if we are fixing parameter uncertainty to zero, do something different.----
     if(zero_parameter_uncertainty == T){
@@ -103,7 +109,11 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
     
     #Combine covariates and parameters to make a prediction.----
     pred.x.m <- matrix(NA, ncol=ncol(x.m), nrow = nrow(covs))
-    for(k in 1:ncol(x.m)){pred.x.m[,k] <- exp(now.cov %*% x.m[,k])}
+    for(k in 1:ncol(x.m)){
+      # sample study effects from normal distribution with mean 0 and SD from calibration
+      s.eff <- rnorm(1, 0, s.eff.sd)
+      pred.x.m[,k] <- exp(now.cov %*% x.m[,k] + s.eff)
+      }
     #get mean prediction and then draw from dirichlet distribution.
     cred.out[[j]] <- pred.x.m / rowSums(pred.x.m)
     pred.out[[j]] <- DirichletReg::rdirichlet(nrow(pred.x.m),pred.x.m)

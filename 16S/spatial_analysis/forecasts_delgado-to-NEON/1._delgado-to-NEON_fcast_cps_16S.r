@@ -22,6 +22,7 @@ all.mod <- readRDS(prior_delgado_ddirch_16S.path)
 dat <- readRDS(hierarch_filled_data.path)
 dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
 dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
+dat <- mapply(cbind, dat, "study_id"=30)
 
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
@@ -87,33 +88,33 @@ site.sd <- merge(core_sd,plot_sd)
 site.sd <- merge(site.sd,site_sd)
 names(site.sd)[names(site.sd)=='b.relEM'] <- "relEM"
 
-# add dummy vars for study effects
-fcast.preds <- list()
-for (h in 1:3){
-  hier <- list(core.preds, plot.preds, site.preds)
-  nrow <- nrow(hier[[h]])
- 
-  all_vars <- unique(all.mod[[1]]$species_parameter_output[[1]]$predictor)
-  dummy_vars <- all_vars[grep("study_id_", all_vars)]
-  dummy_mat <- matrix(0, nrow = nrow, ncol = length(dummy_vars))
-  colnames(dummy_mat) <- dummy_vars
-  out <- cbind(hier[[h]], dummy_mat)
-  fcast.preds[[h]] <- out
-}
-
-
-fcast.sd <- list()
-for (h in 1:3){
-  hier <- list(core.sd, plot.sd, site.sd)
-  nrow <- nrow(hier[[h]])
-  
-  all_vars <- unique(all.mod[[1]]$species_parameter_output[[1]]$predictor)
-  dummy_vars <- all_vars[grep("study_id_", all_vars)]
-  dummy_mat <- matrix(0.01, nrow = nrow, ncol = length(dummy_vars))
-  colnames(dummy_mat) <- dummy_vars
-  out <- cbind(hier[[h]], dummy_mat)
-  fcast.sd[[h]] <- out
-}
+# # add dummy vars for study effects
+# fcast.preds <- list()
+# for (h in 1:3){
+#   hier <- list(core.preds, plot.preds, site.preds)
+#   nrow <- nrow(hier[[h]])
+#  
+#   all_vars <- unique(all.mod[[1]]$species_parameter_output[[1]]$predictor)
+#   dummy_vars <- all_vars[grep("study_id_", all_vars)]
+#   dummy_mat <- matrix(0, nrow = nrow, ncol = length(dummy_vars))
+#   colnames(dummy_mat) <- dummy_vars
+#   out <- cbind(hier[[h]], dummy_mat)
+#   fcast.preds[[h]] <- out
+# }
+# 
+# 
+# fcast.sd <- list()
+# for (h in 1:3){
+#   hier <- list(core.sd, plot.sd, site.sd)
+#   nrow <- nrow(hier[[h]])
+#   
+#   all_vars <- unique(all.mod[[1]]$species_parameter_output[[1]]$predictor)
+#   dummy_vars <- all_vars[grep("study_id_", all_vars)]
+#   dummy_mat <- matrix(0.01, nrow = nrow, ncol = length(dummy_vars))
+#   colnames(dummy_mat) <- dummy_vars
+#   out <- cbind(hier[[h]], dummy_mat)
+#   fcast.sd[[h]] <- out
+# }
 
 #Get forecasts from ddirch_forecast.----
 fcast.output <- list()
@@ -123,13 +124,12 @@ for(i in 1:length(all.mod)){
 
     tic()
   mod <- all.mod[[i]]
-  core.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=fcast.preds[[1]], cov_sd=fcast.sd[[1]], names=fcast.preds[[1]]$sampleID, n.samp = 1000)
-  plot.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=fcast.preds[[2]], cov_sd=fcast.sd[[2]], names=fcast.preds[[2]]$plotID  , n.samp = 1000)
-  site.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=fcast.preds[[3]], cov_sd=fcast.sd[[3]], names=fcast.preds[[3]]$siteID  , n.samp = 1000)
+  core.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)	
+  plot.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)	
+  site.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)
   
   #store output as a list and save.----
-  output <- list(core.fit,plot.fit,site.fit,fcast.preds[[1]],fcast.preds[[1]],fcast.preds[[1]],fcast.sd,fcast.sd,fcast.sd)  
-#  output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
+  output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
   names(output) <- c('core.fit','plot.fit','site.fit',
                      'core.preds','plot.preds','site.preds',
                      'core.sd','plot.sd','site.sd')
