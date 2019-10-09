@@ -9,21 +9,14 @@ library(data.table)
 
 # load forecast 
 all_fcasts <- readRDS(NEON_cps_fcast_ddirch_16S.path)
-all_fcasts <- readRDS("/fs/data3/caverill/NEFI_data/16S/pecan_gen/NEON_forecast_data/NEON_cps_fcast_ddirch_noLogMap.rds")
 # load prior model results
-all_fits <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_phylo_fg_JAGSfit_16S.rds"))
-phylum_fit <- readRDS(paste0(scc_gen_16S_dir,"JAGS_output/prior_phylo_JAGSfit_phylum_fewer_taxa_more_burnin.rds"))
-all_fits$phylum <- phylum.mod$phylum$no.nutr.preds
+all_fits <- readRDS(prior_delgado_ddirch_16S.path)
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)
 map <- readRDS(core_obs_data.path)
 
-no_missing_data <- readRDS(missing_data_removed_16S.path)
-map <- no_missing_data[[1]]
-complete <- no_missing_data[[2]][complete.cases(no_missing_data[[2]]),]$sampleID
-map <- map[map$sampleID %in% complete,]
-map <- map[grep("-O-", map$geneticSampleID),]
+
 # read in prior fit.
 #all_fits <- readRDS("/fs/data3/caverill/NEFI_data/16S/scc_gen/JAGS_output/bahram_16S.prior_phylo_new_test.rds")
 
@@ -73,30 +66,39 @@ for (p in 1:length(all_fcasts)) {
     # read in core-level observed values
     truth <- raw.truth$core.fit
     #organize data.
-    truth <- as.data.frame(truth)
-    truth$deprecatedVialID <- rownames(truth)
-    truth1 <- merge(truth, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
-    truth1 <- truth1[!duplicated(truth1$geneticSampleID),]
-    rownames(truth1) <- gsub('-GEN','',truth1$geneticSampleID)
-    truth <- truth1
-    truth <- truth[rownames(truth) %in% rownames(fcast$mean),]
+    y.fix <- as.data.frame(truth)
+    y.fix$deprecatedVialID <- rownames(y.fix)
+    y.fix <- merge(y.fix, map[,c("deprecatedVialID", "geneticSampleID")], by = "deprecatedVialID")
+    y.fix <- y.fix[!duplicated(y.fix$geneticSampleID),]
+    rownames(y.fix) <- gsub('-GEN','',y.fix$geneticSampleID )
+    y.fix$geneticSampleID <- NULL
+    truth <- y.fix
     
     for(k in 1:length(fcast)){
       fcast[[k]] <- fcast[[k]][rownames(fcast[[k]]) %in% rownames(truth),]
     }
     #truth <- as.matrix(truth)
-    mu <- fcast$mean[,i][order(fcast$mean[,i])]
-    ci_0.975 <- fcast$ci_0.975[,i][order(match(names(fcast$ci_0.975[,i]),names(mu)))]
-    ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu)))]
-    pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu)))]
-    pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu)))]
+    mu <- data.frame(fcast$mean[,i][order(fcast$mean[,i]),drop=FALSE])
+    # get prior rsq.]
+    ci_0.975 <- fcast$ci_0.975[,i][order(match(names(fcast$ci_0.975[,i]),names(mu))),drop=FALSE]
+    # get prior rsq.]
+    ci_0.025 <- fcast$ci_0.025[,i][order(match(names(fcast$ci_0.025[,i]),names(mu))),drop=FALSE]
+    # get prior rsq.]
+    pi_0.975 <- fcast$pi_0.975[,i][order(match(names(fcast$pi_0.975[,i]),names(mu))),drop=FALSE]
+    # get prior rsq.]
+    pi_0.025 <- fcast$pi_0.025[,i][order(match(names(fcast$pi_0.025[,i]),names(mu))),drop=FALSE]
+    
+    colnames(mu) <- colnames(fcast$mean)[i] 
+      
+    # get prior rsq.]
     group_name <- colnames(fcast$mean)[i]
     if (!group_name %in% colnames(truth) | group_name=="other") next()
     obs.mu   <- truth[,c(group_name),drop=FALSE][order(match(names(truth[,c(group_name),drop=FALSE]),names(mu)))]
-    obs.mu <- obs.mu[,c(group_name)]
+    obs.mu <- obs.mu[,c(group_name),drop=FALSE]
     # get prior rsq.
-    mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
-    prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
+    prior_rsq <- summary(lm(fit$observed[,i] ~ fit$predicted[,i]))$r.squared
+    #mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
+    #prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
     
     # create plot
     # get ylim (used for plot/site level as well)
@@ -105,14 +107,14 @@ for (p in 1:length(all_fcasts)) {
     limy <- as.numeric(obs_limit)*1.05
     if(limy > 0.95){limy <- 1}
     
-    plot(obs.mu ~ mu, cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', group_name))
+    plot(obs.mu[,i] ~ mu[,i], cex = 0.7, ylim=c(0,limy), main = paste0('core-level ', group_name))
     
     #r square best fit.
     fit.stats <- lm(obs.mu ~ mu)
     rsq <- round(summary(fit.stats)$r.squared,2)
     #r square 1:1.
-    rss <- sum((mu -      obs.mu)  ^ 2)  ## residual sum of squares
-    tss <- sum((obs.mu - mean(obs.mu)) ^ 2)  ## total sum of squares
+    rss <- sum((mu[,i] -      obs.mu[,i])  ^ 2)  ## residual sum of squares
+    tss <- sum((obs.mu[,i] - mean(obs.mu[,i])) ^ 2)  ## total sum of squares
     rsq1 <- 1 - rss/tss
     if(rsq1 < 0){rsq1 <- 0}
     #RMSE.
@@ -124,7 +126,7 @@ for (p in 1:length(all_fcasts)) {
     # best-fit line.
     abline(lm(obs.mu ~mu), lty = 2, col = 'purple')
     #add confidence interval.
-    range <- mu
+    range <- mu[,i]
     polygon(c(range, rev(range)),c(pi_0.975, rev(pi_0.025)), col=adjustcolor('green', trans), lty=0)
     polygon(c(range, rev(range)),c(ci_0.975, rev(ci_0.025)), col=adjustcolor('blue' , trans), lty=0)
     #fraction within 95% predictive interval.

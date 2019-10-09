@@ -23,8 +23,8 @@ d <- list()
 col.plot <- list()
 rsq.out <- list()
 pca.sub <- list()
-#for(i in 1:length(pl)){
-  for(i in 1:5){
+for(i in 1:length(pl)){
+  #for(i in 1:5){
     lev <- pl[[i]]$species_parameter_output
   pars <- list()
   rsq.lev <- list()

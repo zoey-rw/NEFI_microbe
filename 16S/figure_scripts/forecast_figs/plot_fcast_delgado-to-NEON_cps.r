@@ -8,7 +8,6 @@ library(data.table)
 
 
 # load forecast 
-all_fcasts <- readRDS(paste0(scc_gen_16S_dir,"/NEON_forecasts/delgado-to-NEON_cps_forecast_ddirch.rds"))
 all_fcasts <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 # load prior model results
 all_fits <- readRDS(prior_delgado_ddirch_16S.path)
@@ -74,8 +73,8 @@ for (p in 1:length(all_fcasts)) {
     obs.mu   <- truth[,c(group_name),drop=FALSE][order(match(names(truth[,c(group_name),drop=FALSE]),names(mu)))]
     obs.mu <- obs.mu[,c(group_name)]
     # get prior rsq.
-    mod <- betareg::betareg(crib_fun(fit$observed[,i]/rowSums(fit$observed)) ~ crib_fun(fit$predicted[,i]))
-    prior_rsq <-round(summary(mod)$pseudo.r.squared, 2)
+    mod <- summary(lm(fit$observed[,i]/rowSums(fit$observed) ~ fit$predicted[,i]))
+    prior_rsq <-round(mod$r.squared, 2)
     
     # create plot
     # get ylim (used for plot/site level as well)

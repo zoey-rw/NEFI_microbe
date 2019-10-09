@@ -2,6 +2,7 @@
 
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 #source('NEFI_functions/zero_truncated_density.r')
 library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/zero_truncated_density.r", ssl.verifypeer = FALSE)
@@ -26,6 +27,11 @@ for(i in 1:length(pl)){
   pred <- lev$predicted
   lev.r2 <- list()
   for(j in 1:ncol(obs)){lev.r2[[j]] <- summary(lm(obs[,j] ~ pred[,j]))$r.squared}
+  # for(j in 1:ncol(obs)){
+  #   mod <- betareg::betareg(obs[,j] ~ pred[,j])
+  #   lev.r2[[j]] <-round(summary(mod)$pseudo.r.squared, 3)
+  # }
+  
   lev.r2 <- unlist(lev.r2)
   names(lev.r2) <- colnames(obs)
   lev.r2 <- lev.r2[names(lev.r2) != 'other']
@@ -33,7 +39,7 @@ for(i in 1:length(pl)){
   #names(pl.r2)[[i]] <- names(pl)[i]
 }
 
-fg <- unname(pl.r2[6:17])
+fg <- unname(pl.r2[6:18])
 fg.r2.all <- list(unlist(fg))
 names(fg.r2.all)<- "fg"
 pl <- pl.r2[1:5]
@@ -48,12 +54,10 @@ cal.lev.N  <- unlist(lapply(all.r2, length))
 cal.lev.se <- cal.lev.sd / sqrt(cal.lev.N)
 
 #load forecasts predicted and observed.----
-#pl.cast <- readRDS(NEON_cps_fcast_dmulti.ddirch_16S.path)
 pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
-#pl.cast <- readRDS(paste0(pecan_gen_16S_dir, "/NEON_forecast_data/NEON_cps_fcast_ddirch_old.hier_16S.rds"))
 pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
 pl.core <- readRDS(NEON_16S_phylo_fg_abundances.path)
-# 
+ 
 # #Re-order.
 # pl.cast <- pl.cast[c('fg','phylum','class','order','family','genus')]
 # pl.truth <- pl.truth[c('fg','phylum','class','order','family','genus')]
@@ -76,7 +80,7 @@ for(i in 1:length(pl.cast)){
   #y <- (pl.core[[i]]$abundances + 1)/pl.core[[i]]$seq_total
   x <- fcast$core.fit$mean
   #make sure row and column orders match.
-  rownames(y) <- gsub('-GEN','',rownames(y))
+  #rownames(y) <- gsub('-GEN','',rownames(y))
   truth <- y
   map <- readRDS(core_obs_16S.path)
   truth <- as.data.frame(truth)
@@ -132,6 +136,8 @@ for(i in 1:length(pl.cast)){
   #fit model, grab r2.
   for(k in 1:ncol(y)){
     fungi_name <- colnames(x)[k]
+      #mod <- betareg::betareg(y[,k] ~ x[,k])
+      #rsq <-round(summary(mod)$pseudo.r.squared, 3)
     rsq <- summary(lm(y[,k] ~ x[,k]))$r.squared
     names(rsq) <- fungi_name
     site.rsq[[k]] <- rsq
@@ -150,28 +156,37 @@ core.rsq <- unlist(all.core.rsq)
 plot.rsq <- unlist(all.plot.rsq)
 site.rsq <- unlist(all.site.rsq)
 
+
+
 # fix the functional-group grouping for each level
-core.rsq.fg <- list(unlist(all.core.rsq[6:17]))
-names(core.rsq.fg)<- "functional"
+core.rsq.fg <- list(unlist(all.core.rsq[6:18]))
+names(core.rsq.fg)<- "fg"
 core.rsq.pl <- all.core.rsq[1:5]
 names(core.rsq.pl) <- c('phylum','class','order','family','genus')
 core.rsq <- c(core.rsq.fg, core.rsq.pl)
 core.rsq <- unlist(core.rsq)
 
 plot.rsq.fg <- list(unlist(all.plot.rsq[6:17]))
-names(plot.rsq.fg)<- "functional"
+names(plot.rsq.fg)<- "fg"
 plot.rsq.pl <- all.plot.rsq[1:5]
 names(plot.rsq.pl) <- c('phylum','class','order','family','genus')
 plot.rsq <- c(plot.rsq.fg, plot.rsq.pl)
 plot.rsq <- unlist(plot.rsq)
 
 site.rsq.fg <- list(unlist(all.site.rsq[6:17]))
-names(site.rsq.fg)<- "functional"
+names(site.rsq.fg)<- "fg"
 site.rsq.pl <- all.site.rsq[1:5]
 names(site.rsq.pl) <- c('phylum','class','order','family','genus')
 site.rsq.list <- c(site.rsq.fg, site.rsq.pl)
 site.rsq <- unlist(site.rsq.list)
 
+#Subset to observations that have a minimum calibration R2 value.----
+pass <- cal.rsq[cal.rsq > .1]
+core.rsq.pass <- core.rsq[names(core.rsq) %in% names(pass)]
+plot.rsq.pass <- plot.rsq[names(plot.rsq) %in% names(pass)]
+site.rsq.pass <- site.rsq[names(site.rsq) %in% names(pass)]
+
+subset <- relist(site.rsq.pass, site.rsq.list)
 # shouldn't we be getting these values *after* subsetting by calibration R2?
 lev.mu <- unlist(lapply(site.rsq.list, mean  ))
 lev.sd <- unlist(lapply(site.rsq.list, sd    ))
@@ -179,11 +194,6 @@ lev.N  <- unlist(lapply(site.rsq.list, length))
 lev.se <- lev.sd / sqrt(lev.N)
 names(lev.mu) <- names(site.rsq.list)
 
-#Subset to observations that have a minimum calibration R2 value.----
-pass <- cal.rsq[cal.rsq > .1]
-core.rsq <- core.rsq[names(core.rsq) %in% names(pass)]
-plot.rsq <- plot.rsq[names(plot.rsq) %in% names(pass)]
-site.rsq <- site.rsq[names(site.rsq) %in% names(pass)]
 
 
 # get densities
@@ -196,7 +206,7 @@ site.d <- zero_truncated_density(site.rsq)
 
 
 #png save line.----
-png(filename=output.path,width=8,height=5,units='in',res=300)
+#png(filename=output.path,width=8,height=5,units='in',res=300)
 
 #global plot settings.----
 par(mfrow = c(1,2))
@@ -222,6 +232,7 @@ png(filename=paste0(pecan_gen_16S_dir, "figures/cal.val_by.tax.scale_ddirch_16S.
 #Calibration/Validation rsq ~ function/phylo scale.----
 x <- 1:length(lev.mu)
 limy <- c(0,max(cal.lev.mu + cal.lev.se))
+limy <- c(0,.6)
 plot(lev.mu ~ x, cex = 2.5, ylim = limy, pch = 16, ylab = NA, xlab = NA, bty='n', xaxt = 'n', col="grey")
 points(cal.lev.mu ~ x, cex = 2.5, pch = 16)
 #arrows(x, lev.mu - lev.se, x1 = x, y1 = lev.mu + lev.se, length=0.00, angle=90, code=3, col = 'black')
