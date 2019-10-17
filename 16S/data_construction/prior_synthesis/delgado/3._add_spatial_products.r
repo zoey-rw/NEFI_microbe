@@ -19,8 +19,7 @@ output.path <- delgado_metadata_spatial.path
 
 # read in data
 d <- read.csv(delgado_metadata_raw.path)
-# subset to northern temperate lats
-#d <- d[d$Latitude < 66.5 & d$Latitude > 23.5,]
+
 # change column names
 colnames(d) <- tolower(colnames(d))
 setnames(d, c("soil_c", "soil_c_n_ratio", "npp2003_2015","ph"), c("pC", "cn", "NPP","pH"))

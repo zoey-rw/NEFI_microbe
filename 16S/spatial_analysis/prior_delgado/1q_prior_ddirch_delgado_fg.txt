@@ -10,7 +10,7 @@
 #$ -pe omp 28
 #
 #Give the job a name
-#$ -N ddirch_prior_delgado_tax
+#$ -N ddirch_prior_delgado_fg
 #
 # Merge stderr into the stdout file, to reduce clutter
 #$ -j y
@@ -37,7 +37,7 @@
 module load jags
 #
 # in the directory specified above, invoke this function:
-Rscript 16S/spatial_analysis/prior_delgado/1._prior_ddirch_delgado.r
+Rscript 16S/spatial_analysis/prior_delgado/1._prior_ddirch_delgado_fg.r
 #
 #
 #End of commands.

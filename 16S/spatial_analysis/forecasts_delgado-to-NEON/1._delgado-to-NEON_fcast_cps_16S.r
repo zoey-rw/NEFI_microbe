@@ -1,6 +1,7 @@
 # forecast to NEON sites using delgao-ramirez calibration models.
 
 rm(list=ls())
+library(data.table)
 source('paths.r')
 source('paths_fall2019.r')
 source('NEFI_functions/tic_toc.r')
@@ -16,7 +17,10 @@ eval(parse(text = script))
 output.path <- NEON_cps_fcast_ddirch_16S.path
 
 #load prior model results.----
-all.mod <- readRDS(prior_delgado_ddirch_16S.path)
+#all.mod <- readRDS(prior_delgado_ddirch_16S.path)
+all.mod <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds")
+all.fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds")
+all.mod <- c(all.mod[1:5], all.fg[1:13])
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_data.path)
@@ -131,7 +135,7 @@ for(i in 1:length(all.mod)){
   #store output as a list and save.----
   output <- list(core.fit,plot.fit,site.fit,core.preds,plot.preds,site.preds,core.sd,plot.sd,site.sd)
   names(output) <- c('core.fit','plot.fit','site.fit',
-                     'core.preds','plot.preds','site.preds',
+                     'core.preds','plot.preds','site.preds', 
                      'core.sd','plot.sd','site.sd')
   fcast.output[[i]] <- output
   cat(paste0(i,' of ',length(all.mod),' forecasts complete. '))

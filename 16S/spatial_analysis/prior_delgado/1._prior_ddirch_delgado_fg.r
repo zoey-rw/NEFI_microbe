@@ -2,8 +2,8 @@
 # from Delgado-Baquerizo et al. 2018 and Ramirez et al. 2018
 
 rm(list = ls())
-cat(paste0("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
-           n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRunning script at ", 
+cat(paste0("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+           Running script at ", 
            Sys.time(),"\n\n\n\n\n\n"))
 library(data.table)
 library(doParallel)
@@ -21,7 +21,7 @@ registerDoParallel(cores=n.cores)
 
 # set output path
 #output.path <- prior_delgado_ddirch_16S.path
-output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds"
+output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds"
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
@@ -36,7 +36,7 @@ x <- d
 rownames(x) <- x$sampleID
 x <- x[,colnames(x) %in% preds]
 #x <- x[1:400,] # testing
- 
+
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
 
@@ -45,9 +45,9 @@ x <- cbind(intercept, x)
 cat('Begin model fitting loop...\n')
 tic()
 output.list <- 
-   foreach(i = 1:5) %dopar% {
+     foreach(i = 6:18) %dopar% {
   #foreach(i = 1:length(y.all)) %dopar% {
-   # i <- 18  
+    # i <- 18  
     y <- y.all[[i]]
     # ensure "other" column is first
     y <- y %>% select(other, everything())
@@ -67,21 +67,22 @@ output.list <-
     }
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                     #adapt = 7001, burnin = 10002, sample = 3003,
-                                     adapt = 70001, burnin = 10002, sample = 70003,
+                                     adapt = 100001, burnin = 10002, sample = 100003,
+                                    # adapt = 120001, burnin = 10002, sample = 3003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
                                      study_id = study_id,
                                      jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags")
     
-cat(paste("Model fit for", names(y.all)[i], "\n"))
-return(fit)    #allows nested loop to work.
-}
+    cat(paste("Model fit for", names(y.all)[i], "\n"))
+    return(fit)    #allows nested loop to work.
+  }
 cat('Model fitting loop complete! ')
 toc()
 
 #output.list <- fit
-names(output.list) <- names(y.all)[1:5]
+names(output.list) <- names(y.all)[6:18]
+#names(output.list) <- names(y.all)[18]
 
 saveRDS(output.list, output.path)

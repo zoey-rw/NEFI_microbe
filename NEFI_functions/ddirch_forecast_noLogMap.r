@@ -8,6 +8,7 @@
 #' @param zero_parameter_uncertainty #turns off drawing from parameter distributions, keeps parameters fixed at means.
 #' @param zero_predictor_uncertainty #turns off drawing from covariate distributions, keeps covaraites fixed at means.
 #' @param zero_process_uncertainty   #turns off process draw from rdirichlet. Basically just makes predictive interval = credible interval.
+#' @param zero_study_variance        #turns off adding variance associated with the study (drawn from normal dist with mean = 0, variance estimated from calibration)
 #'
 #' @return                           #returns a list of forecasts (mean, 95% CI, 95% PI) same length as model list.
 #' @export
@@ -17,7 +18,8 @@ source('NEFI_functions/precision_matrix_match.r')
 ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1000,
                             zero_parameter_uncertainty = F,
                             zero_covariate_uncertainty = F,
-                            zero_process_uncertainty   = F){
+                            zero_process_uncertainty   = F,
+                            zero_study_variance = T){
   #run some tests.----
   if(is.list(mod) == F){
     stop("Your model object isn't a list. It really needs to be.")
@@ -68,7 +70,7 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
     x.m <- mcmc.sample[grep("^x\\.m\\[", names(mcmc.sample))]
     x.m <- matrix(x.m, nrow = ncol(covs), ncol = length(x.m)/ncol(covs))
     
-   # s.effs <- mcmc.sample[grep("study_effect", names(mcmc.sample))]
+    #grab precision of study random effects
     s.tau <-  mcmc.sample[grep("study_tau", names(mcmc.sample))]
     # convert study_tau to SD
     s.eff.sd <- sqrt(1/s.tau)
@@ -110,9 +112,13 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
     #Combine covariates and parameters to make a prediction.----
     pred.x.m <- matrix(NA, ncol=ncol(x.m), nrow = nrow(covs))
     for(k in 1:ncol(x.m)){
+      if (zero_study_variance==FALSE){
       # sample study effects from normal distribution with mean 0 and SD from calibration
       s.eff <- rnorm(1, 0, s.eff.sd)
       pred.x.m[,k] <- exp(now.cov %*% x.m[,k] + s.eff)
+      } else {
+        pred.x.m[,k] <- exp(now.cov %*% x.m[,k])
+      }
       }
     #get mean prediction and then draw from dirichlet distribution.
     cred.out[[j]] <- pred.x.m / rowSums(pred.x.m)
