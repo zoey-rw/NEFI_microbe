@@ -20,8 +20,8 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 # set output path
-#output.path <- prior_delgado_ddirch_16S.path
-output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds"
+output.path <- prior_delgado_ddirch_16S.path
+#output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_9tax.rds"
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
@@ -68,12 +68,13 @@ output.list <-
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
                                      #adapt = 7001, burnin = 10002, sample = 3003,
-                                     adapt = 70001, burnin = 10002, sample = 70003,
+                                     adapt = 70001, burnin = 10002, sample = 30003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
                                      study_id = study_id,
-                                     jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags")
+                                     jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags",
+                                     thin = 5)
     
 cat(paste("Model fit for", names(y.all)[i], "\n"))
 return(fit)    #allows nested loop to work.
@@ -82,6 +83,6 @@ cat('Model fitting loop complete! ')
 toc()
 
 #output.list <- fit
-names(output.list) <- names(y.all)[1:5]
+names(output.list) <- names(y.all)
 
 saveRDS(output.list, output.path)

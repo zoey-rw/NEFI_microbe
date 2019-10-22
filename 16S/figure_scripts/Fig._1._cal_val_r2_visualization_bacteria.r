@@ -2,9 +2,10 @@
 rm(list=ls())
 source('paths.r')
 source('paths_fall2019.r')
-source('NEFI_functions/zero_truncated_density.r')
+#source('NEFI_functions/zero_truncated_density.r')
 source('NEFI_functions/rsq_1.1.r')
 library(Metrics)
+library(RCurl)
 
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/zero_truncated_density.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
@@ -16,8 +17,10 @@ eval(parse(text = script))
 output.path <- 'test.png'
 
 #Load calibration data.----
-#cal <- readRDS(ted_ITS.prior_dmulti.ddirch_fg_JAGSfit) #failed multinomial-dirichlet models.
-cal <- readRDS(prior_delgado_ddirch_16S.path)  #dirichlet-only.
+#cal <- readRDS(prior_delgado_ddirch_16S.path)  #dirichlet-only.
+all.mod <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds")
+all.fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds")
+cal <- c(all.mod[1:5], all.fg[1:13])
 
 #Get calibration r2 values.----
 cal.r2 <- list()
@@ -310,7 +313,7 @@ axis(1, labels = F)
 
 text(x=x+0.05, y = -.03, labels= names(cal.mu), srt=45, adj=1, xpd=TRUE, cex = 1.25)
 #legend
-legend(x = 1, y = 0.1, legend = c('calibration','validation'), col =c('black','gray'), bty = 'n', pch = 16, pt.cex = 2.5, cex = 1.2)
+legend(x = 1, y = 0.1, legend = c('calibration','validation'), col =c('black','gray'), bty = 'n', pch = 16, pt.cex = 2.5, cex = 1.2, y.intersp = 2.6)
 mtext('(f)', side = 3, adj = 0.95, line = -2)
 
 #Outer labels.----

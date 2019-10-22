@@ -13,6 +13,9 @@ output.path <- delgado_ramirez_abun.path
 ramirez_tax_all <- readRDS(ramirez_tax_fun_abun.path)
 delgado_tax_all <- readRDS(delgado_16S_common_phylo_fg_abun.path)
 
+# read in mapping data for subsetting 
+x <- readRDS(delgado_ramirez_bahram_mapping.path)
+
 # find number for majority of the samples (currently not used)
 cutoff <- .95
 
@@ -20,12 +23,13 @@ y.lev <- list()
 for (k in 1:length(ramirez_tax_all)){
   d.ram <- ramirez_tax_all[[k]]
   colnames(d.ram) <- tolower(colnames(d.ram))
+  d.ram <- d.ram[rownames(d.ram) %in% x$sampleID,]
   
   delgado_tax <- delgado_tax_all[[k]]$rel.abundances
   colnames(delgado_tax) <- tolower(colnames(delgado_tax))
   d.delgado <- as.data.frame(delgado_tax)
   d.delgado <- d.delgado[,colSums(d.delgado) > 0]
-
+  d.delgado <- d.delgado[rownames(d.delgado) %in% x$sampleID,]
   
   common_col <- Reduce(intersect, list(colnames(d.ram), colnames(d.delgado)))
   y.ram <- d.ram[,colnames(d.ram) %in% common_col]  

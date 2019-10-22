@@ -3,6 +3,7 @@
 
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/crib_fun.r')
 library(data.table)
 
@@ -10,7 +11,10 @@ library(data.table)
 # load forecast 
 all_fcasts <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 # load prior model results
-all_fits <- readRDS(prior_delgado_ddirch_16S.path)
+#all_fits <- readRDS(prior_delgado_ddirch_16S.path)
+all_fits <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds")
+all.fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds")
+all_fits <- c(all_fits[1:5], all.fg[1:13])
 
 # read in obs table that links deprecatedVialID and geneticSampleID
 #map <- readRDS(obs.table_16S.path)

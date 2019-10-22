@@ -14,8 +14,8 @@ output.path <- delgado_ramirez_bahram_mapping.path
 map.ram <- readRDS(ramirez_clean_map.path)
 map.ram$source <- "Ramirez"
 map.ram$study_id <- map.ram$dataset
-map.ram$new.C.5 <- extract_C(map.ram$latitude, map.ram$longitude, topsoil=T)/10
-map.ram$new.C.30 <- extract_C(map.ram$latitude, map.ram$longitude, topsoil=F)/10
+map.ram$pC <- extract_C(map.ram$latitude, map.ram$longitude, topsoil=T)/10
+#map.ram$new.C.30 <- extract_C(map.ram$latitude, map.ram$longitude, topsoil=F)/10
 map.ram <- map.ram[map.ram$sequencing_platform != "454",]
 map.ram$pH <- map.ram$ph
 
@@ -24,8 +24,8 @@ map.ram$pH <- map.ram$ph
 map.del <- readRDS(delgado_metadata_spatial.path)
 map.del$source <- "Delgado"
 map.del$study_id <- "Delgado"
-map.del$new.C.5 <- extract_C(map.del$latitude, map.del$longitude, topsoil=T)/10
-map.del$new.C.30 <- extract_C(map.del$latitude, map.del$longitude, topsoil=F)/10
+#map.del$new.C.5 <- extract_C(map.del$latitude, map.del$longitude, topsoil=T)/10
+#map.del$new.C.30 <- extract_C(map.del$latitude, map.del$longitude, topsoil=F)/10
 
 
 # fill with NAs? or, only common columns?

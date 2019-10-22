@@ -1,13 +1,14 @@
 #calculating spatial signal in taxa by phylo scale across NEON, using entire network.
 rm(list=ls())
 source('paths.r')
-source('paths_fall2019.r')
 library(boot)
 library(RCurl)
 script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
 eval(parse(text = script))
+source('paths_fall2019.r')
+
 #output path.----
-output.path <- paste0(pecan_gen_16S_dir, 'figures/Moran_I_figure_16S_ITS.png')
+output.path <- paste0(scc_gen_16S_dir, 'figures/Moran_I_figure_16S.png')
 
 #logit transform observed values and model residuals?----
 do_logit <- F
@@ -165,7 +166,7 @@ b_avg_16S$x <- c(1:(nrow(b_avg_16S)))
 
 
 #setup figure output.----
-#png(filename=output.path,width=7,height=5,units='in',res=300)
+png(filename=output.path,width=7,height=5,units='in',res=300)
 
 #plot.-----
 par(mfrow=c(1,1), mar = c(5,3,.5,1), oma = c(1,1.5,1,1))
