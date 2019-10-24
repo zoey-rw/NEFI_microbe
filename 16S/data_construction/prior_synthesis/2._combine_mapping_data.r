@@ -24,6 +24,7 @@ map.ram$pH <- map.ram$ph
 map.del <- readRDS(delgado_metadata_spatial.path)
 map.del$source <- "Delgado"
 map.del$study_id <- "Delgado"
+map.del$depth_max <- 7.5
 #map.del$new.C.5 <- extract_C(map.del$latitude, map.del$longitude, topsoil=T)/10
 #map.del$new.C.30 <- extract_C(map.del$latitude, map.del$longitude, topsoil=F)/10
 

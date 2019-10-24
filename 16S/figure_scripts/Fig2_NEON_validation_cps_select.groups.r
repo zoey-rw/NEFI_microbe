@@ -1,43 +1,20 @@
-#Plotting phyla and functional groups - from Multinomial Dirichlet fit.
+#Plotting phyla and functional groups - from Dirichlet fit.
 #Building so its easy to update which representative groups we use.
-#General method to combine phylo and functional data/casts, and then loop over to plot.
-#Core level plots work. Next is plot-level.
-#plot level close- seems to be plotting too many points? summary stats seem right.
+
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 
 #set output path.----
-#output.path <- 'test.png'
-#output.path <- NEON_cps_rep.groups_forecast_figure.path
+output.path <- paste0(scc_gen_16S_dir, "figures/NEON_cps_rep.groups_forecast_figure_16S.png")
 
-#groups of interest----
-namey <- tolower(c("Proteobacteria", "Verrucomicrobia", "Actinobacteria", 
-           "Planctomycetes", "Chloroflexi", "Acidobacteria", "Firmicutes", 
-           "Bacteroidetes", "Gemmatimonadetes", "Armatimonadetes"))
-level <- rep('phylum', length(namey))
-#namey <- c('Chloroflexi','Chitinolytic','Mycobacterium')
-#level <- c('phylum','function_group','genus')
-
-namey <- c("Assim_nitrite_reduction", "Dissim_nitrite_reduction", "Assim_nitrate_reduction", 
-           "N_fixation", "Dissim_nitrate_reduction", "Nitrification", "Denitrification", 
-           "Cellulolytic", "Chitinolytic", "Lignolytic", "Methanotroph", 
-           "copiotroph", "oligotroph")
-#level <- rep('functional_group', length(namey))
-level <- c(namey[1:11], "Cop_olig", "Cop_olig")
-
-namey <- c("Chloroflexi", "Firmicutes", "Solibacteres")
-level <- c("phylum", "phylum", "class")
-
-namey <- tolower(c("Chloroflexi", "Firmicutes", "Solibacteres"))
-level <- c("phylum", "phylum", "class")
-
+namey <- tolower(c("oligotroph", "rhodoplanes", "proteobacteria"))
+level <- c("oligotroph", "genus", "phylum")
 
 #grab forecasts and observations of functional and phylogenetic groups.----
 pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)
 map <- readRDS(core_obs.path)
-#names(pl.cast )[names(pl.cast ) == 'fg'] <- 'function_group'
-#names(pl.truth)[names(pl.truth) == 'fg'] <- 'function_group'
 
 #grab the data of interest based on 'namey', set above.
 pl.core_mu <- list()
@@ -74,15 +51,9 @@ pl.plot_lo95 <- do.call(cbind,Filter(length,pl.plot_lo95))
 pl.plot_hi95 <- do.call(cbind,Filter(length,pl.plot_hi95))
 pl.site_lo95 <- do.call(cbind,Filter(length,pl.site_lo95))
 pl.site_hi95 <- do.call(cbind,Filter(length,pl.site_hi95))
-#name problem.
-#rownames(pl.core_mu) <- gsub('-GEN','',rownames(pl.core_mu))
-
-#DEFINE OUTLIER SITES for groups- DSNY-ECM in this case.----
-#out_sites <- c('DSNY')
-out_spp   <- c('Ectomycorrhizal')
 
 #png save line.----
-#png(filename=output.path,width=12,height=12,units='in',res=300)
+png(filename=output.path,width=12,height=12,units='in',res=300)
 
 #global plot settings.----
 par(mfrow = c(3,3),
@@ -103,7 +74,10 @@ bf_col <- 'magenta1' #best-fit regression line color.
 for(i in 1:length(names)){
   #core.level.----
   #organize data.
-  fcast <- pl.cast[[i]]$core.fit
+  
+  # Zoey changed this index to the "level" vector instead of "namey" vector
+  fcast <- pl.cast[[level[[i]]]]$core.fit
+  
   obs <- pl.core_mu
   truth <- pl.core_mu
 
@@ -135,19 +109,14 @@ for(i in 1:length(names)){
   obs.pos <- which(colnames(obs) == names[i])
   obs.mu   <- obs[,obs.pos][order(match(names(obs[,c(fungi_name)]),names(mu)))]
   
-  #make DSNY sites light gray for Ectos.
   obs.cols <- rep('black',nrow(obs))
-  # if(names[i] %in% out_spp){
-  #   obs.cols <- ifelse(substring(names(obs.mu),1,4) %in% out_sites,out.color,'black')
-  # }
-  
+ 
   #get y-limit.
   obs_limit <- max(obs.mu)
   if(max(pi_0.975) > as.numeric(obs_limit)){obs_limit <- max(pi_0.975)}
   y_max <- as.numeric(obs_limit)*1.05
   if(y_max > 0.95){y_max <- 1}
-  if(names[i] == 'Arbuscular'){y_max = 0.1}
-  
+
   #plot
   plot(obs.mu ~ mu, cex = core.cex, pch=glob.pch, ylim=c(0,y_max), ylab=NA, xlab = NA, col = obs.cols)
   mod_fit <- lm(obs.mu ~ mu)
@@ -327,7 +296,6 @@ for(i in 1:length(names)){
   state <- paste0(in_it,'% of obs. within interval.')
   mtext(state,side = 3, line = -1.3, adj = 0.05)
 }
-
 #outer labels.----
 mtext('core-level', side = 3, line = -1.8, adj = 0.11, cex = outer.cex, outer = T)
 mtext('plot-level', side = 3, line = -1.8, adj = 0.50, cex = outer.cex, outer = T)
@@ -337,3 +305,4 @@ mtext('predicted relative abundance', side = 1, line = 2, cex = outer.cex, outer
 
 #end plot.----
 dev.off()
+

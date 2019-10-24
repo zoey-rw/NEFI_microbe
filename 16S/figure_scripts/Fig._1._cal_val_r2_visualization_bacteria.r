@@ -14,7 +14,7 @@ eval(parse(text = script))
 
 
 #set output path.----
-output.path <- 'test.png'
+output.path <- paste0(scc_gen_16S_dir, "figures/Fig1_cal_val_scale.png")
 
 #Load calibration data.----
 #cal <- readRDS(prior_delgado_ddirch_16S.path)  #dirichlet-only.
@@ -240,7 +240,7 @@ plot.rmse.d <- zero_truncated_density(plot.rmse)
 site.rmse.d <- zero_truncated_density(site.rmse)
 
 #png save line.----
-#png(filename=output.path,width=8,height=6,units='in',res=300)
+png(filename=output.path,width=8,height=6,units='in',res=300)
 
 #global plot settings.----
 #par(mfrow = c(2,3), mar = c(5,4,2,1), oma = c(1,1,1,1))

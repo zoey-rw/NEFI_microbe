@@ -2,9 +2,9 @@
 # from Delgado-Baquerizo et al. 2018 and Ramirez et al. 2018
 
 rm(list = ls())
-cat(paste0("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
-           n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRunning script at ", 
-           Sys.time(),"\n\n\n\n\n\n"))
+cat(paste0("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n
+           Running script at ", Sys.time(),
+           "\n\n\n\n\n\n"))
 library(data.table)
 library(doParallel)
 library(dplyr)
@@ -13,7 +13,6 @@ source('NEFI_functions/crib_fun.r')
 source('paths.r')
 source('paths_fall2019.r')
 source('NEFI_functions/ddirch_site.level_JAGS_study.effects.r')
-#source('NEFI_functions/ddirch_site.level_JAGS_no.missing.data.r')
 
 #detect and register cores.
 n.cores <- detectCores()
@@ -21,12 +20,10 @@ registerDoParallel(cores=n.cores)
 
 # set output path
 output.path <- prior_delgado_ddirch_16S.path
-#output.path <- "/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_9tax.rds"
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
 d <- readRDS(delgado_ramirez_bahram_mapping.path)
-setnames(d, old = c("new.C.5"), new = c("pC"))
 
 # set predictors of interest
 preds <- c("pC","pH","forest","NPP","map","mat","relEM","ndep.glob","study_id")
@@ -45,8 +42,7 @@ x <- cbind(intercept, x)
 cat('Begin model fitting loop...\n')
 tic()
 output.list <- 
-   foreach(i = 1:5) %dopar% {
-  #foreach(i = 1:length(y.all)) %dopar% {
+  foreach(i = 1:length(y.all)) %dopar% {
    # i <- 18  
     y <- y.all[[i]]
     # ensure "other" column is first
@@ -58,7 +54,7 @@ output.list <-
     y <- y[rownames(y) %in% rownames(x),]
     y <- y[match(rownames(x), rownames(y)),] #order abundance table to match the metadata file
     
-    # study_id as list
+    # study_id as integer
     study_id <- as.integer(as.factor(x$study_id))
     x$study_id <- NULL
     
@@ -68,7 +64,7 @@ output.list <-
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
                                      #adapt = 7001, burnin = 10002, sample = 3003,
-                                     adapt = 70001, burnin = 10002, sample = 30003,
+                                     adapt = 40001, burnin = 10002, sample = 20003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
