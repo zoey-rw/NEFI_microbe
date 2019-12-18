@@ -356,6 +356,7 @@ dir <- paste0(prior.data.dir, 'Ramirez/')
 cmd <- paste0('mkdir -p ',dir)
 system(cmd)
 ramirez_raw_mapping_and_abundance.path <- paste0(dir,'mapping_and_abundance.rds')
+ramirez_raw_CN_data.path <- paste0(dir,'merged_spec_env2.csv')
 ramirez_clean_map.path <- paste0(dir,'clean_map.rds')
 ramirez_tax_fun_abun.path <- paste0(dir,'tax_fun_abun.rds')
 
