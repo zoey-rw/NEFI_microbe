@@ -13,11 +13,12 @@ magic.merge <- function(x,y){
                inner_join(x))
 }
 
+
 file.dir <- file.path(scc_gen_16S_dir, "prior_abundance_mapping/Ramirez/")
 
 # assuming file2 is the right one to use because it has all the cols/rows of file3, and more than file1.
-file2 <- fread(file.path(file.dir, "merged_spec_env2.csv"), stringsAsFactors=FALSE, encoding="Latin-1")
-
+file2_raw <- fread(file.path(file.dir, "merged_spec_env2.csv"), stringsAsFactors=FALSE, encoding="Latin-1")
+file2 <- file2_raw
 
 # read in metadata for study 24
 env_24 <- fread(file.path(file.dir, "env_24.csv"), stringsAsFactors=FALSE, encoding="Latin-1")
@@ -51,18 +52,25 @@ file2_bac  <- subset(file2, select = colnames(file2) %in% file2_bac_names)
 colnames(file2_bac) <- sapply(strsplit(colnames(file2_bac), "_"), `[`, 3)
 file2_bac[, c("dataset","Sample_Name_Study_refno2")] <- file2[,c("dataset","Sample_Name_Study_refno2")]
 
-# now let's use the taxonomy to merge file2 and the metadata from the taxonomy file. then use that metadata to get values from env24 file.
+# now let's use the taxonomy to merge file2 and the lat/lon/pH from the taxonomy file. 
 bac_merge <- bac[,c("acidobacteria", "actinobacteria", "bacteroidetes", "verrucomicrobia","dataset","latitude","longitude","pH")]
 file2_bac_merge <- file2_bac[,c("acidobacteria", "actinobacteria", "bacteroidetes", "verrucomicrobia","dataset","Sample_Name_Study_refno2")]
 tax_merged <- merge(file2_bac_merge, bac_merge)
-tax_merged[tax_merged$dataset=="X24",]
 
+# library(dplyr)
+# df2 <-  mutate_if(file2_bac_merge, is.numeric, round, 5)
+# df3 <- mutate_if(bac_merge, is.numeric, round, 5)
+# tax_merged2 <- merge(round_df(file2_bac_merge, 4), round_df(bac_merge,4))
+# tax_merged[tax_merged$dataset=="X24",]
 
 colnames(tax_merged)[1:4] <- c("p_bacteria_acidobacteria", "p_bacteria_actinobacteria", "p_bacteria_bacteroidetes", "p_bacteria_verrucomicrobia")
 file2$latitude <- as.numeric(file2$latitude)
 file2$longitude <- as.numeric(file2$longitude)
-
 df <- merge(file2, tax_merged, all.x=T, by = intersect(colnames(file2), colnames(tax_merged)))
+df <- merge(file2, tax_merged[,c("dataset","Sample_Name_Study_refno2","latitude","longitude","pH")], all=T, by = c("dataset","Sample_Name_Study_refno2"))
+df$pH <- ifelse(is.na(df$pH.x), df$pH.y, df$pH.x)
+df$latitude <- ifelse(is.na(df$latitude.x), df$latitude.y, df$latitude.x)
+df$longitude <- ifelse(is.na(df$longitude.x), df$longitude.y, df$longitude.x)
 
 # # fix a bunch of file type issues
 # df$latitude <- as.numeric(df$latitude)
@@ -86,10 +94,12 @@ df <- merge(file2, tax_merged, all.x=T, by = intersect(colnames(file2), colnames
 env_24$dataset <- "X24"
 env_merge <- env_24[,c("Study_refno", "pH", "latitude","longitude", "C", "N", "moisture", "habitat","description","Natural_or_Managed","sequening_platform")]
 df_24 <- df[df$Study_refno=="24",]
+df_24[is.na(df_24$longitude) | df_24$longitude>0]$longitude <- -73.96 # some longitudes are missing or positive
 out_24 <- magic.merge(env_merge, df_24)
 
 df_no24 <- df[df$Study_refno!="24",]
 out <- rbind(out_24, df_no24)
+
 
 
 #meta_24 <- merge(env_24[,c("Study_refno", "pH", "latitude","longitude", "C", "N", "moisture", "habitat","description","Natural_or_Managed","sequening_platform")], df, by = c("latitude","longitude","pH"))
@@ -111,14 +121,11 @@ out <- rbind(out_24, df_no24)
 # out$sequening_platform <- ifelse(!is.na(out$sequening_platform.x), out$sequening_platform.x, out$sequening_platform.y)
 
 
-# get latitude and longitude back into this df
+# subset to complete cases, just to check
 wanted_vars <- out[,c("Study_refno","Sample_Name_Study_refno2","dataset", "pH", "latitude","longitude", "C", "N", "moisture", "habitat")]
 dim(wanted_vars)
 dim(wanted_vars[complete.cases(wanted_vars),])
 wanted_vars[!complete.cases(wanted_vars),]
-
-
-
 
 
 
