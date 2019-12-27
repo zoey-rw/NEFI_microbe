@@ -12,16 +12,35 @@ output.path <- ramirez_tax_fun_abun.path
 tax_fun <- readRDS(paste0(pecan_gen_16S_dir, "reference_data/bacteria_tax_to_function.rds"))
 
 #### Read in relative abundance data ####
-ramirez <- readRDS(ramirez_raw_mapping_and_abundance.path)
-tax <- ramirez[[2]]
-rownames(tax) <- tax$sampleID
-tax$d__unassigned <- NULL # remove accidental column
+ramirez <- as.data.frame(readRDS(ramirez_raw_mapping_and_abundance.path))
+
+tax <- ramirez[,grep("_bacteria", colnames(ramirez))]
+tax$dataset <- "Ramirez"
+rownames(tax) <- ramirez$Sample_Name_Study_refno2
+# remove empty columns
+tax <- tax[,colSums(tax) > 0]
+
+
+#load data.----
+# download name-matched file
+name.matched <- curl::curl_download("https://static-content.springer.com/esm/art%3A10.1038%2Fs41564-017-0062-x/MediaObjects/41564_2017_62_MOESM7_ESM.zip", tempfile(fileext = ".zip"))
+name.matched <- unzip(unzip(name.matched))
+name.matched <- as.data.frame(data.table::fread(name.matched[[1]]))
+name.matched$pH <- name.matched$ph
+
+
+dirty <- ramirez[,c("dataset","p_bacteria_planctomycetes","p_bacteria_proteobacteria","p_bacteria_chloroflexi","p_bacteria_actinobacteria","Sample_Name_Study_refno2","pH","latitude","longitude","C","N","forest")]
+colnames(dirty)[1:6] <- c("dataset","p__bacteria__planctomycetes","p__bacteria__proteobacteria","p__bacteria__chloroflexi","p__bacteria__actinobacteria","sampleID")
+clean <- name.matched
+res <- merge(dirty, clean, by = c("dataset","p__bacteria__planctomycetes","p__bacteria__proteobacteria","p__bacteria__chloroflexi","p__bacteria__actinobacteria"), all=F)
+tax <- res
 
 # assign function to taxonomy
 pathway_names <- colnames(tax_fun)[3:15]
 
 # taxon-function assignments
-tax.fun.out   <- tax[, c(1, grep("g__bacteria", colnames(tax)))]
+tax.fun.out   <- as.data.table(tax[, c(1, grep("g__bacteria", colnames(tax)))])
+genus   <- tax[, c(1, grep("g__bacteria", colnames(tax)))]
 #tax.fun.out[, pathway_names] <- NA
 
 for (i in 1:length(pathway_names)) {
@@ -31,21 +50,21 @@ for (i in 1:length(pathway_names)) {
   # Classifications from literature search (multiple taxon levels)
   has_pathway <- tax_fun[tax_fun[,p] == 1,]
   levels <- c("Phylum", "Class", "Order", "Family", "Genus", "Species")
-    has_pathway_taxa <- tolower(has_pathway$Taxon)
-    listed <- sapply(all.levels, function(x) x %in% has_pathway_taxa)
-    in_has_pathway <- sapply(listed, function(x) any(x == T))
-    match <- colnames(genus)[in_has_pathway]
-    # create new functional columns with the per-sample sum 
-    tax.fun.out <- tax.fun.out %>% 
-      select(match) %>% 
-      reduce(`+`) %>%
-      mutate(tax.fun.out, newcol = .) %>% 
-      rename(!!p := newcol) 
-  }
+  has_pathway_taxa <- tolower(has_pathway$Taxon)
+  listed <- sapply(all.levels, function(x) x %in% has_pathway_taxa)
+  in_has_pathway <- sapply(listed, function(x) any(x == T))
+  match <- colnames(genus)[in_has_pathway]
+  # create new functional columns with the per-sample sum 
+  tax.fun.out <- tax.fun.out %>% 
+    dplyr::select(match) %>% 
+    reduce(`+`) %>%
+    mutate(tax.fun.out, newcol = .) %>% 
+    dplyr::rename(!!p := newcol) 
+}
 
 rownames(tax.fun.out) <- rownames(tax)
 
-# assign abundances by functional group
+# separate abundances and create "other" column, by functional group
 fg <- tax.fun.out[, 2263:2275]
 fg.list <- list()
 for (i in 1:13) {
@@ -67,13 +86,17 @@ genus   <- tax[, c(1, grep("g__bacteria", colnames(tax)))]
 tax_in <- list(phylum, class, order, family, genus)
 tax_out <- list()
 for (i in 1:5){
-  df <- tax_in[[i]]
+    df <- tax_in[[i]]
   df$dataset <- NULL
   newnames <- strsplit(colnames(df), "__")
   newnames <- rapply(newnames, function(x) tail(x, 1))
   colnames(df) <- newnames
   colnames(df) <- gsub("_", " ", colnames(df))
   df <- as.data.frame(t(rowsum(t(df), group = rownames(t(df))))) # collapse all of the "unassigned" columns
+  rowSums(df) > 1
+  df$unassigned <- NULL
+  df$other <- 0
+  df[rowSums(df) < 1,]$other <- 1-rowSums(df[rowSums(df) < 1,])
   df$dataset <- tax$dataset
   tax_out[[i]] <- df
 }
@@ -81,4 +104,3 @@ names(tax_out) <- c("phylum", "class", "order", "family", "genus")
 
 out <- c(tax_out, fg.list)
 saveRDS(out, output.path)
-  
