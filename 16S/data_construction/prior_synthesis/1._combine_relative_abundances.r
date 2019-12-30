@@ -22,8 +22,9 @@ cutoff <- .95
 y.lev <- list() 
 for (k in 1:length(ramirez_tax_all)){
   d.ram <- ramirez_tax_all[[k]]
-  colnames(d.ram) <- tolower(colnames(d.ram))
-  d.ram <- d.ram[rownames(d.ram) %in% x$sampleID,]
+  #colnames(d.ram) <- tolower(colnames(d.ram))
+  d.ram <- d.ram[d.ram$sampleID %in% x$sampleID,]
+  rownames(d.ram) <- d.ram$sampleID
   
   delgado_tax <- delgado_tax_all[[k]]$rel.abundances
   colnames(delgado_tax) <- tolower(colnames(delgado_tax))
@@ -43,14 +44,15 @@ for (k in 1:length(ramirez_tax_all)){
   # subset to taxa present in the majority of samples
   n_maj <- nrow(y.all.source) * cutoff
   n.presences <- colSums(y.all.source != 0)
-  
+  if (k < 6) n.presences <- n.presences[names(n.presences) != c("other")] 
+
   # get the 10 most abundant taxa (+ sampleID)
-  y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),10))]
+  y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),9)), drop=F]
   #y_maj <- y.all.source[,colSums(y.all.source != 0) > n_maj]
   row.name.save <- rownames(y_maj)
 
   # cribari-neto transformation
-  y <- data.frame(lapply(y_maj,crib_fun, N = nrow(y_maj) * ncol(y_maj)))
+  y <- data.frame(lapply(y_maj, crib_fun, N = nrow(y_maj) * ncol(y_maj)))
   rownames(y) <- row.name.save
   
   #in the case where one column actually needs to be a zero for a row to prevent to summing over 1...
@@ -67,7 +69,11 @@ for (k in 1:length(ramirez_tax_all)){
   y$other  <- 1 - rowSums(y)
   
   prob.rows <- which(y$other==0)
-  if (length(prob.rows) > 0) y <- y[-prob.rows,]
+  if (length(prob.rows) > 0) {
+    print(k)
+    print(prob.rows)
+    y <- y[-prob.rows,]
+  }
  # y[prob.rows,] <- data.frame(lapply(y[prob.rows,],crib_fun, N = nrow(y[prob.rows,]) * ncol(y[prob.rows,])))
   
   y.lev[[k]] <- y

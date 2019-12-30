@@ -17,16 +17,13 @@ eval(parse(text = script))
 output.path <- NEON_cps_fcast_ddirch_16S.path
 
 #load prior model results.----
-#all.mod <- readRDS(prior_delgado_ddirch_16S.path)
-all.mod <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds")
-all.fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds")
-all.mod <- c(all.mod[1:5], all.fg[1:13])
+all.mod <- readRDS(prior_delgado_ddirch_16S.path)
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_data.path)
 dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
 dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
-dat <- mapply(cbind, dat, "study_id"=30)
+dat <- mapply(cbind, dat, "study_id"=200)
 
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
@@ -128,6 +125,7 @@ for(i in 1:length(all.mod)){
 
     tic()
   mod <- all.mod[[i]]
+  mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 3000, collapse.chains = FALSE)
   core.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)	
   plot.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)	
   site.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)
