@@ -16,18 +16,18 @@ source('NEFI_functions/extract_EM.r')
 output.path <- ramirez_clean_map.path
 
 #load 16S meta data file with lat/long
-d <- as.data.frame(readRDS(ramirez_raw_mapping_and_abundance.path))
+d <- readRDS(ramirez_raw_mapping_and_abundance.path)
 
 # removing taxonomic data 
-metadata.cols <- colnames(d)[!grepl("^[dpcofgs]_[bacteria]", colnames(d))]
-metadata.cols <- metadata.cols[!grepl("^[dpcofgs]_[vu]", metadata.cols)]
-d <- d[,which(colnames(d) %in% metadata.cols)]
+#metadata.cols <- colnames(d)[!grepl("^[phylum|class|order|family|genus]", colnames(d))]
+metadata.cols <- colnames(d)[!grepl("^[dpcofgs]__[bacteria]", colnames(d))]
+metadata.cols <- metadata.cols[!grepl("^[dpcofgs]__[vu]", metadata.cols)]
+d <- d[,..metadata.cols]
 
-d$sampleID <- d$Sample_Name_Study_refno2
-rownames(d) <- d$sampleID
-d$latitude <- as.numeric(d$latitude)
-d$longitude <- as.numeric(d$longitude)
-d$altitude.elevation..meter. <- as.numeric(d$altitude.elevation..meter.)
+#rownames(d) <- d$sampleID
+# d$latitude <- as.numeric(d$latitude.x)
+# d$longitude <- as.numeric(d$longitude.x)
+#d$altitude.elevation..meter. <- as.numeric(d$altitude.elevation..meter.)
 # remove studies without lat/lon (would be cool to get this netherlands one back later)
 d <- d[!is.na(d$latitude),]
 #extract worldclim.
@@ -36,7 +36,9 @@ d <- d[!is.na(d$latitude),]
 # clim <- worldclim2_grab(d$latitude,d$longitude,d$altitude.elevation..meter.)
 # clim$aridity <- arid_extract(d$latitude,d$longitude)
 # on SCC: 
-clim <- worldclim2_grab(d$latitude,d$longitude,d$altitude.elevation..meter., worldclim2_folder = "/projectnb/talbot-lab-data/spatial_raster_data/WorldClim2/")
+clim <- worldclim2_grab(d$latitude,d$longitude,
+                        #d$altitude.elevation..meter.,
+                        worldclim2_folder = "/projectnb/talbot-lab-data/spatial_raster_data/WorldClim2/")
 clim$aridity <- arid_extract(d$latitude,d$longitude, folder = "/projectnb/talbot-lab-data/spatial_raster_data/Global_Aridity/aridity/")
 
 #extract N deposition. Half of these are NA because our Ndep product only covers the United States.

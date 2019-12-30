@@ -19,7 +19,7 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 # set output path and predictors of interest
-relEM <- T # include ectomycorrhizal trees as a predictor?
+relEM <- F # include ectomycorrhizal trees as a predictor?
 if (relEM==T){
   output.path <- prior_delgado_ddirch_16S_with_relEM.path
   preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
