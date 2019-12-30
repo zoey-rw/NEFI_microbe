@@ -18,15 +18,19 @@ source('NEFI_functions/ddirch_site.level_JAGS_study.effects.r')
 n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
-# set output path
-output.path <- prior_delgado_ddirch_16S.path
+# set output path and predictors of interest
+relEM <- T # include ectomycorrhizal trees as a predictor?
+if (relEM==T){
+  output.path <- prior_delgado_ddirch_16S_with_relEM.path
+  preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
+} else {
+  output.path <- prior_delgado_ddirch_16S.path
+  preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","study_id")
+}
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
 d <- readRDS(delgado_ramirez_bahram_mapping.path)
-
-# set predictors of interest
-preds <- c("pC","pH","forest","NPP","map","mat","relEM","ndep.glob","study_id")
 
 # format data
 x <- d
@@ -36,7 +40,7 @@ x <- x[,colnames(x) %in% preds]
  
 intercept <- rep(1, nrow(x))
 x <- cbind(intercept, x)
-
+d <- x
 
 #fit model using function.
 cat('Begin model fitting loop...\n')
@@ -46,9 +50,9 @@ output.list <-
    # i <- 18  
     y <- y.all[[i]]
     # ensure "other" column is first
-    y <- y %>% select(other, everything())
+    y <- y %>% dplyr::select(other, everything())
     y <- as.data.frame(y)
-    x <- x[complete.cases(x),]
+    x <- d[complete.cases(d),]
     y <- y[complete.cases(y),]
     x <- x[rownames(x) %in% rownames(y),]
     y <- y[rownames(y) %in% rownames(x),]
@@ -63,8 +67,8 @@ output.list <-
     }
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                     #adapt = 7001, burnin = 10002, sample = 3003,
-                                     adapt = 40001, burnin = 10002, sample = 20003,
+                                     #adapt = 1001, burnin = 102, sample = 503,
+                                     adapt = 30001, burnin = 10002, sample = 5003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',

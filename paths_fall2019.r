@@ -383,6 +383,7 @@ NEON_observation_uncertainty_plot_16S.path <- paste0(dir,'NEON_observation_uncer
 HARV_sampling_effort_analysis_16S.path <- paste0(dir, "HARV_sampling_effort_analysis_16S.rds")
 NEON_sampling_effort_analysis_plot.level_16S.path <- paste0(dir, "NEON_sampling_effort_analysis_plot.level_16S.rds")
 prior_delgado_ddirch_16S.path <- paste0(dir, "prior_delgado_ddirch_16S.rds")
+prior_delgado_ddirch_16S_with_relEM.path <- paste0(dir, "prior_delgado_ddirch_16S_with_relEM.rds")
 
   #### 16S/scc_gen/JAGS_output/cross_val: cross-validation calibration/forecasts at NEON ####
   dir <- paste0(scc_gen_16S_dir, "JAGS_output/cross_val/") 
