@@ -17,7 +17,7 @@ eval(parse(text = script))
 output.path <- paste0(scc_gen_16S_dir, "figures/Fig1_cal_val_scale.png")
 
 #Load calibration data.----
-#cal <- readRDS(prior_delgado_ddirch_16S.path)  #dirichlet-only.
+cal <- readRDS(prior_delgado_ddirch_16S.path)  #dirichlet-only.
 all.mod <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_tax.rds")
 all.fg <- readRDS("/projectnb/talbot-lab-data/NEFI_data/16S/scc_gen/JAGS_output/prior_delgado_ddirch_16S_fg.rds")
 cal <- c(all.mod[1:5], all.fg[1:13])
