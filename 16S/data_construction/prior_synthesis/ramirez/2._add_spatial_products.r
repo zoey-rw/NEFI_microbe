@@ -54,9 +54,8 @@ NPP <- extract_npp(d$latitude, d$longitude, path="/projectnb/talbot-lab-data/NEF
 # from Ackerman et al.: https://conservancy.umn.edu/handle/11299/197613
 #ndep.glob <- extract.ndep.global(d$latitude, d$longitude)
 
-# extract % basal area of ecto trees
-#relEM <- extract_EM(d$latitude, d$longitude, path = "/home/zrwerbin/em_1degreeMasked.nc")
-relEM <- extract_EM(d$latitude, d$longitude)
+# extract % basal area of ecto trees (using the not-masked raster)
+relEM <- extract_EM(d$latitude, d$longitude, path = "/projectnb/talbot-lab-data/NEFI_data/covariate_data/EM_AM_maps/em_1degree.nc")
 
 #put together all spatial products
 spatial <- cbind(clim, NPP, relEM)

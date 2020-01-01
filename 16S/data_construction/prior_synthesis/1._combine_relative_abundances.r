@@ -44,10 +44,11 @@ for (k in 1:length(ramirez_tax_all)){
   # subset to taxa present in the majority of samples
   n_maj <- nrow(y.all.source) * cutoff
   n.presences <- colSums(y.all.source != 0)
-  if (k < 6) n.presences <- n.presences[names(n.presences) != c("other")] 
+  if (k < 6) 
+    n.presences <- n.presences[names(n.presences) != c("other")] 
 
   # get the 10 most abundant taxa (+ sampleID)
-  y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),9)), drop=F]
+  y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),10)), drop=F]
   #y_maj <- y.all.source[,colSums(y.all.source != 0) > n_maj]
   row.name.save <- rownames(y_maj)
 

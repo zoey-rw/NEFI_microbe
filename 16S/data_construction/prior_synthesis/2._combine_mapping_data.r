@@ -3,8 +3,6 @@ rm(list=ls())
 source('NEFI_functions/crib_fun.r')
 source("paths.r")
 source("paths_fall2019.r")
-source("NEFI_functions/convert_K.r")
-source("NEFI_functions/extract_C.r")
 library(runjags)
 
 output.path <- delgado_ramirez_bahram_mapping.path
@@ -15,8 +13,9 @@ map.ram$source <- "Ramirez"
 map.ram$study_id <- map.ram$dataset
 #map.ram <- map.ram[which(map.ram$sequencing_platform != "454"),]
 map.ram$pC <- map.ram$c
-map.ram$soil_n <- map.ram$n
+map.ram$pN <- map.ram$n
 map.ram$pH <- map.ram$ph
+map.ram$depth_max <- map.ram$depth_max.x
 
 
 # prep delgado mapping data
@@ -24,6 +23,9 @@ map.del <- readRDS(delgado_metadata_spatial.path)
 map.del$source <- "Delgado"
 map.del$study_id <- "Delgado"
 map.del$depth_max <- 7.5
+map.del$pN <- map.del$soil_n
+map.del$NPP.del <- map.del$NPP # keep delgado's original NPP values
+map.del$NPP <- map.del$NPP_recent
 
 
 # fill with NAs? or, only common columns?

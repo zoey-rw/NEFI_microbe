@@ -1,3 +1,8 @@
+# combine Ramirez synthesis data from google drive and paper supplement.
+source("paths_fall2019.r")
+library(data.table)
+file.dir <- file.path(scc_gen_16S_dir, "prior_abundance_mapping/Ramirez/")
+
 # first, download name-matched file of taxon abundances
 name.matched <- curl::curl_download("https://static-content.springer.com/esm/art%3A10.1038%2Fs41564-017-0062-x/MediaObjects/41564_2017_62_MOESM7_ESM.zip", tempfile(fileext = ".zip"))
 name.matched <- unzip(unzip(name.matched))
@@ -55,13 +60,14 @@ drop <- append(drop, "XNA")
 # add forest data.----
 out$forest <- 0
 out[which(out$dataset %in% forest_dats),]$forest <- 1
+out[which(is.na(out$habitat)),]$forest <- NA
 
 # drop any samples from our drop list.----
 out <- out[!out$dataset %in% drop,]
 
 # check that things worked alright.
 plot(out$p__bacteria__acidobacteria, out$ph)
-wanted_vars <- out[,c("dataset","Sample_Name_Study_refno2","dataset", "pH", "latitude","longitude", "c", "n", "moisture", "habitat.y")]
+wanted_vars <- out[,c("dataset","Sample_Name_Study_refno2","dataset", "pH", "latitude","longitude", "c", "n", "moisture", "habitat","forest")]
 dim(wanted_vars[complete.cases(wanted_vars),])
 wanted_vars[!complete.cases(wanted_vars),]
 

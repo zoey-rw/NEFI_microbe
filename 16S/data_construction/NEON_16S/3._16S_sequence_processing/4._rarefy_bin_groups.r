@@ -39,8 +39,8 @@ tax <- tax[rownames(tax) %in% colnames(otu),]
 
 # rarefy otu table
 set.seed(5) # so that rarefaction is repeatable.
-otu <- otu[rowSums(otu) >= 10000,]
-otu <- vegan::rrarefy(otu, 10000)
+otu <- otu[rowSums(otu) >= 5000,]
+otu <- vegan::rrarefy(otu, 5000)
 
 # assign function to taxonomy
 pathway_names <- colnames(tax_fun)[3:15]
