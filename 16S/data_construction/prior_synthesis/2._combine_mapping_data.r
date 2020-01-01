@@ -15,6 +15,7 @@ map.ram$study_id <- map.ram$dataset
 map.ram$pC <- map.ram$c
 map.ram$pN <- map.ram$n
 map.ram$pH <- map.ram$ph
+map.ram$cn <- map.ram$pC/map.ram$pN
 map.ram$depth_max <- map.ram$depth_max.x
 
 

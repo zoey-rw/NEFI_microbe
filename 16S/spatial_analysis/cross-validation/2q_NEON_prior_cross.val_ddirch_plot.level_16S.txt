@@ -34,6 +34,8 @@
 # load necessary modules 
 module load jags
 #
+cd /projectnb/talbot-lab-data/zrwerbin/NEFI_microbe/
+#
 # in the directory specified above, invoke this function:
 Rscript 16S/spatial_analysis/cross-validation/2._NEON_prior_cross.val_ddirch_plot.level_16S.r
 #
