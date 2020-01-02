@@ -65,6 +65,7 @@ fg_assign_parallel <- function(tax_table, url = "http://www.stbates.org/funguild
   #What follows is a series of if statements to assign function within a parallel loop.
   #start with highest level of taxonomy and go down.
 
+  fg$taxon <- tolower(fg$taxon)
   #setup output list.
   out <- list()
   #run parallel fg assign loop.

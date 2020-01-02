@@ -7,7 +7,7 @@
 #$ -l h_rt=120:00:00
 #
 #Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 28
+#$ -pe omp 16
 #
 #Give the job a name
 #$ -N cross.val_core_ddirch_JAGS
@@ -34,6 +34,8 @@
 #
 # load necessary modules 
 module load jags
+#
+cd /projectnb/talbot-lab-data/zrwerbin/NEFI_microbe/
 #
 # in the directory specified above, invoke this function:
 Rscript 16S/spatial_analysis/cross-validation/1._NEON_prior_cross.val_ddirch_core.level_16S.r
