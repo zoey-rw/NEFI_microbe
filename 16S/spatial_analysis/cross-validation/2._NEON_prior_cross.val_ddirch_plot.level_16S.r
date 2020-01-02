@@ -64,7 +64,7 @@ core.sd$plotID <- gsub('_','\\.',core.sd$plotID)
 set.seed(420)
 #Subset by plot and site.
 cal.p <- 0.7 #how much data in calibration vs. validation.
-plotID <- rownames(y$Phylum$plot.fit$mean)
+plotID <- rownames(y$phylum$plot.fit$mean)
 siteID <- substr(plotID,1, 4)
 plots <- data.frame(plotID, siteID) 
 plots <- plots[plotID %in% core.preds$plotID,]
@@ -119,10 +119,10 @@ x_mu.val <- x_mu.val[order(match(x_mu.val$plotID, rownames(y.val$phylum$mean))),
 x_sd.val <- x_sd.val[order(match(x_sd.val$plotID, rownames(y.val$phylum$mean))),]
 
 #subset to predictors of interest, drop in intercept.----
-rownames(x_mu.cal) <- rownames(y.cal$Phylum$abundances)
+rownames(x_mu.cal) <- rownames(y.cal$phylum$mean)
 intercept <- rep(1, nrow(x_mu.cal))
 x_mu.cal <- cbind(intercept, x_mu.cal)
-x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
+x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP')]
 
 
 #save calibration/valiation data sets.----
