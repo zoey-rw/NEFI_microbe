@@ -14,13 +14,17 @@ d <- readRDS(delgado_ramirez_abun.path)
 
 #load mapping data.----
 map.all <- readRDS(delgado_ramirez_bahram_mapping.path)
-map.all$cn <- map.all$pC/map.all$soil_n
+map.all$cn <- map.all$pC/map.all$pN
 r2_lev <- list()
 #map.all$study_id <- as.integer(as.factor(map.all$study_id))
 
 # with study_id
 preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
-preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","study_id")
+preds <- c("pC","pN","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","depth_max","study_id")
+preds <- c("pC","pN","cn","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
+preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
+preds <- c("pC","forest","NPP","map","mat","pH","relEM","depth_max","study_id")
+preds <- c("pC","cn","NPP","map","mat","pH","relEM","depth_max","study_id")
 
 
 #preds <- c("ph","study_id")

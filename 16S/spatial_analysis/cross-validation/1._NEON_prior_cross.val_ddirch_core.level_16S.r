@@ -7,6 +7,7 @@ rm(list = ls())
 library(data.table)
 library(doParallel)
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
 
@@ -61,7 +62,7 @@ names(core.sd)[names(core.sd)=="b.relEM"] <- "relEM"
  
 #Split into calibration / validation data sets.----
 set.seed(420)
-ID <- rownames(y$Phylum$abundances)
+ID <- rownames(y$phylum$abundances)
 cal.ID <- sample(ID, round(length(ID)/ 2))
 cal.ID <- cal.ID[cal.ID %in% core.preds$deprecatedVialID]
 val.ID <- ID[!(ID %in% cal.ID)]
@@ -106,7 +107,8 @@ x_sd.val <- x_sd.val[order(match(x_sd.val$deprecatedVialID, rownames(y.val$phylu
 rownames(x_mu.cal) <- rownames(y.cal$Phylum$abundances)
 intercept <- rep(1, nrow(x_mu.cal))
 x_mu.cal <- cbind(intercept, x_mu.cal)
-x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
+#x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
+x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP')]
 
 
 #save calibration/valiation data sets.----
@@ -129,7 +131,7 @@ output.list<-
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                     adapt = 2000, burnin = 8000, sample = 5000, 
+                                     adapt = 5001, burnin = 5002, sample = 5003, 
                                      #adapt = 100, burnin = 100, sample = 100,   #testing
                                      parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.

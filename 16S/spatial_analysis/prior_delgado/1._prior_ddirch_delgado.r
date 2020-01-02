@@ -19,14 +19,9 @@ n.cores <- detectCores()
 registerDoParallel(cores=n.cores)
 
 # set output path and predictors of interest
-relEM <- F # include ectomycorrhizal trees as a predictor?
-if (relEM==T){
-  output.path <- prior_delgado_ddirch_16S_with_relEM.path
-  preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
-} else {
+
   output.path <- prior_delgado_ddirch_16S.path
-  preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","study_id")
-}
+  preds <- c("pC","cn","NPP","map","mat","relEM","pH","study_id")
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
@@ -68,13 +63,13 @@ output.list <-
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
                                      #adapt = 1001, burnin = 102, sample = 503,
-                                     adapt = 30001, burnin = 10002, sample = 5003,
+                                     adapt = 30001, burnin = 10002, sample = 3003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
                                      study_id = study_id,
                                      jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags",
-                                     thin = 5)
+                                     thin = 15)
     
 cat(paste("Model fit for", names(y.all)[i], "\n"))
 return(fit)    #allows nested loop to work.
