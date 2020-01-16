@@ -14,17 +14,19 @@ d <- readRDS(delgado_ramirez_abun.path)
 
 #load mapping data.----
 map.all <- readRDS(delgado_ramirez_bahram_mapping.path)
-map.all$cn <- map.all$pC/map.all$pN
 r2_lev <- list()
 #map.all$study_id <- as.integer(as.factor(map.all$study_id))
 
 # with study_id
-preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
-preds <- c("pC","pN","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","depth_max","study_id")
-preds <- c("pC","pN","cn","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
-preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
-preds <- c("pC","forest","NPP","map","mat","pH","relEM","depth_max","study_id")
-preds <- c("pC","cn","NPP","map","mat","pH","relEM","depth_max","study_id")
+# preds <- c("pC","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","study_id")
+# preds <- c("pC","pN","cn","forest","NPP","map","mat","relEM","pH","aridity","mdr","depth_max","study_id")
+# preds <- c("pC","pN","cn","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
+# preds <- c("pC","cn","forest","NPP","map","mat","pH","aridity","mdr","depth_max","study_id")
+# preds <- c("pC","forest","NPP","map","mat","pH","relEM","depth_max","study_id")
+preds <- c("pC","cn","NPP","map","mat","pH","relEM","study_id")
+preds <- c("cn","NPP","map","mat","pH","relEM","study_id")
+preds <- c("NPP","map","mat","pH","relEM","study_id")
+preds <- c("NPP","map","mat","pH","relEM","study_id")
 
 
 #preds <- c("ph","study_id")
@@ -43,6 +45,8 @@ for(k in 1:length(d)){
   #map <- map.all[1:200,] # testing
   map <- map.all
   map <- map[map$sampleID %in% rownames(y),]
+ # map <- map[which(map$pC < 10),]
+
   y <- y[rownames(y) %in% map$sampleID,]
   y <- y[order(match(rownames(y), map$sampleID)),]
   x <- map[,colnames(map) %in% preds]

@@ -6,6 +6,7 @@ library(runjags)
 library(foreach)
 library(doParallel)
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/tic_toc.r')
 #source('NEFI_functions/hierarch_ddirch_means.r')
 
@@ -28,6 +29,7 @@ d <- readRDS(NEON_16S_phylo_fg_abundances.path)
 
 #register parallel environment.----
 n.cores <- detectCores()
+n.cores <- 16
 registerDoParallel(n.cores)
 
 #loop over levels.----
@@ -62,5 +64,6 @@ names(output) <- names(d)
 
 #save matrix lists.----
 saveRDS(output, output.path)
-cat('Script complete. ');toc()
+cat('Script complete. ');
+toc()
 

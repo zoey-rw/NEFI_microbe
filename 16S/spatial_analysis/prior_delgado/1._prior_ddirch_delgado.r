@@ -16,12 +16,13 @@ source('NEFI_functions/ddirch_site.level_JAGS_study.effects.r')
 
 #detect and register cores.
 n.cores <- detectCores()
+n.cores <- 14
 registerDoParallel(cores=n.cores)
 
 # set output path and predictors of interest
 
   output.path <- prior_delgado_ddirch_16S.path
-  preds <- c("pC","cn","NPP","map","mat","relEM","pH","study_id")
+  preds <- c("NPP","map","mat","relEM","pH","study_id")
 
 # read in data
 y.all <- readRDS(delgado_ramirez_abun.path)
@@ -42,7 +43,8 @@ cat('Begin model fitting loop...\n')
 tic()
 output.list <- 
   foreach(i = 1:length(y.all)) %dopar% {
-   # i <- 18  
+    #foreach(i = 18:18) %dopar% {
+      # i <- 18  
     y <- y.all[[i]]
     # ensure "other" column is first
     y <- y %>% dplyr::select(other, everything())
@@ -62,14 +64,15 @@ output.list <-
     }
     
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
-                                     #adapt = 1001, burnin = 102, sample = 503,
-                                     adapt = 30001, burnin = 10002, sample = 3003,
+                                    #adapt = 20001, burnin = 10002, sample = 3003,
+                                     #adapt = 501, burnin = 102, sample = 503,
+                                     adapt = 35001, burnin = 10002, sample = 3003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',
                                      study_id = study_id,
                                      jags.path = "/share/pkg.7/jags/4.3.0/install/bin/jags",
-                                     thin = 15)
+                                     thin = 10)
     
 cat(paste("Model fit for", names(y.all)[i], "\n"))
 return(fit)    #allows nested loop to work.

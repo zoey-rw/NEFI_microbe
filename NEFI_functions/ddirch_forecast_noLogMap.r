@@ -44,6 +44,7 @@ ddirch_forecast_noLogMap <- function(mod, cov_mu, names, cov_sd = NA, n.samp = 1
   check <- preds[!(preds %in% colnames(covs))]
   if(length(check > 0)){
     cat(paste0('Warning: the predictor(s): ',paste(check, sep = ','), ' are absent from the supplied covariate matrix.\n'))
+    preds <- preds[preds %in% colnames(covs)]
   }
   check <- colnames(covs)[!(colnames(covs) %in% preds)]
   if(length(check > 0)){

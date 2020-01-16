@@ -23,6 +23,7 @@ eval(parse(text = script))
 
 #detect and register cores.----
 n.cores <- detectCores()
+n.cores <- 16
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -104,11 +105,12 @@ x_sd.val <- x_sd.val[order(match(x_sd.val$deprecatedVialID, rownames(y.val$phylu
 
 
 #subset to predictors of interest, drop in intercept.----
-rownames(x_mu.cal) <- rownames(y.cal$Phylum$abundances)
+rownames(x_mu.cal) <- rownames(y.cal$phylum$abundances)
 intercept <- rep(1, nrow(x_mu.cal))
 x_mu.cal <- cbind(intercept, x_mu.cal)
 #x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP','forest','ndep.glob')]
-x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP')]
+#x_mu.cal <- x_mu.cal[,c('intercept','pH','pC','cn','relEM','map','mat','NPP')]
+x_mu.cal <- x_mu.cal[,c('intercept','pH','relEM','map','mat','NPP')]
 
 
 #save calibration/valiation data sets.----
@@ -131,7 +133,7 @@ output.list<-
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                     adapt = 5001, burnin = 5002, sample = 5003, 
+                                     adapt = 30001, burnin = 10002, sample = 5003, 
                                      #adapt = 100, burnin = 100, sample = 100,   #testing
                                      parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.

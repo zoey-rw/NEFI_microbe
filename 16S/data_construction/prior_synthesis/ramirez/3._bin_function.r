@@ -17,12 +17,14 @@ ramirez <- as.data.frame(readRDS(ramirez_raw_mapping_and_abundance.path))
 ramirez <- ramirez[ramirez$dataset != "X1",] # these data don't even sort of add up to 1.
 
 tax <- ramirez[,grep("__bacteria", colnames(ramirez))]
+rownames(tax) <- make.names(ramirez$sampleID)
+
 # na_rows <- tax[rowSums(is.na(tax)) > 0,]
 # na_cols <- tax[,colSums(is.na(tax)) > 0]
 tax <- tax[,which(colSums(tax, na.rm=T) > 0)]
 tax <- tax[which(rowSums(tax, na.rm=T) > 0),]
 # add in dataset/sample identifiers
-rownames(tax) <- ramirez[which(rowSums(tax, na.rm=T) > 0),]$sampleID
+#rownames(tax) <- ramirez[which(rowSums(tax, na.rm=T) > 0),]$sampleID
 tax$sampleID <- rownames(tax) 
 tax$source <- "Ramirez"
 # remove empty columns
@@ -58,7 +60,7 @@ for (i in 1:length(pathway_names)) {
 
 rownames(tax.fun.out) <- rownames(tax)
 # separate abundances and create "other" column, by functional group
-fg <- tax.fun.out[, 1839:1851]
+fg <- tax.fun.out[, 2260:2272]
 fg.list <- list()
 for (i in 1:13) {
   f <- fg[,i, drop=F]

@@ -22,7 +22,8 @@ d <- readRDS(ramirez_raw_mapping_and_abundance.path)
 #metadata.cols <- colnames(d)[!grepl("^[phylum|class|order|family|genus]", colnames(d))]
 metadata.cols <- colnames(d)[!grepl("^[dpcofgs]__[bacteria]", colnames(d))]
 metadata.cols <- metadata.cols[!grepl("^[dpcofgs]__[vu]", metadata.cols)]
-d <- d[,..metadata.cols]
+#d <- d[,..metadata.cols]
+d <- d[,metadata.cols]
 
 #rownames(d) <- d$sampleID
 # d$latitude <- as.numeric(d$latitude.x)

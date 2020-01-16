@@ -12,9 +12,8 @@ map.ram <- readRDS(ramirez_clean_map.path)
 map.ram$source <- "Ramirez"
 map.ram$study_id <- map.ram$dataset
 #map.ram <- map.ram[which(map.ram$sequencing_platform != "454"),]
-map.ram$pC <- map.ram$c
-map.ram$pN <- map.ram$n
-map.ram$pH <- map.ram$ph
+map.ram$pC <- map.ram$C
+map.ram$pN <- map.ram$N
 map.ram$cn <- map.ram$pC/map.ram$pN
 map.ram$depth_max <- map.ram$depth_max.x
 

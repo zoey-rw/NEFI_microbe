@@ -125,7 +125,7 @@ for(i in 1:length(all.mod)){
 
     tic()
   mod <- all.mod[[i]]
-  mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 3000, collapse.chains = FALSE)
+  #mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 2000, collapse.chains = FALSE)
   core.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)	
   plot.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)	
   site.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)

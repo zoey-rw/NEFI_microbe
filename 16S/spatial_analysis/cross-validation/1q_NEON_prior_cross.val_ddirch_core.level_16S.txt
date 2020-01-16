@@ -7,7 +7,7 @@
 #$ -l h_rt=120:00:00
 #
 #Use N processors on a single machine. Running 3 chains in parallel, but i think a 4th will make things move better.
-#$ -pe omp 16
+#$ -pe omp 28 -l mem_per_core=16G
 #
 #Give the job a name
 #$ -N cross.val_core_ddirch_JAGS

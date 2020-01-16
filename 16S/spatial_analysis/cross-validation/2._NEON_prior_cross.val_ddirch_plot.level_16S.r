@@ -20,6 +20,7 @@ eval(parse(text = script))
 
 #detect and register cores.----
 n.cores <- detectCores()
+n.cores <- 16
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -143,7 +144,7 @@ output.list<-
     y.group <- y.cal[[i]]$mean
   
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                        adapt = 1500, burnin = 7000, sample = 5000, 
+                                        adapt = 50001, burnin = 10002, sample = 5003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.

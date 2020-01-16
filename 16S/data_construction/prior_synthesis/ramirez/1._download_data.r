@@ -3,7 +3,6 @@ source("paths_fall2019.r")
 library(data.table)
 file.dir <- file.path(scc_gen_16S_dir, "prior_abundance_mapping/Ramirez/")
 
-file.dir <- file.path(scc_gen_16S_dir, "prior_abundance_mapping/Ramirez/")
 
 # first, download name-matched file of taxon abundances
 name.matched <- curl::curl_download("https://static-content.springer.com/esm/art%3A10.1038%2Fs41564-017-0062-x/MediaObjects/41564_2017_62_MOESM7_ESM.zip", tempfile(fileext = ".zip"))
@@ -73,7 +72,9 @@ name.matched <- as.data.frame(name.matched)
 df_merge <- df_merge[!duplicated(df_merge[,c("latitude","longitude","pH","dataset","depth_min","depth_max")]),]
 
 tax_merged <- merge(df_merge, name.matched, by=c("latitude","longitude","pH","dataset","depth_min","depth_max"), all.y=T)
-tax_merged <- tax_merged[!is.na(tax_merged$sampleID),]
+#tax_merged <- merge(df_merge, name.matched, by=c("latitude","longitude","pH","dataset","depth_min","depth_max"))
+tax_merged$sampleID <- make.names(make.unique(tax_merged$sampleID))
+#tax_merged <- tax_merged[!is.na(tax_merged$sampleID),]
 
 
 out <- tax_merged

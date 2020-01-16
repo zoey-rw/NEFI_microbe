@@ -17,10 +17,16 @@ delgado_tax_all <- readRDS(delgado_16S_common_phylo_fg_abun.path)
 x <- readRDS(delgado_ramirez_bahram_mapping.path)
 
 # find number for majority of the samples (currently not used)
-cutoff <- .95
+cutoff <- .93
+# number of taxa per rank
+n.taxa<- 10
+
+# do we want to subset the taxa by a number per rank, or by presence in a utoff % of samples?
+method <- "cutoff"
+method <- "n.taxa"
 
 y.lev <- list() 
-for (k in 1:length(ramirez_tax_all)){
+for (k in 1:length(ramirez_tax_all)) {
   d.ram <- ramirez_tax_all[[k]]
   #colnames(d.ram) <- tolower(colnames(d.ram))
   d.ram <- d.ram[d.ram$sampleID %in% x$sampleID,]
@@ -44,12 +50,14 @@ for (k in 1:length(ramirez_tax_all)){
   # subset to taxa present in the majority of samples
   n_maj <- nrow(y.all.source) * cutoff
   n.presences <- colSums(y.all.source != 0)
-  if (k < 6) 
-    n.presences <- n.presences[names(n.presences) != c("other")] 
+  if (k < 6) n.presences <- n.presences[names(n.presences) != c("other")] 
 
-  # get the 10 most abundant taxa (+ sampleID)
-  y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),10)), drop=F]
-  #y_maj <- y.all.source[,colSums(y.all.source != 0) > n_maj]
+  # get the X most abundant taxa (+ sampleID)
+  if (method=="n.taxa") {
+    y_maj <- y.all.source[,colnames(y.all.source) %in% names(tail(sort(n.presences),n.taxa)), drop=F]
+    } else {   # get the taxa in % of samples (+ sampleID)
+  y_maj <- y.all.source[,colSums(y.all.source != 0) > n_maj]
+}
   row.name.save <- rownames(y_maj)
 
   # cribari-neto transformation
@@ -81,4 +89,4 @@ for (k in 1:length(ramirez_tax_all)){
 }
 names(y.lev) <- tolower(names(ramirez_tax_all))
 
-saveRDS(y.lev, output.path)
+saveRDS(y.lev, output.path, version = 2)
