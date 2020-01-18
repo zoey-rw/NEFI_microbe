@@ -66,7 +66,7 @@ output.list <-
     fit <- site.level_dirlichet_jags(y=y,x_mu=x,
                                     #adapt = 20001, burnin = 10002, sample = 3003,
                                      #adapt = 501, burnin = 102, sample = 503,
-                                     adapt = 35001, burnin = 10002, sample = 3003,
+                                     adapt = 60001, burnin = 15002, sample = 5003,
                                      parallel = T,
                                      parallel_method="parallel",
                                      #parallel_method='simple',

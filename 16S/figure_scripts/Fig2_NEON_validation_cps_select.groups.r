@@ -8,9 +8,9 @@ source('paths_fall2019.r')
 #set output path.----
 output.path <- paste0(scc_gen_16S_dir, "figures/NEON_cps_rep.groups_forecast_figure_16S.png")
 
-namey <- tolower(c("oligotroph", "rhodoplanes", "proteobacteria"))
-level <- c("oligotroph", "genus", "phylum")
-
+namey <- tolower(c("lignolytic", "sphingomonas", "acidobacteria"))
+level <- c("lignolytic", "genus", "phylum")
+out_spp <- NULL
 #grab forecasts and observations of functional and phylogenetic groups.----
 pl.cast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
 pl.truth <- readRDS(NEON_phylo_fg_plot.site_obs_16S.path)

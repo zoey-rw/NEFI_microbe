@@ -6,17 +6,9 @@ rm(list = ls())
 library(data.table)
 library(doParallel)
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
-
-# source function from colin's github
-library(RCurl)
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
-
-# source Colin's paths.r
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
 
 #detect and register cores.----
 n.cores <- detectCores()
@@ -146,7 +138,7 @@ output.list<-
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
                                         adapt = 50001, burnin = 10002, sample = 5003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
-                                        parallel = T, parallel_method = 'parallel')
+                                        parallel = T, parallel_method = 'parallel', thin = 5)
     return(fit)                                                                     #allows nested loop to work.
   }
 cat('Model fitting loop complete! ')
