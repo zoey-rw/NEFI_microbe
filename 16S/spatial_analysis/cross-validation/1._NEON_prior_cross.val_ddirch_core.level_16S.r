@@ -10,20 +10,10 @@ source('paths.r')
 source('paths_fall2019.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
-
-library(RCurl)
-# source function from colins github
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/NEFI_functions/ddirch_site.level_JAGS.r", ssl.verifypeer = FALSE)
-#script <- gsub("if(is.na(x_sd))", )
-eval(parse(text = script))
-
-# source Colin's paths.r
-script <- getURL("https://raw.githubusercontent.com/colinaverill/NEFI_microbe/master/paths.r", ssl.verifypeer = FALSE)
-eval(parse(text = script))
+source('NEFI_functions/ddirch_site.level_JAGS.r')
 
 #detect and register cores.----
 n.cores <- detectCores()
-n.cores <- 16
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -34,8 +24,7 @@ calval_data.path <- core.CV_NEON_cal.val_data_16S.path
 dat <- readRDS(hierarch_filled_data.path)
 dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
 dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
-#pl.truth <- readRDS(NEON_all.phylo.levels_plot.site_obs_fastq_1k_rare.path) #this has the plot and site values for NEON.
-y <- readRDS(NEON_16S_phylo_fg_abundances.path)
+y <- readRDS(NEON_16S_phylo_fg_abundances.path) #this has the plot and site values for NEON.
 map <- readRDS(core_obs.path)
 
 #get core/plot/site-level covariate means.----
@@ -133,7 +122,7 @@ output.list<-
     y.group <- y.group + 1
     y.group <- y.group/rowSums(y.group)
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                     adapt = 30001, burnin = 10002, sample = 5003, 
+                                     adapt = 50001, burnin = 10002, sample = 5003, thin = 5,
                                      #adapt = 100, burnin = 100, sample = 100,   #testing
                                      parallel = T, parallel_method = 'parallel')
     return(fit)                                                                     #allows nested loop to work.

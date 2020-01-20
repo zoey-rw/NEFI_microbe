@@ -9,10 +9,10 @@ source('paths.r')
 source('paths_fall2019.r')
 source('NEFI_functions/crib_fun.r')
 source('NEFI_functions/tic_toc.r')
+source('NEFI_functions/ddirch_site.level_JAGS.r')
 
 #detect and register cores.----
 n.cores <- detectCores()
-n.cores <- 16
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -136,7 +136,7 @@ output.list<-
     y.group <- y.cal[[i]]$mean
   
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                        adapt = 50001, burnin = 10002, sample = 5003, 
+                                        adapt = 60001, burnin = 10002, sample = 2003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T, parallel_method = 'parallel', thin = 5)
     return(fit)                                                                     #allows nested loop to work.
