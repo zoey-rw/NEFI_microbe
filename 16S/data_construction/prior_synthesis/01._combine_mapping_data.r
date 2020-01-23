@@ -15,7 +15,7 @@ map.ram$study_id <- map.ram$dataset
 map.ram$pC <- map.ram$C
 map.ram$pN <- map.ram$N
 map.ram$cn <- map.ram$pC/map.ram$pN
-map.ram$depth_max <- map.ram$depth_max.x
+map.ram$depth_max <- map.ram$depth_max
 
 
 # prep delgado mapping data

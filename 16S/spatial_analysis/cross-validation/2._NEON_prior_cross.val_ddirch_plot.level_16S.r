@@ -136,9 +136,9 @@ output.list<-
     y.group <- y.cal[[i]]$mean
   
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                        adapt = 60001, burnin = 10002, sample = 2003, 
+                                        adapt = 60001, burnin = 10002, sample = 3003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
-                                        parallel = T, parallel_method = 'parallel', thin = 5)
+                                        parallel = T, parallel_method = 'parallel', thin = 20)
     return(fit)                                                                     #allows nested loop to work.
   }
 cat('Model fitting loop complete! ')
