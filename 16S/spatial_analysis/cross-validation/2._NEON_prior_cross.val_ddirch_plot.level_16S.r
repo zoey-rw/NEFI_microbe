@@ -13,6 +13,7 @@ source('NEFI_functions/ddirch_site.level_JAGS.r')
 
 #detect and register cores.----
 n.cores <- detectCores()
+#n.cores <- 3
 registerDoParallel(cores=n.cores)
 
 #set output path.----
@@ -132,13 +133,16 @@ saveRDS(dat.out, calval_data.path)
 cat('Begin model fitting loop...\n')
 tic()
 output.list<-
-  foreach(i = 1:length(y)) %dopar% {
+  foreach(i = 1:length(y), .errorhandling="pass") %dopar% {
     y.group <- y.cal[[i]]$mean
-  
+    
     fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
-                                        adapt = 60001, burnin = 10002, sample = 3003, 
+                                        adapt = 100001, burnin = 30002, sample = 10003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
-                                        parallel = T, parallel_method = 'parallel', thin = 20)
+                                        parallel = T,
+                                       #parallel_method = "simple",
+                                     parallel_method = 'parallel', 
+                                     thin = 25)
     return(fit)                                                                     #allows nested loop to work.
   }
 cat('Model fitting loop complete! ')

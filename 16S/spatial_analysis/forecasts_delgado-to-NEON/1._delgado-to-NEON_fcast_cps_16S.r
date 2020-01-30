@@ -21,8 +21,9 @@ all.mod <- readRDS(prior_delgado_ddirch_16S.path)
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_data.path)
-dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
+dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer", "pC", "cn", "ndep.glob", "forest"))])
 dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
+dat <- lapply(dat, function(x) x[!(names(x) %in% c("ID", "Value"))])
 dat <- mapply(cbind, dat, "study_id"=200)
 
 core_mu <- dat$core.core.mu
@@ -125,7 +126,7 @@ for(i in 1:length(all.mod)){
 
     tic()
   mod <- all.mod[[i]]
-  #mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 2000, collapse.chains = FALSE)
+  mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 2000, collapse.chains = FALSE)
   core.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=core.preds, cov_sd=core.sd, names=core.preds$sampleID, n.samp = 1000)	
   plot.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=plot.preds, cov_sd=plot.sd, names=plot.preds$plotID  , n.samp = 1000)	
   site.fit <- ddirch_forecast_noLogMap(mod=mod, cov_mu=site.preds, cov_sd=site.sd, names=site.preds$siteID  , n.samp = 1000)

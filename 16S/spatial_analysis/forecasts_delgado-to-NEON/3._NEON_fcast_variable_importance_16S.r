@@ -2,25 +2,21 @@
 #clear environment, source paths, packages and functions.
 rm(list=ls())
 source('paths.r')
+source('paths_fall2019.r')
 source('NEFI_functions/tic_toc.r')
 #set output path.----
 output.path <- NEON_var_importance_data_ddirch_16S.path
 
 #load forecast.----
-fcast <- readRDS(paste0(scc_gen_16S_dir,"/NEON_forecasts/delgado-to-NEON_cps_forecast_ddirch.rds"))
-mod <- readRDS(paste0(scc_gen_16S_dir,"/JAGS_output/prior_delgado/dir_delgado_8-30-19.rds"))
-# mcmc <- mod$all.preds$jags_model$mcmc
-# mcmc <- do.call(rbind,mcmc)
-# preds <- d$site.preds
-
+fcast <- readRDS(NEON_cps_fcast_ddirch_16S.path)
+mod <- readRDS(prior_delgado_ddirch_16S.path)
 #get predictor mean and sd.----
 #get predictor mean and sd.----
 #get standard deviation of predictors based on the scale at which they are actually observed.
-core.preds <- c('pC','cn','pH')
+core.preds <- c('pH')
 plot.preds <- c('relEM')
-site.preds <- c('map','mat','NPP','ndep.glob') #forest and conifer not included, they are 0-1.
+site.preds <- c('map','mat','NPP') #forest and conifer not included, they are 0-1.
 #Forest conifer sensitivity will be based on 0-mean, and changing the binary level.
-bin.preds <- c('forest')
 pred <- list()
 for(k in 1:length(fcast)){
   d <- fcast[[k]]
@@ -43,9 +39,9 @@ for(i in 1:length(site.preds)){
   site_mu[[i]] <- mean(d$site.preds[,site.preds[i]])
   site_sd[[i]] <-   sd(d$site.preds[,site.preds[i]])
 }
-grand_mu <- c(unlist(core_mu),unlist(plot_mu),unlist(site_mu),rep(0,length(bin.preds)))
-grand_sd <- c(unlist(core_sd),unlist(plot_sd),unlist(site_sd),rep(1,length(bin.preds)))
-to_name <- c(core.preds,plot.preds,site.preds,bin.preds)
+grand_mu <- c(unlist(core_mu),unlist(plot_mu),unlist(site_mu))
+grand_sd <- c(unlist(core_sd),unlist(plot_sd),unlist(site_sd))
+to_name <- c(core.preds,plot.preds,site.preds)
 to_sim <- data.frame(to_name,grand_mu,grand_sd)
 to_sim$delta <- to_sim$grand_mu + to_sim$grand_sd
 #put in correct order.
