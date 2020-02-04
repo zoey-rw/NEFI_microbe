@@ -135,8 +135,8 @@ tic()
 output.list<-
   foreach(i = 1:length(y), .errorhandling="pass") %dopar% {
     y.group <- y.cal[[i]]$mean
-    
-    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, 
+    n.chains <- ifelse(i %in% c(6,12), 5, 3)
+    fit <- site.level_dirlichet_jags(y=y.group,x_mu=x_mu.cal, x_sd=x_sd.cal, n.chains = n.chains,
                                         adapt = 100001, burnin = 30002, sample = 10003, 
                                         #adapt = 200, burnin = 200, sample = 200,   #testing
                                         parallel = T,
