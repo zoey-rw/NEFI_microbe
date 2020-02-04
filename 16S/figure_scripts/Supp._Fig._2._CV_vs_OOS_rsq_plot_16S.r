@@ -31,10 +31,11 @@ cv.dat.plot <- readRDS(plot.CV_NEON_cal.val_data_16S.path)
 cv.dat.core <- cv.dat.core$val$y.val
 cv.dat.plot <- cv.dat.plot$val$y.val
 
-# read in obs table that links deprecatedVialID and geneticSampleID
-map <- readRDS(core_obs_data.path)
-map <- map[,c("deprecatedVialID", "geneticSampleID")]
-map$geneticSampleID <- gsub('-GEN','',map$geneticSampleID)
+# Create table to link deprecatedVialID and geneticSampleID
+map <- readRDS(core_obs_data.path)[,c("geneticSampleID","deprecatedVialID")]
+map <- transform(map, row.names = deprecatedVialID, 
+                 deprecatedVialID = NULL, 
+                 geneticSampleID = gsub('-GEN','',map$geneticSampleID))
 
 #Generate Tedersoo out of sample fit statistics.----
 oos.stats <- list()
@@ -46,16 +47,13 @@ for(i in 1:length(oos.val)){
   cps.list <- list()
   for(k in 1:length(y)){
     yy <- as.data.frame(y[[k]])
+    
     if (k == 1){ # fix sample names for cores
-      yy$deprecatedVialID <- rownames(yy)
-      yy <- merge(yy, map, by = "deprecatedVialID")
-      rownames(yy) <- yy$geneticSampleID
-      yy$geneticSampleID <- NULL
-      yy$deprecatedVialID <- NULL
-    } else if (k == 2){ # or for plots
+      yy <- transform(merge(yy,map,by=0), row.names=geneticSampleID, 
+                Row.names=NULL, geneticSampleID=NULL)
+    } else if (k == 2) { # fix names for plots
       rownames(yy) <- gsub('\\.','_', rownames(yy))
     }
-    
     #match row and column names.
     xx <- x[[k]]
     yy <- yy[,order(match(colnames(yy), colnames(xx)))]
@@ -104,11 +102,8 @@ core.list <- list()
 for(i in 1:length(cv.val.core)){
   y <- as.data.frame(cv.dat.core[[i]]$rel.abundances)
   # fix sample names for cores
-    y$deprecatedVialID <- rownames(y)
-    y <- merge(y, map, by = "deprecatedVialID")
-    rownames(y) <- y$geneticSampleID
-    y$geneticSampleID <- NULL
-    y$deprecatedVialID <- NULL
+    y <- transform(merge(y,map,by=0), row.names=geneticSampleID, 
+                    Row.names=NULL, geneticSampleID=NULL)
   
   #match row and column names.
   x <- cv.val.core[[i]]$core.fit$mean
