@@ -23,8 +23,8 @@ plot.sd    <- dat$val$x_sd.val
 #run forecast over all phylo/functional levels.----
 all.output <- list()
 for(i in 1:length(all.mod)){
-  if (i %in% c(6,12)){
-    all.output[[i]] <- old_fcast[[i]]
+  if (length(all.mod[[i]]) < 8) { # only selects the models that didn't converge
+    all.output[[i]] <- old_fcast[[i]] # and uses older forecasts for those models.
     for(m in seq_along(all.output[[i]]$plot.fit)) { # make sure group names are lowercase
       colnames(all.output[[i]]$plot.fit[[m]]) <- tolower(colnames(all.output[[i]]$plot.fit[[m]]))
       }
