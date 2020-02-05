@@ -1,19 +1,21 @@
 #spatial forecast variance decomposition: bacterial taxonomic and functional groups.
 #clear envrionment, source paths, packages and functions.
 rm(list=ls())
+library(data.table)
 source('paths.r')
-source('NEFI_functions/ddirch_forecast_noLogMap_noLogMap.r')
+source('paths_fall2019.r')
+source('NEFI_functions/ddirch_forecast_noLogMap.r')
+source('NEFI_functions/tic_toc.r')
 
 #set output path.----
 output.path <- NEON_ddirch_var.decomp_16S.path
 
 #load model results.----
-all.mod <- readRDS(paste0(scc_gen_16S_dir,'JAGS_output/prior_delgado/dir_delgado_8-30-19.rds'))
+all.mod <- readRDS(prior_delgado_ddirch_16S.path)
 
 #get core-level covariate means and sd.----
 dat <- readRDS(hierarch_filled_data.path)
-dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer"))])
-dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
+dat <- lapply(dat, function(x) x[!(names(x) %in% c("pH", "conifer", "pC", "cn", "ndep.glob", "forest"))])dat <- lapply(dat, function(x) setnames(x, old = "pH_water", new = "pH", skip_absent = TRUE))
 
 core_mu <- dat$core.core.mu
 plot_mu <- dat$plot.plot.mu
@@ -121,8 +123,9 @@ site_median_sd <- data.frame(t(unlist(site_median_sd)))
 
 all_group <- list()
 for (p in 1:length(all.mod)){
-  
+  tic()
   mod <- all.mod[[p]]    
+  mod$jags_model$mcmc <- runjags::combine.mcmc(mod$jags_model, return.samples = 2000, collapse.chains = FALSE)
   
   #core-scale variance decomposition.----
   core_ref <- ddirch_forecast_noLogMap(mod = mod, cov_mu = core_median_mu, cov_sd = core_median_sd, names = 'core_scale')
@@ -185,6 +188,7 @@ for (p in 1:length(all.mod)){
   output <- list(core_variance_decomp, plot_variance_decomp, site_variance_decomp)
   names(output) <- c('core_decomp','plot_decomp','site_decomp')
   all_group[[p]] <- output
+  toc()
 }
 saveRDS(all_group, output.path)
 
